@@ -26,11 +26,11 @@ class Player{
 
         $result = $this->conn->query( $query );
 
-        $players = null;
-        $res = null;
+        $res = array( 'players' => array(), 'status' => false );
 
         if( $result->num_rows > 0){
             $i = 0;
+            $players = null;
             while($row = $result->fetch_assoc()) {
                 $players[$i]['id'] = $row['player_id'];
                 $players[$i]['team_id'] = $row['team_id'];
@@ -42,12 +42,18 @@ class Player{
                 'players'      => $players,
                 'status'    => true
             );
-
-            return $res;
         }
-        $res = array( 'players' => array(), 'status' => false );
 
         return $res;
+    }
+
+    public function countPlayers(){
+        $sql = "SELECT COUNT(*) as nPlayers FROM " . $this->table_name;
+
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        return $row['nPlayers'];
     }
 
     public function getPlayerById($playerid){
@@ -88,10 +94,10 @@ class Player{
 
         $result = $this->conn->query( $query );
 
-        $players = null;
-        $res = null;
+        $res = array( 'players' => array(), 'status' => false );
 
         if( $result->num_rows > 0){
+            $players = null;
             $i = 0;
             while($row = $result->fetch_assoc()) {
                 $players[$i]['id'] = $row['player_id'];
@@ -104,10 +110,7 @@ class Player{
                 'players'      => $players,
                 'status'    => true
             );
-
-            return $res;
         }
-        $res = array( 'players' => array(), 'status' => false );
 
         return $res;
     }
@@ -115,16 +118,13 @@ class Player{
     public function createPlayer( $player_data){
         $sql = "INSERT INTO " . $this->table_name . " (player_name, team_id) VALUES ('{$player_data['player_name']}', '{$player_data['team_id']}')";
 
-        $res = null;
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $res = array(
                 'status'    => true
             );
-
-            return $res;
         }
-        $res = array( 'status' => false );
 
         return $res;
     }

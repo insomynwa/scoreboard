@@ -21,6 +21,39 @@ class Game{
         return $stmt->fetch_assoc();
     }
 
+    public function getDraws(){
+        $query = "SELECT * FROM " . $this->table_name;
+
+        $result = $this->conn->query( $query );
+
+        $draws;
+        $res = null;
+
+        if( $result->num_rows > 0){
+            $i = 0;
+            while($row = $result->fetch_assoc()) {
+                $draws[$i]['id'] = $row['game_id'];
+                $draws[$i]['num'] = $row['game_num'];
+                $draws[$i]['teamA'] = $row['tim_a_id'];
+                $draws[$i]['teamB'] = $row['tim_b_id'];
+                $draws[$i]['playerA'] = $row['player_a_id'];
+                $draws[$i]['playerB'] = $row['player_b_id'];
+                $draws[$i]['status'] = $row['game_status'];
+                $i++;
+            }
+
+            $res = array(
+                'draws'      => $draws,
+                'status'    => true
+            );
+
+            return $res;
+        }
+        $res = array( 'draws' => array(), 'status' => false );
+
+        return $res;
+    }
+
     public function getGames(){
         $query = "SELECT * FROM " . $this->table_name;
 
@@ -54,10 +87,19 @@ class Game{
         return $res;
     }
 
-    public function createGame( $game_data){
-        $sql = "INSERT INTO " . $this->table_name . " (game_num, tim_a_id, tim_b_id, player_a_id, player_b_id, game_teamgame) VALUES ('{$game_data['game_num']}', '{$game_data['team_a']}', '{$game_data['team_b']}', '{$game_data['player_a']}', '{$game_data['player_b']}', '{$game_data['teamgame']}')";
+    public function countGames(){
+        $sql = "SELECT COUNT(*) as nGames FROM " . $this->table_name;
 
-        $res = null;
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        return $row['nGames'];
+    }
+
+    public function createGame( $game_data){
+        $sql = "INSERT INTO " . $this->table_name . " (game_num, tim_a_id, tim_b_id, player_a_id, player_b_id, game_teamgame) VALUES ('{$game_data['num']}', '{$game_data['team_a']}', '{$game_data['team_b']}', '{$game_data['player_a']}', '{$game_data['player_b']}', '{$game_data['teamgame']}')";
+
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $res = array(
@@ -66,7 +108,6 @@ class Game{
 
             return $res;
         }
-        $res = array( 'status' => false );
 
         return $res;
     }

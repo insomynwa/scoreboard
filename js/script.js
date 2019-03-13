@@ -2,10 +2,12 @@ $(document).ready(function(){
 
     var request;
     // jQuery methods go here
+    /*
+    getGames(); */
     getTeams();
+    getGameDraws();
     getPlayers();
-    getGames();
-    getGameset();
+    // getGameset();
     /* getScores(); */
 
     $(".scoreboard-gamemode-cls").change( function(){
@@ -21,27 +23,118 @@ $(document).ready(function(){
         }
     });
 
+    $("select.scoreboard-team-cls").on("change", function(){
+        var teamid = "", playerOptionTagID = "";
+        if(this.id == "scoreboard-team-a"){
+            teamid = $("#scoreboard-team-a").val();
+            playerOptionObject = $("#scoreboard-player-a");
+        }
+        else if(this.id == "scoreboard-team-b"){
+            teamid = $("#scoreboard-team-b").val();
+            playerOptionObject = $("#scoreboard-player-b");
+        }
+        // console.log($("#game-teamgame-single").is(":checked"));
+        if( $("#scoreboard-gamemode-single").is(":checked") ){
+            GetPlayersByTeam(  playerOptionObject, teamid );
+        }
+    });
+
+    $("#form-scoreboard").on('submit', function(e){
+        e.preventDefault();
+
+        if( request){
+            request.abort();
+        }
+
+        var $form = $(this);
+        var serializedData = $form.serialize();
+
+        request = $.ajax({
+            url: "/scoreboard/controller.php",
+            type: "POST",
+            data: serializedData,
+        });
+
+        request.done( function( response, textStatus, jqXHR) {
+            var data = $.parseJSON(response);
+            if( data.status ){
+            }
+        });
+    });
+
+    function getGameDraws(){
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/scoreboard/controller.php?getGameDraws=all',
+            success: function(data){
+                var msg = "";
+                if( data.status ){
+                    // Scoreboard Form
+                    EnableFormScoreboard();
+                    RefreshGameDrawOption( $("#scoreboard-games"), data.draws );
+                    RefreshGameDrawTable( $("#tbl-gamedraw"), data.draws );
+                }else{
+                    if( data.count > 0){
+                        msg = "error on load game draws";
+
+                    // Scoreboard Form
+                        DisableFormScoreboard();
+                        alert("error on load game draws");
+                    }else{
+                        msg = "Create a game draws!";
+                        // Scoreboard Form
+                        DisableFormScoreboard();
+                    }
+
+                    ErrorMessage( $("#form-scoreboard-msg"), msg );
+                }
+            }
+        });
+    }
+
     function getTeams(){
-        // var result = null;
         $.ajax({
             type: 'GET',
             dataType: 'json',
             url: '/scoreboard/controller.php?getTeam=all',
             success: function(data){
+                var msg = "";
                 if( data.status ){
-                    refreshTeamList(data.teams);
-                    refreshPlayerTeamOption(data.teams);
-                    refreshDrawingOption(data.teams);
-                    // result = data;
-                    // console.log("FUCK");
-                    /* refreshTeamList(data);
-                    refreshDrawingOption(data); */
+                    EnableFormPlayer();
+                    RefreshTeamsTable( $("#tbl-team"), data.teams);
+                    RefreshTeamsOption( $("#player-team"), data.teams);
+                    if( data.count > 1 ){
+                        EnableFormGameDraws();
+                        RefreshTeamsOption( $("#gamedraw-team-a"), data.teams);
+                        RefreshTeamsOption( $("#gamedraw-team-b"), data.teams);
+                    }else{
+                        DisableFormGameDraws();
+                    }
+                    // refreshTeamList(data.teams);
+                    // refreshPlayerTeamOption(data.teams);
+                    // refreshDrawingOption(data.teams);
+                    // RefreshTeamsOption( "#scoreboard-team-a", data.teams );
+                    // RefreshTeamsOption( "#scoreboard-team-b", data.teams );
+                }else{
+                    if( data.count > 0){
+                        msg = "error on load teams!";
+
+                        // Scoreboard Form
+                        DisableFormPlayer();
+                        DisableFormGameDraws();
+                        alert("error on load teams!");
+                    }else{
+                        msg = "Create a teams";
+                        // Scoreboard Form
+                        DisableFormPlayer();
+                        DisableFormGameDraws();
+                    }
+
+                    ErrorMessage( $("#form-gamedraw-msg"), msg );
                 }
-                // console.log("DAMN");
-                // console.log(data.teamA);
             }
         });
-        // return result;
     }
 
     /* function getTeamById(){
@@ -60,58 +153,99 @@ $(document).ready(function(){
     } */
 
     function getPlayers(){
-        // var result = null;
         $.ajax({
             type: 'GET',
             dataType: 'json',
             url: '/scoreboard/controller.php?getPlayer=all',
             success: function(data){
-                // console.log(data);
+                var msg = "";
                 if( data.status ){
-                    refreshPlayerList(data.players);
+                    // EnableFormPlayer();
+                    RefreshPlayerTable( $("#tbl-player"), data.players);
+                    // RefreshTeamsOption( $("#player-team"), data.teams);
+
+                    if( data.count > 1 ){
+                        $( "#gamedraw-gamemode-single" ).removeAttr( "disabled" );
+                        if( $("#gamedraw-gamemode-single").is(":checked") ){
+                            var teamAid = $("#gamedraw-team-a option:selected").val();
+                            var teamBid = $("#gamedraw-team-b option:selected").val();
+                            GetPlayersByTeam(  $("#gamedraw-player-a"), teamAid );
+                            GetPlayersByTeam(  $("#gamedraw-player-b"), teamBid );
+                        }
+                        // EnableFormGameDraws();
+                        // RefreshTeamsOption( $("#gamedraw-team-a"), data.teams);
+                        // RefreshTeamsOption( $("#gamedraw-team-b"), data.teams);
+                    }else{
+                        // DisableFormGameDraws();
+                        $( "#gamedraw-gamemode-team" ).prop("checked", true);
+                        $( "#gamedraw-gamemode-single" ).attr( "disabled", "disabled" );
+                    }
+                }else{
+                    if( data.count > 0){
+                        msg = "error on load players!";
+
+                        // DisableFormPlayer();
+                        // DisableFormGameDraws();
+                        alert("error on load players!");
+                    }else{
+                        // msg = "Create a teams";
+
+                        // DisableFormPlayer();
+                        // DisableFormGameDraws();
+                    }
+                    if( data.count > 1 ){
+                        $( "#gamedraw-gamemode-single" ).removeAttr( "disabled" );
+                        if( $("#gamedraw-gamemode-single").is(":checked") ){
+                            var teamAid = $("#gamedraw-team-a option:selected").val();
+                            var teamBid = $("#gamedraw-team-b option:selected").val();
+                            GetPlayersByTeam(  $("#gamedraw-player-a"), teamAid );
+                            GetPlayersByTeam(  $("#gamedraw-player-b"), teamBid );
+                        }
+                        // EnableFormGameDraws();
+                        // RefreshTeamsOption( $("#gamedraw-team-a"), data.teams);
+                        // RefreshTeamsOption( $("#gamedraw-team-b"), data.teams);
+                    }else{
+                        // DisableFormGameDraws();
+                        $( "#gamedraw-gamemode-team" ).prop("checked", true);
+                        $( "#gamedraw-gamemode-single" ).attr( "disabled", "disabled" );
+                    }
+
+                    // ErrorMessage( $("#form-gamedraw-msg"), msg );
                 }
             }
         });
-        // return result;
     }
 
-    function getPlayersByTeam(byteam){
-        // var result = null;
-        var team = "";
-        if( byteam == 'A' ){
-            team = $("#form-game #game-teamA").val();
-        }
-        else if( byteam == 'B' ){
-            team = $("#form-game #game-teamB").val();
-        }
+    function GetPlayersByTeam( playerOptionObject, teamid){
 
         $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: '/scoreboard/controller.php?getPlayersByTeam=' + team,
+            url: '/scoreboard/controller.php?GetPlayersByTeam=' + teamid,
             success: function(data){
-                // console.log(data);
                 if( data.status ){
-                    // if( $("#game-teamgame-single").is("checked") ){
-                        refreshGamePlayerOption( byteam, data.players );
-                    // }
+                    RefreshPlayerOption( playerOptionObject, data.players );
                 }
             }
         });
         // return result;
     }
 
-    $("select.game-teams").on("change", function(){
-        var team = "";
-        if(this.id == "game-teamA"){
-            team = "A";
+    $("select.gamedraw-team-cls").on("change", function(){
+        var teamid = "", playerOptionObject = null;
+        if(this.id == "gamedraw-team-a"){
+            teamcat = "A";
+            teamid = $("#form-gamedraw #gamedraw-team-a").val();
+            playerOptionObject = $("#gamedraw-player-a");
         }
-        else if(this.id == "game-teamB"){
-            team = "B";
+        else if(this.id == "gamedraw-team-b"){
+            teamcat = "B";
+            teamid = $("#form-gamedraw #gamedraw-team-b").val();
+            playerOptionObject = $("#gamedraw-player-b");
         }
-        console.log($("#game-teamgame-single").is(":checked"));
-        if( $("#game-teamgame-single").is(":checked") ){
-            getPlayersByTeam(team);
+
+        if( $("#gamedraw-gamemode-single").is(":checked") ){console.log(teamid);
+            GetPlayersByTeam(playerOptionObject, teamid);
         }
     });
 
@@ -121,17 +255,14 @@ $(document).ready(function(){
             dataType: 'json',
             url: '/scoreboard/controller.php?getGames=all',
             success: function(data){
-                // console.log(data);
-                // if( data.status ){
-                    refreshGamesDrawingList(data.games);
-                    refreshGamesetGameOption(data.games);
-                // }
-                // retGamesSet(data);
+                if( data.status ){
+                    // refreshGamesDrawingList(data.games);
+                }
             }
         });
     }
 
-    function getGameset(){
+    /* function getGameset(){
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -142,7 +273,7 @@ $(document).ready(function(){
                 // retGamesSet(data);
             }
         });
-    }
+    } */
 
     function getScores(){
         $.ajax({
@@ -223,45 +354,106 @@ $(document).ready(function(){
         $("#fs-teamB-status").val(data.teamB.pts_stat);
     }
 
-    function refreshPlayerTeamOption(teams){
-        var opText = "<option value='0'>Select team</option>";
-        if(teams.length > 0){
-            for( i=0; i<teams.length; i++){
-                opText += "<option value='" + teams[i].id +"'>" + teams[i].name +"</option>";
-            }
-        }else{
-            opText += "";
+    function RefreshTeamsOption( elemTarget, teamsdata){
+        var opText = "<option value='0'>Select a team</option>";
+        for( i=0; i<teamsdata.length; i++){
+            opText += "<option value='" + teamsdata[i].id +"'>" + teamsdata[i].name +"</option>";
         }
-        $("#player-team").html(opText);
+        elemTarget.html(opText);
     }
 
-    function refreshTeamList(teams){
-        // console.log(teams);
+    function RefreshTeamsTable( elemTarget, teamsdata){
         var tdText = "<tr><th></th><th>Team</th></tr>";
-        if(teams.length > 0){
-            for( i=0; i<teams.length; i++){
-                tdText += "<tr><td><img src='uploads/" + teams[i].logo +"'></td><td><span>" + teams[i].name +"</span></td></tr>";
-            }
-        }else{
-            tdText += "<tr><td>0 team</td></tr>";
+        for( i=0; i<teamsdata.length; i++){
+            tdText += "<tr><td><img src='uploads/" + teamsdata[i].logo +"'></td><td><span>" + teamsdata[i].name +"</span></td></tr>";
         }
-        $("#tbl-team").html(tdText);
+        elemTarget.html(tdText);
     }
 
-    function refreshPlayerList(players){
-        // console.log(players);
+    function RefreshPlayerTable( elemTarget, playersdata){
         var tdText = "<tr><th>Player</th><th>Team</th></tr>";
-        if(players.length > 0){
-            for( i=0; i<players.length; i++){
-                tdText += "<tr><td><span>" + players[i].name +"</span></td><td><span>" + players[i].team_name +"</span></td></tr>";
-            }
-        }else{
-            tdText += "<tr><td>0 player</td></tr>";
+        for( i=0; i<playersdata.length; i++){
+            var teamname = playersdata[i].team_id==0? "-" : playersdata[i].team_name;
+            tdText += "<tr><td><span>" + playersdata[i].name +"</span></td><td><span>" + teamname +"</span></td></tr>";
         }
-        $("#tbl-player").html(tdText);
+        elemTarget.html(tdText);
     }
 
-    function refreshGamesDrawingList(games){
+    function EnableFormScoreboard(){
+        $( "#scoreboard-games" ).removeAttr( "disabled" );
+        $( "#scoreboard-set" ).removeAttr( "disabled" );
+        $( "#scoreboard-submit" ).removeAttr( "disabled" );
+    }
+
+    function DisableFormScoreboard(){
+        $( "#scoreboard-games" ).attr( "disabled", "disabled" );
+        $( "#scoreboard-set" ).attr( "disabled", "disabled" );
+        $( "#scoreboard-submit" ).attr( "disabled", "disabled" );
+    }
+
+    function EnableFormGameDraws(){
+        $( "#gamedraw-num" ).removeAttr( "disabled" );
+        $( "#gamedraw-gamemode-team" ).removeAttr( "disabled" );
+        $( "#gamedraw-gamemode-single" ).removeAttr( "disabled" );
+        $( ".gamedraw-team-cls" ).removeAttr( "disabled" );
+        $( ".gamedraw-player-cls" ).removeAttr( "disabled" );
+        $( "#gamedraw-submit" ).removeAttr( "disabled" );
+    }
+
+    function DisableFormGameDraws(){
+        $( "#gamedraw-num" ).attr( "disabled", "disabled" );
+        $( "#gamedraw-gamemode-team" ).attr( "disabled", "disabled" );
+        $( "#gamedraw-gamemode-single" ).attr( "disabled", "disabled" );
+        $( ".gamedraw-team-cls" ).attr( "disabled", "disabled" );
+        $( ".gamedraw-player-cls" ).attr( "disabled", "disabled" );
+        $( "#gamedraw-submit" ).attr( "disabled", "disabled" );
+    }
+
+    function EnableFormPlayer(){
+        $( "#player-team" ).removeAttr( "disabled" );
+    }
+
+    function DisableFormPlayer(){
+        $( "#player-team" ).attr( "disabled", "disabled" );
+    }
+
+    function ErrorMessage( elemTarget, message ){
+        elemTarget.html(message);
+    }
+
+    function RefreshGameDrawOption( elemTarget, gamesdrawing_data ){
+        var opText = "<option value='0'>Select a game</option>";
+        // if(gamesdrawing_data.length > 0){
+            for( i=0; i<gamesdrawing_data.length; i++){
+                /* var teamAName = (gamesdrawing_data[i].teamA_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamA_name + ")";
+                var teamBName = (gamesdrawing_data[i].teamB_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamB_name + ")";
+                var playerAName = (gamesdrawing_data[i].playerA_name == "" ) ? "" : "" + gamesdrawing_data[i].playerA_name ;
+                var playerBName = (gamesdrawing_data[i].playerB_name == "" ) ? "" : "" + gamesdrawing_data[i].playerB_name ; */
+                opText += "<option value='" + gamesdrawing_data[i].id + "'>" + gamesdrawing_data[i].num + ". " + gamesdrawing_data[i].teamA_name + "" + gamesdrawing_data[i].playerA_name + " vs "+ gamesdrawing_data[i].teamB_name + "" + gamesdrawing_data[i].playerB_name + "</option>";
+            }
+        // }else{
+        //     opText += "";
+        // }
+        $(elemTarget).html(opText);
+    }
+
+    function RefreshGameDrawTable( elemTarget, gamesdrawing_data ){
+        var tdText = "<tr><th>Game</th><th>Team A</th><th></th><th>Team B</th><th>Status</th></tr>";
+        // if( gamesdrawing_data.length > 0 ){
+            for( i=0; i<gamesdrawing_data.length; i++){
+                /* var teamAName = (gamesdrawing_data[i].teamA_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamA_name + ")";
+                var teamBName = (gamesdrawing_data[i].teamB_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamB_name + ")";
+                var playerAName = (gamesdrawing_data[i].playerA_name == "" ) ? "" : "" + gamesdrawing_data[i].playerA_name;
+                var playerBName = (gamesdrawing_data[i].playerB_name == "" ) ? "" : "" + gamesdrawing_data[i].playerB_name; */
+                tdText += "<tr><td><span>" + gamesdrawing_data[i].num +"</span></td><td><span>" + gamesdrawing_data[i].teamA_name + "" + gamesdrawing_data[i].playerA_name + "</span></td><td>vs</td><td><span>"+ gamesdrawing_data[i].teamB_name + "" + gamesdrawing_data[i].playerB_name + "</span></td><td><span>"+ gamesdrawing_data[i].status +"</span></td></tr>";
+            }
+        // }else{
+        //     tdText += "<tr><td>0 games</td></tr>";
+        // }
+        elemTarget.html(tdText);
+    }
+
+    /* function refreshGamesDrawingList(games){
         // console.log(games);
         var tdText = "<tr><th>Game ke-</th><th>Team A</th><th></th><th>Team B</th><th>Status</th></tr>";
         if( games.length > 0 ){
@@ -276,9 +468,21 @@ $(document).ready(function(){
             tdText += "<tr><td>0 games</td></tr>";
         }
         $("#tbl-game").html(tdText);
+    } */
+
+    function RefreshTeamsOption( elemTarget, teams){
+        var opText = "<option value='0'>Select team</option>";
+        if(teams.length > 0){
+            for( i=0; i<teams.length; i++){
+                opText += "<option value='" + teams[i].id +"'>" + teams[i].name +"</option>";
+            }
+        }else{
+            opText += "";
+        }
+        $(elemTarget).html(opText);
     }
 
-    function refreshDrawingOption(teams){//console.log(teams);
+    function refreshDrawingOption(teams){
         var opText = "<option value='0'>Select team</option>";
         if(teams.length > 0){
             for( i=0; i<teams.length; i++){
@@ -290,7 +494,7 @@ $(document).ready(function(){
         $("select.game-teams").html(opText);
     }
 
-    function refreshGamesetGameOption(games){//console.log(games);
+    /* function refreshGamesetGameOption(games){//console.log(games);
         var opText = "<option value='0'>Select games</option>";
         if(games.length > 0){
             for( i=0; i<games.length; i++){
@@ -300,9 +504,26 @@ $(document).ready(function(){
             opText += "";
         }
         $("#gameset-games").html(opText);
+    } */
+
+    function RefreshPlayerOption( playerOptionObject, players){
+        var opText = "<option value='0'>Select player</option>";
+        if(players.length > 0){
+            for( i=0; i<players.length; i++){
+                opText += "<option value='" + players[i].id +"'>" + players[i].name +"</option>";
+            }
+        }else{
+            opText += "";
+        }
+        playerOptionObject.html(opText);
+        /* if( team=="A" ){
+            $("#game-playerA").html(opText);
+        }else{
+            $("#game-playerB").html(opText);
+        } */
     }
 
-    function refreshGamePlayerOption(team,players){//console.log(games);
+    /* function refreshGamePlayerOption(team,players){
         var opText = "<option value='0'>Select player</option>";
         if(players.length > 0){
             for( i=0; i<players.length; i++){
@@ -316,9 +537,9 @@ $(document).ready(function(){
         }else{
             $("#game-playerB").html(opText);
         }
-    }
+    } */
 
-    function refreshGamesetTable(gameset){
+    /* function refreshGamesetTable(gameset){
         var tdText = "<tr><th>Game</th><th>Set</th><th>Status</th></tr>";
         if( gameset.length > 0 ){
             for( i=0; i<gameset.length; i++){
@@ -328,22 +549,21 @@ $(document).ready(function(){
             tdText += "<tr><td>0 gameset</td></tr>";
         }
         $("#tbl-gameset").html(tdText);
-    }
+    } */
 
-    $(".game-teamgame-radio").change( function(){
-        $("select.game-teams").prop("selectedIndex", 0);
-        $("select.game-playerteam").html("");
+    $(".gamedraw-gamemode-cls").change( function(){
+        $("select.gamedraw-team-cls").prop("selectedIndex", 0);
+        $("select.gamedraw-player-cls").html("");
         if( $(this).val()==0 ){
-            // $(".game-teams").show();
-            $(".game-player-opt-area").addClass("hide");
+            $(".gamedraw-player-opt-area-cls").addClass("hide");
         }
         else if( $(this).val()==1 ){
-            // $(".game-teams").hide();
-            $(".game-player-opt-area").removeClass("hide").addClass("show");
+            GetPlayersByTeam(  $("#gamedraw-player-a, #gamedraw-player-b"), 0 );
+            $(".gamedraw-player-opt-area-cls").removeClass("hide").addClass("show");
         }
     });
 
-    $("#form-game").on('submit', function(e){
+    $("#form-gamedraw").on('submit', function(e){
         e.preventDefault();
 
         if( request){
@@ -363,19 +583,22 @@ $(document).ready(function(){
         });
 
         request.done( function( response, textStatus, jqXHR) {
-            // console.log("DONE");
-            var data = $.parseJSON(response);
-            if( data.status ){
-                getGames();//createScores();
-                $("select.game-teams").prop("selectedIndex", 0);
-                $("select.game-playerteam").html("");
-                $("#form-game input#game-ke").val(data.next_gamenum);
-                // $input.prop("disabled", false);
+            // console.log(response);
+            response = $.parseJSON(response);
+            if( response.status ){
+                getGameDraws();
+                // getGames();
+                $("select.gamedraw-team-cls").prop("selectedIndex", 0);
+                $("select.gamedraw-player-cls").html("");
+                $( "#gamedraw-gamemode-team" ).prop("checked", true);
+                $(".gamedraw-player-opt-area-cls").addClass("hide");
+                // GetPlayersByTeam(  $("#gamedraw-player-a, #gamedraw-player-b"), 0 );
+                $("#form-gamedraw input#gamedraw-num").val(response.next_num);
             }
         });
     });
 
-    $("#form-gameset").on('submit', function(e){
+    /* $("#form-gameset").on('submit', function(e){
         e.preventDefault();
 
         if( request){
@@ -405,7 +628,7 @@ $(document).ready(function(){
                 // $input.prop("disabled", false);
             }
         });
-    });
+    }); */
 
     $("#form-team").on('submit', function(e) {
         e.preventDefault();
@@ -418,42 +641,30 @@ $(document).ready(function(){
             processData: false,
             beforeSend : function()
             {
-             console.log('before send');
+            //  console.log('before send');
             },
             success: function(data)
             {
-                data = $.parseJSON(data);
-                // console.log(data);
+                // data = $.parseJSON(data);
                 if(data.status=='false')
                 {
-                    // console.log('invalid');
+                    alert("error create a team!");
                 }
                 else
                 {
-                    // console.log('view');
-                    // console.log(data);
-                    // $("#sb-teamA-logo").attr('src', 'ancuk' );
-                    // $("#sb-teamB-logo").attr('src', ("uploads/" + data) );
-                    $("#inp-team-logo").val("");
-                    $("#inp-team-name").val("");
+                    $("#team-logo").val("");
+                    $("#team-name").val("");
                     getTeams();
-                    // var datateamlist = getTeams();
-                    // console.log(datateamlist);
-                    // if(datateamlist.status){
-                        /* refreshTeamList(datateamlist.teams);
-                        refreshPlayerTeamOption(datateamlist.teams);
-                        refreshDrawingOption(datateamlist.teams); */
-                    // }
                 }
             },
             error: function(e)
             {
-                console.log('error');
+                // console.log('error');
             }
         });
     });
 
-    $("#form-score-a").on('submit', function(e){
+    /* $("#form-score-a").on('submit', function(e){
         e.preventDefault();
 
         if( request){
@@ -478,9 +689,9 @@ $(document).ready(function(){
             //getGameset();createScores();
             // $input.prop("disabled", false);
         });
-    });
+    }); */
 
-    $("#form-score-b").on('submit', function(e){
+    /* $("#form-score-b").on('submit', function(e){
         e.preventDefault();
 
         if( request){
@@ -505,7 +716,7 @@ $(document).ready(function(){
             //getGameset();createScores();
             // $input.prop("disabled", false);
         });
-    });
+    }); */
 
     $("#form-player").on('submit', function(e){
         e.preventDefault();
@@ -529,42 +740,12 @@ $(document).ready(function(){
         request.done( function( response, textStatus, jqXHR) {
             var data = $.parseJSON(response);
             if( data.status ){
-                $("#inp-player-name").val("");
+                $("#player-name").val("");
                 $("#player-team")[0].selectedIndex = 0;
                 getPlayers();
             }
         });
     });
-
-    /* $("#scoreA-timer-btnplay").click(function(e){
-        e.preventDefault();
-        var counterA = $("#fs-teamA-timer").val();
-        var interval = setInterval(function() {
-            $("#fs-teamA-timer").val(counterA);
-            counterA--;
-            // Display 'counter' wherever you want to display it.
-            if (counterA == 0) {
-                // Display a login box
-                clearInterval(interval);
-            }
-        }, 1000);
-    }); */
-    /* $("#scoreA-timer-btnplay").click(function(e){
-        e.preventDefault();
-        var intervalA;
-        // console.log(this.id);
-        // if(this.id == ''){
-            counterA = $("#fs-teamA-timer").val();
-            playA();
-        // }
-        // if(this.id == 'scoreA-timer-btnpause'){
-        //     pauseA();
-        // }
-    }); */
-    /* $("#scoreA-timer-btnpause").click(function(e){
-        e.preventDefault();
-        pauseA();
-    }); */
 })
 
 var timer = null,

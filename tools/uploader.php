@@ -3,10 +3,11 @@
 $valid_extensions = array('jpeg', 'jpg', 'png', 'gif', 'bmp' , 'pdf' , 'doc' , 'ppt'); // valid extensions
 $path = '../uploads/'; // upload directory
 
-if(!empty($_POST['team-name']) && $_FILES['team-logo'] && $_POST['team-action'] =='inp-create-team')
+if(!empty($_POST['team_name']) && $_FILES['team_logo'] && $_POST['team_action'] =='create')
 {
-    $img = $_FILES['team-logo']['name'];
-    $tmp = $_FILES['team-logo']['tmp_name'];
+    $status = false;
+    $img = $_FILES['team_logo']['name'];
+    $tmp = $_FILES['team_logo']['tmp_name'];
 
     // get uploaded file's extension
     $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
@@ -23,7 +24,7 @@ if(!empty($_POST['team-name']) && $_FILES['team-logo'] && $_POST['team-action'] 
         if(move_uploaded_file($tmp,$path)/*  && move_uploaded_file($tmpB,$pathB) */)
         {
             // echo "<img src='$path' />";
-            $name = $_POST['team-name'];
+            $name = $_POST['team_name'];
 
             //include database configuration file
             include_once '../config/database.php';
@@ -37,9 +38,7 @@ if(!empty($_POST['team-name']) && $_FILES['team-logo'] && $_POST['team-action'] 
             // $insert = $db->query("INSERT tim (tim_name,tim_logo) VALUES ('".$nameB."','".$pathB."')");
 
             if($insert){
-                echo json_encode(array('status'=>true));
-            }else{
-                echo json_encode(array('status'=>false));
+                $status = true;
             }
             $database->conn->close();
 
@@ -52,5 +51,6 @@ if(!empty($_POST['team-name']) && $_FILES['team-logo'] && $_POST['team-action'] 
     {
         echo 'invalid';
     }
+    echo json_encode(array('status'=>$status));
 }
 ?>

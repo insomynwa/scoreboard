@@ -13,12 +13,13 @@ class Team{
         $this->conn = $db;
     }
 
-    public function getATeam( $id ){
-        $query = "SELECT * FROM " . $this->table_name . " WHERE tim_id = {$id}";
+    public function countTeams(){
+        $sql = "SELECT COUNT(*) as nTeams FROM " . $this->table_name;
 
-        $stmt = $this->conn->query( $query );
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
-        return $stmt->fetch_assoc();
+        return $row['nTeams'];
     }
 
     public function getTeams(){
@@ -26,10 +27,10 @@ class Team{
 
         $result = $this->conn->query( $query );
 
-        $teams = null;
-        $res = null;
+        $res = array( 'teams' => array(), 'status' => false );
 
         if( $result->num_rows > 0){
+            $teams = null;
             $i = 0;
             while($row = $result->fetch_assoc()) {
                 $teams[$i]['id'] = $row['tim_id'];
@@ -45,7 +46,6 @@ class Team{
 
             return $res;
         }
-        $res = array( 'teams' => array(), 'status' => false );
 
         return $res;
     }
@@ -55,29 +55,21 @@ class Team{
 
         $result = $this->conn->query( $query );
 
-        $team = null;
-        $res = null;
+        $res = array( 'team' => array(), 'status' => false );
 
-        // var_dump($result);
         if( $result->num_rows > 0){
-            // $i = 0;
+
+            $team = null;
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-            // var_dump($row);die;
-            // while($row = $result->fetch_assoc()) {
-                $team['id'] = $row['tim_id'];
-                $team['name'] = $row['tim_name'];
-                $team['logo'] = $row['tim_logo'];
-                // $i++;
-            // }
+            $team['id'] = $row['tim_id'];
+            $team['name'] = $row['tim_name'];
+            $team['logo'] = $row['tim_logo'];
 
             $res = array(
                 'team'      => $team,
-                'status'    => 'true'
+                'status'    => true
             );
-
-            return $res;
         }
-        $res = array( 'team' => '', 'status' => false );
 
         return $res;
     }

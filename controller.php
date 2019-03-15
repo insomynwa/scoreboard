@@ -2,17 +2,41 @@
 
 include_once 'config/database.php';
 include_once 'objects/team.php';
-include_once 'objects/gameset.php';
-include_once 'objects/game.php';
-include_once 'objects/score.php';
 include_once 'objects/player.php';
+include_once 'objects/gamemode.php';
+include_once 'objects/contestant.php';
+include_once 'objects/gamedraw.php';
+include_once 'objects/gamestatus.php';
+/* include_once 'objects/gameset.php';
+include_once 'objects/game.php';
+include_once 'objects/score.php'; */
 
 
 
 // Get Game Draws
-if (isset( $_GET['getGameDraws']) && $_GET['getGameDraws'] != '') {
-    if( $_GET['getGameDraws'] == 'all') {
-        $draws = array(
+if (isset( $_GET['getGameDraw']) && $_GET['getGameDraw'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    if( $_GET['getGameDraw'] == 'all') {
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $teams = new GameDraw($db);
+        $tempRes = $teams->GetGameDraws();
+
+        $database->conn->close();
+
+        if( $tempRes['status'] ){
+            $result['gamedraws'] = $tempRes['gamedraws'];
+            $result['status'] = $tempRes['status'];
+        }else{
+            $result['message'] = 'ERROR: Load Game Draws';
+        }
+
+        /* $draws = array(
             'count'     => 0,
             'status'    => false
         );
@@ -80,26 +104,43 @@ if (isset( $_GET['getGameDraws']) && $_GET['getGameDraws'] != '') {
                     }
                 }
             }
-        }
+        } */
 
-        echo json_encode($draws);
     }
+    echo json_encode($result);
 }
 
 // Create Scoreboard
 if ( isset( $_POST['scoreboard_action']) ) {
     if( $_POST['scoreboard_action'] == 'create') {
 
-        $inp_status = false;
+        $result = array( 'status_init' => false );
         $nGames = countGames();
-        $game_data = array(
-            'set'  => isset($_POST['scoreboard_set']) ? $_POST['scoreboard_set'] : 0,
-            'team_a'    => isset($_POST['scoreboard_team_a']) ? $_POST['scoreboard_team_a'] : 0,
-            'team_b'    => isset($_POST['scoreboard_team_b']) ? $_POST['scoreboard_team_b'] : 0,
-            'player_a'    => isset($_POST['scoreboard_player_a']) ? $_POST['scoreboard_player_a'] : 0,
-            'player_b'    => isset($_POST['scoreboard_player_b']) ? $_POST['scoreboard_player_b'] : 0,
-            'game_mode'  => isset($_POST['scoreboard_gamemode']) ? $_POST['scoreboard_gamemode'] : 0
+        $scoreboardData = array(
+            'set_num'  => isset($_POST['scoreboard_set']) ? $_POST['scoreboard_set'] : 0,
+            'gamedraw_id'    => isset($_POST['scoreboard_team_a']) ? $_POST['scoreboard_games'] : 0
         );
+
+        $resGameSet = createGameset( $scoreboardData );
+        $result['status_gameset'] = $resGameSet['status'];
+
+        if( $result['status_gameset'] ){
+
+            $teams = getTeamsByGame($scoreboardData['gamedraw_id']);
+            $resTeams['status_teams'] = sizeof( $teams ) > 0;
+
+            if( $resTeams['status_teams'] ){
+
+                $score_data = array(
+                    'gameset_id'    => $resGameSet['latest_id'],
+                    'teams'         => $teams
+                );
+                $c_score = createScore($score_data);
+
+                $result['status'] = $c_score['status'];
+
+            }
+        }
 
         $result = createGame($game_data);
 
@@ -171,9 +212,25 @@ if( isset( $_GET['game']) && $_GET['game'] != '' && isset( $_GET['gameset']) && 
 if (isset( $_GET['getTeam']) && $_GET['getTeam'] != '') {
     $result = array(
         'status'    => false,
+        'message'   => ''
     );
     if( $_GET['getTeam'] == 'all') {
-        $count = countTeams();
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $teams = new Team($db);
+        $tempRes = $teams->GetTeams();
+
+        $database->conn->close();
+
+        $result['status'] = $tempRes['status'];
+
+        if( $result['status'] ){
+            $result['teams'] = $tempRes['teams'];
+        }
+
+        /* $count = countTeams();
         $result['count'] = $count;
         if( $count > 0){
             $result['status'] = true;
@@ -182,7 +239,43 @@ if (isset( $_GET['getTeam']) && $_GET['getTeam'] != '') {
                 $result['status'] = $teams['status'];
                 $result['teams'] = $teams['teams'];
             }
+        } */
+    }
+    echo json_encode($result);
+}
+
+// Get Game Mode
+if (isset( $_GET['getGameMode']) && $_GET['getGameMode'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    if( $_GET['getGameMode'] == 'all') {
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gamemode = new GameMode($db);
+        $tempRes = $gamemode->GetGameModes();
+
+        $database->conn->close();
+
+        $result['status'] = $tempRes['status'];
+
+        if( $result['status'] ){
+            $result['gamemodes'] = $tempRes['gamemodes'];
         }
+
+        /* $count = countTeams();
+        $result['count'] = $count;
+        if( $count > 0){
+            $result['status'] = true;
+            $teams = getTeams();
+            if( $teams['status'] ){
+                $result['status'] = $teams['status'];
+                $result['teams'] = $teams['teams'];
+            }
+        } */
     }
     echo json_encode($result);
 }
@@ -191,41 +284,6 @@ if (isset( $_GET['getTeam']) && $_GET['getTeam'] != '') {
 if (isset( $_GET['getTeamById']) && $_GET['getTeamById'] != '') {
     $team = getTeamById($_GET['getTeamById']);
     echo "[". json_encode($team['team']) . "]";
-}
-
-// Get Players
-if (isset( $_GET['getPlayer']) && $_GET['getPlayer'] != '') {
-    $result = array(
-        'status'    => false,
-    );
-    if( $_GET['getPlayer'] == 'all') {
-        $count = countPlayers();
-        $result['count'] = $count;
-        if( $count > 0){
-            $result['status'] = true;
-            $players = getPlayers();
-            if( $players['status'] ){
-                $result['status'] = $players['status'];
-                for($i=0; $i<sizeof($players['players']); $i++){
-                    $teamname = "";
-                    if( $players['players'][$i]['team_id'] > 0 ){
-                        $team = getTeamById( $players['players'][$i]['team_id']);
-
-                        if( ! $team['status'] ){
-                            $result['status'] = $team['status'];
-                            break;
-                        }
-                        $teamname = $team['team']['name'];
-                    }
-                    $players['players'][$i]['team_name'] = $teamname;
-                }
-                $result['players'] = $players['players'];
-            }
-        }
-        // $teams = getTeamById( $game['tim_a_id']);
-        // echo json_encode($players);
-    }
-    echo json_encode($result);
 }
 
 // Get Team Players
@@ -240,72 +298,6 @@ if (isset( $_GET['GetPlayersByTeam']) && $_GET['GetPlayersByTeam'] != '') {
     echo json_encode($result);
 }
 
-// Get Games
-if (isset( $_GET['getGames']) && $_GET['getGames'] != '') {
-    if( $_GET['getGames'] == 'all') {
-        $games = getGames();
-        if( $games['status'] ){
-            for($i=0; $i<sizeof($games['games']); $i++){/* 
-
-                $games['games'][$i]['teamA_name'] = "";
-                $games['games'][$i]['teamB_name'] = "";
-                $games['games'][$i]['playerA_name'] = "";
-                $games['games'][$i]['playerB_name'] = "";
-
-                $teamAId = $games['games'][$i]['teamA'];
-                $teamBId = $games['games'][$i]['teamB'];
-                $playerAId = $games['games'][$i]['playerA'];
-                $playerBId = $games['games'][$i]['playerB'];if($i==3) var_dump($teamAId);die;
-
-                if( $teamAId > 0 ){
-                    $teamA = getTeamById( $games['games'][$i]['teamA']);
-                    if( $playerAId > 0 ){
-                        $playerA = getPlayerById( $games['games'][$i]['playerA'] );
-                        $games['games'][$i]['teamA_name'] = "(" . strtoupper( substr( $teamA['team']['name'], 0, 3) ) . ")";
-                        $games['games'][$i]['playerA_name'] = $playerA['player']['name'];
-                    }else{
-                        $games['games'][$i]['teamA_name'] = $teamA['team']['name'];
-                    }
-                }else{
-                    if( $playerAId > 0 ){
-                        $games['games'][$i]['playerA_name'] = $playerA['player']['name'];
-                    }else{
-                        $games['games'][$i]['teamA_name'] = "Unknown";
-                        $games['games'][$i]['playerA_name'] = "Unknown";
-                    }
-                }
-
-                if( $teamBId > 0 ){
-                    $teamB = getTeamById( $games['games'][$i]['teamB']);
-                    if( $playerBId > 0 ){
-                        $playerB = getPlayerById( $games['games'][$i]['playerB'] );
-                        $games['games'][$i]['teamB_name'] = "(" . strtoupper( substr( $teamB['team']['name'], 0, 3) ) . ")";
-                        $games['games'][$i]['playerB_name'] = $playerB['player']['name'];
-                    }else{
-                        $games['games'][$i]['teamB_name'] = $teamB['team']['name'];
-                    }
-                }else{
-                    if( $playerBId > 0 ){
-                        $games['games'][$i]['playerB_name'] = $playerB['player']['name'];
-                    }else{
-                        $games['games'][$i]['teamB_name'] = "Unknown";
-                        $games['games'][$i]['playerB_name'] = "Unknown";
-                    }
-                }
-
-                if( $games['games'][$i]['status'] == 0 ) {
-                    $games['games'][$i]['status'] = "Wait";
-                }else if( $games['games'][$i]['status'] == 1 ) {
-                    $games['games'][$i]['status'] = "Live";
-                }else if( $games['games'][$i]['status'] == 2 ) {
-                    $games['games'][$i]['status'] = "Finished";
-                } */
-            }
-        }
-
-        echo json_encode($games);
-    }
-}
 // Get Gameset
 if (isset( $_GET['getGameset']) && $_GET['getGameset'] != '') {
 
@@ -335,33 +327,77 @@ if (isset( $_GET['getGameset']) && $_GET['getGameset'] != '') {
     }
 }
 
-// Create Game
+// Create Game Draw
 if ( isset( $_POST['gamedraw_action']) ) {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
     if( $_POST['gamedraw_action'] == 'create') {
-        $result = array(
-            'status'    => false,
-        );
 
-        $game_data = array(
-            'num'  => isset($_POST['gamedraw_num']) ? $_POST['gamedraw_num'] : 0,
-            'team_a'    => isset($_POST['gamedraw_team_a']) ? $_POST['gamedraw_team_a'] : 0,
-            'team_b'    => isset($_POST['gamedraw_team_b']) ? $_POST['gamedraw_team_b'] : 0,
-            'player_a'    => isset($_POST['gamedraw_player_a']) ? $_POST['gamedraw_player_a'] : 0,
-            'player_b'    => isset($_POST['gamedraw_player_b']) ? $_POST['gamedraw_player_b'] : 0,
-            'teamgame'  => isset($_POST['gamedraw_gamemode']) ? $_POST['gamedraw_gamemode'] : 0
-        );
+        $contestant_a_id = 0;
+        $contestant_b_id = 0;
+        $gamemode_id = isset($_POST['gamedraw_gamemode']) ? $_POST['gamedraw_gamemode'] : 0;
 
-        $result = createGame($game_data);
-
-        if($result['status']){
-            $result['next_num'] = $game_data['num'] + 1;
+        /*
+        * TO-DO:
+        * Harus dinamis
+        * Game Status
+        */
+        if( $gamemode_id == 1 ) {   // ID Beregu
+            $contestant_a_id = isset($_POST['gamedraw_team_a']) ? $_POST['gamedraw_team_a'] : 0;
+            $contestant_b_id = isset($_POST['gamedraw_team_b']) ? $_POST['gamedraw_team_b'] : 0;
+        }else if( $gamemode_id == 2) {// ID Individu
+            $contestant_a_id = isset($_POST['gamedraw_player_a']) ? $_POST['gamedraw_player_a'] : 0;
+            $contestant_b_id = isset($_POST['gamedraw_player_b']) ? $_POST['gamedraw_player_b'] : 0;
         }
-        echo json_encode($result);
+
+        if( $contestant_a_id != 0 && $contestant_b_id != 0 ){
+
+            $database = new Database();
+            $db = $database->getConnection();
+
+            $contestant = new Contestant($db);
+            $contestant->SetContestantAID($contestant_a_id);
+            $contestant->SetContestantBID($contestant_b_id);
+            $tempRes = $contestant->CreateContestant();
+
+            if( $tempRes['status'] ){
+
+                $game_data = array(
+                    'num'  => isset($_POST['gamedraw_num']) ? $_POST['gamedraw_num'] : 0,
+                    'contestant_id'    => $tempRes['latest_id'],
+                    'gamemode_id'  => $gamemode_id
+                );
+
+                $contestant = new GameDraw($db);
+                $contestant->SetNum($game_data['num']);
+                $contestant->SetGameModeID($game_data['gamemode_id']);
+                $contestant->SetContestantID($game_data['contestant_id']);
+                $tempRes = $contestant->CreateGameDraw();
+
+                if( $tempRes['status'] ){
+                    $result['next_num'] = $game_data['num'] + 1;
+                    $result['status'] = $tempRes['status'];
+                }else{
+                    $result['message'] = "ERROR: Create Game Draw";
+                }
+
+            }else{
+                $result['message'] = "ERROR: Create Contestant";
+            }
+
+            $database->conn->close();
+
+        }else{
+            $result['message'] = "ERROR: Contestant 0";
+        }
     }
+    echo json_encode($result);
 }
 
 // Create Gameset
-if ( isset( $_POST['gameset-action']) ) {
+/* if ( isset( $_POST['gameset-action']) ) {
     if( $_POST['gameset-action'] == 'create') {
 
         $gameset_data = array(
@@ -385,21 +421,96 @@ if ( isset( $_POST['gameset-action']) ) {
 
         echo json_encode($result);
     }
+} */
+
+// Get Players
+if (isset( $_GET['getPlayer']) && $_GET['getPlayer'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ""
+    );
+    if( $_GET['getPlayer'] == 'all') {
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $players = new Player($db);
+        $tempRes = $players->GetPlayers();
+
+        $database->conn->close();
+
+        $result['status'] = $tempRes['status'];
+
+        if( $result['status'] ){
+            $result['players'] = $tempRes['players'];
+            $result['message'] = "success";
+        }else{
+            $result['message'] = "ERROR: load players";
+        }
+
+        /* $count = countPlayers();
+        $result['count'] = $count;
+        if( $count > 0){
+            $result['status'] = true;
+            $players = getPlayers();
+            if( $players['status'] ){
+                $result['status'] = $players['status'];
+                for($i=0; $i<sizeof($players['players']); $i++){
+                    $teamname = "";
+                    if( $players['players'][$i]['team_id'] > 0 ){
+                        $team = getTeamById( $players['players'][$i]['team_id']);
+
+                        if( ! $team['status'] ){
+                            $result['status'] = $team['status'];
+                            break;
+                        }
+                        $teamname = $team['team']['name'];
+                    }
+                    $players['players'][$i]['team_name'] = $teamname;
+                }
+                $result['players'] = $players['players'];
+            }
+        } */
+        // $teams = getTeamById( $game['tim_a_id']);
+        // echo json_encode($players);
+    }
+    echo json_encode($result);
 }
 
 // Create Player
 if ( isset( $_POST['player_action']) ) {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
     if( $_POST['player_action'] == 'create') {
 
-        $player_data = array(
-            'player_name'   => isset($_POST['player_name']) ? $_POST['player_name'] : '',
+        $playerData = array(
+            'name'   => isset($_POST['player_name']) ? $_POST['player_name'] : '',
             'team_id'       =>  isset($_POST['player_team']) ? $_POST['player_team'] : 0
         );
 
-        $result = createPlayer($player_data);
+        if( $playerData['name'] == '' ){
+            $result['message'] = "ERROR: player name is required!";
+        }else{
+            $database = new Database();
+            $db = $database->getConnection();
 
-        echo json_encode($result);
+            $player = new Player($db);
+            $player->SetName( $playerData['name'] );
+            $player->SetTeamId( $playerData['team_id'] );
+            $tempRes = $player->CreatePlayer();
+            if( $tempRes['status'] ){
+                $result['status'] = $tempRes['status'];
+            }
+
+            $database->conn->close();
+        }
+
+        /* $result = createPlayer($player_data); */
+
     }
+    echo json_encode($result);
 }
 
 // Update Score

@@ -25,6 +25,8 @@ if(!empty($_POST['team_name']) && $_FILES['team_logo'] && $_POST['team_action'] 
         {
             // echo "<img src='$path' />";
             $name = $_POST['team_name'];
+            $team_initial = strtoupper( substr( $name, 0, 3) );
+            $team_desc = $_POST['team_desc'];
 
             //include database configuration file
             include_once '../config/database.php';
@@ -34,7 +36,7 @@ if(!empty($_POST['team_name']) && $_FILES['team_logo'] && $_POST['team_action'] 
 
             //insert form data in the database basename($_FILES['uploadedFile']['name'])
             // $insert = $db->query("INSERT tim (tim_name,tim_logo) VALUES ('".$name."','".$path."')");
-            $insert = $db->query("INSERT tim (tim_name,tim_logo) VALUES ('".$name."','". strtolower($final_image) ."')");
+            $insert = $db->query("INSERT team (team_name,team_logo,team_initial,team_desc) VALUES ('".$name."','". strtolower($final_image) ."', '". $team_initial ."', '". $team_desc ."' )");
             // $insert = $db->query("INSERT tim (tim_name,tim_logo) VALUES ('".$nameB."','".$pathB."')");
 
             if($insert){

@@ -52,19 +52,20 @@ class GameSet{
     }
 
     public function createGameset( $gameset_data){
-        $sql = "INSERT INTO " . $this->table_name . " (game_id, gameset_num) VALUES ('{$gameset_data['game_id']}', '{$gameset_data['num']}')";
+        $sql = "INSERT INTO " . $this->table_name . " (game_id, gameset_num) VALUES ('{$gameset_data['gamedraw_id']}', '{$gameset_data['set_num']}')";
 
-        $res = null;
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
-            $last_id = $this->conn->insert_id;
+
+            $latest_id = $this->conn->insert_id;
+
             $res = array(
                 'status'    => true,
-                'latest_id' => $last_id
+                'latest_id' => $latest_id
             );
 
             return $res;
         }
-        $res = array( 'status' => false );
 
         return $res;
     }

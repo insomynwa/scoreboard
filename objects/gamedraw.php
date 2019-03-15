@@ -1,20 +1,99 @@
 <?php
 
-class Game{
+class GameDraw{
 
     private $conn;
-    private $table_name = "game";
+    private $table_name = "gamedraw";
 
-    public $id;
-    public $name;
-    public $logo;
+    private $id;            //_[int]
+    private $num;           //_[int]
+    private $gamemode_id;      //_id_[int]
+    private $contestant_id;   //_id_[int]
+    private $gamestatus_id;    //_id_[int]
 
     public function __construct( $db ){
         $this->conn = $db;
     }
 
+    public function SetNum( $num ){
+        $this->num = $num;
+    }
+
+    public function SetGameModeID( $gamemode_id ){
+        $this->gamemode_id = $gamemode_id;
+    }
+
+    public function SetContestantID( $contestant_id ){
+        $this->contestant_id = $contestant_id;
+    }
+
+    public function CreateGameDraw(){
+        $sql = "INSERT INTO " . $this->table_name . " (gamedraw_num, gamemode_id, contestant_id) VALUES ('{$this->num}', '{$this->gamemode_id}', '{$this->contestant_id}')";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    public function GetGameDraws(){
+        $query = "SELECT * FROM " . $this->table_name;
+
+        $result = $this->conn->query( $query );
+
+        $res = array( 'gamedraws' => array(), 'status' => $result->num_rows > 0 );
+
+        if( $res['status'] ){
+            $i = 0;
+            $gamedraws = null;
+            while($row = $result->fetch_assoc()) {
+                $gamedraws[$i]['id'] = $row['gamedraw_id'];
+                $gamedraws[$i]['num'] = $row['gamedraw_num'];
+
+                $gamemode = new GameMode($this->conn);
+                $gamemode->SetID( $row['gamemode_id'] );
+                $tempRes = $gamemode->GetGameModeByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['gamemode'] = $tempRes['gamemode'];
+                }
+
+                /*
+                * TO-DO: Harus Dinamis
+                */
+                $contestant = new Contestant($this->conn);
+                $contestant->SetID( $row['contestant_id'] );
+                $contestant->SetGameMode( $row['gamemode_id'] );
+                $tempRes = $contestant->GetContestantByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['contestant'] = $tempRes['contestant'];
+                }
+
+                $gamestatus = new GameStatus($this->conn);
+                $gamestatus->SetID( $row['gamestatus_id'] );
+                $tempRes = $gamestatus->GetGameStatusByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['gamestatus'] = $tempRes['gamestatus'];
+                }
+
+                $i++;
+            }
+
+            $res = array(
+                'gamedraws'      => $gamedraws,
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+/*
     public function getGame( $id ){
-        $query = "SELECT * FROM " . $this->table_name . " WHERE game_num = {$id}";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE gamedraw_num = {$id}";
 
         $stmt = $this->conn->query( $query );
 
@@ -32,8 +111,8 @@ class Game{
         if( $result->num_rows > 0){
             $i = 0;
             while($row = $result->fetch_assoc()) {
-                $draws[$i]['id'] = $row['game_id'];
-                $draws[$i]['num'] = $row['game_num'];
+                $draws[$i]['id'] = $row['gamedraw_id'];
+                $draws[$i]['num'] = $row['gamedraw_num'];
                 $draws[$i]['teamA'] = $row['tim_a_id'];
                 $draws[$i]['teamB'] = $row['tim_b_id'];
                 $draws[$i]['playerA'] = $row['player_a_id'];
@@ -170,6 +249,6 @@ class Game{
         }
 
         return $res;
-    }
+    } */
 }
 ?>

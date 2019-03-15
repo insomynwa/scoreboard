@@ -1,14 +1,11 @@
 $(document).ready(function(){
 
     var request;
-    // jQuery methods go here
-    /*
-    getGames(); */
-    getTeams();
-    getGameDraws();
-    getPlayers();
-    // getGameset();
-    /* getScores(); */
+
+    GetTeams();
+    GetPlayers();
+    GetGameDraws();
+    GetGameModes();
 
     $(".scoreboard-gamemode-cls").change( function(){
         $("select.scoreboard-team-cls").prop("selectedIndex", 0);
@@ -62,18 +59,18 @@ $(document).ready(function(){
         });
     });
 
-    function getGameDraws(){
+    function GetGameDraws(){
         $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: '/scoreboard/controller.php?getGameDraws=all',
+            url: '/scoreboard/controller.php?getGameDraw=all',
             success: function(data){
                 var msg = "";
                 if( data.status ){
                     // Scoreboard Form
-                    EnableFormScoreboard();
-                    RefreshGameDrawOption( $("#scoreboard-games"), data.draws );
-                    RefreshGameDrawTable( $("#tbl-gamedraw"), data.draws );
+                    // EnableFormScoreboard();
+                    Option_Load_GameDraw( $("#scoreboard-games"), data.gamedraws );
+                    Table_Load_GameDraw( $("#tbl-gamedraw"), data.gamedraws );
                 }else{
                     if( data.count > 0){
                         msg = "error on load game draws";
@@ -87,13 +84,13 @@ $(document).ready(function(){
                         DisableFormScoreboard();
                     }
 
-                    ErrorMessage( $("#form-scoreboard-msg"), msg );
                 }
+                ErrorMessage( $("#form-scoreboard-msg"), msg );
             }
         });
     }
 
-    function getTeams(){
+    function GetTeams(){
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -101,23 +98,20 @@ $(document).ready(function(){
             success: function(data){
                 var msg = "";
                 if( data.status ){
-                    EnableFormPlayer();
-                    RefreshTeamsTable( $("#tbl-team"), data.teams);
-                    RefreshTeamsOption( $("#player-team"), data.teams);
+                    Table_Load_Team( $("#tbl-team"), data.teams);
+                    Option_Load_Team( $("#player-team"), data.teams);
+                    Option_Load_Team( $("#gamedraw-team-a"), data.teams);
+                    Option_Load_Team( $("#gamedraw-team-b"), data.teams);
+                    /* EnableFormPlayer();
                     if( data.count > 1 ){
                         EnableFormGameDraws();
-                        RefreshTeamsOption( $("#gamedraw-team-a"), data.teams);
-                        RefreshTeamsOption( $("#gamedraw-team-b"), data.teams);
+                        Option_Load_Team( $("#gamedraw-team-a"), data.teams);
+                        Option_Load_Team( $("#gamedraw-team-b"), data.teams);
                     }else{
                         DisableFormGameDraws();
-                    }
-                    // refreshTeamList(data.teams);
-                    // refreshPlayerTeamOption(data.teams);
-                    // refreshDrawingOption(data.teams);
-                    // RefreshTeamsOption( "#scoreboard-team-a", data.teams );
-                    // RefreshTeamsOption( "#scoreboard-team-b", data.teams );
+                    } */
                 }else{
-                    if( data.count > 0){
+                    /* if( data.count > 0){
                         msg = "error on load teams!";
 
                         // Scoreboard Form
@@ -131,7 +125,22 @@ $(document).ready(function(){
                         DisableFormGameDraws();
                     }
 
-                    ErrorMessage( $("#form-gamedraw-msg"), msg );
+                    ErrorMessage( $("#form-gamedraw-msg"), msg ); */
+                }
+            }
+        });
+    }
+
+    function GetGameModes(){
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/scoreboard/controller.php?getGameMode=all',
+            success: function(data){
+                // var msg = "";
+                if( data.status ){
+                    Radio_Load_GameMode( $("#gamedraw-radio-area"), data.gamemodes);
+                }else{
                 }
             }
         });
@@ -152,7 +161,7 @@ $(document).ready(function(){
         });
     } */
 
-    function getPlayers(){
+    function GetPlayers(){
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -161,32 +170,34 @@ $(document).ready(function(){
                 var msg = "";
                 if( data.status ){
                     // EnableFormPlayer();
-                    RefreshPlayerTable( $("#tbl-player"), data.players);
-                    // RefreshTeamsOption( $("#player-team"), data.teams);
+                    Table_Load_Player( $("#tbl-player"), data.players);
+                    Option_Load_Player( $("#gamedraw-player-a"), data.players);
+                    Option_Load_Player( $("#gamedraw-player-b"), data.players);
+                    // Option_Load_Team( $("#player-team"), data.teams);
 
                     if( data.count > 1 ){
-                        $( "#gamedraw-gamemode-single" ).removeAttr( "disabled" );
+                        /* $( "#gamedraw-gamemode-single" ).removeAttr( "disabled" );
                         if( $("#gamedraw-gamemode-single").is(":checked") ){
                             var teamAid = $("#gamedraw-team-a option:selected").val();
                             var teamBid = $("#gamedraw-team-b option:selected").val();
                             GetPlayersByTeam(  $("#gamedraw-player-a"), teamAid );
                             GetPlayersByTeam(  $("#gamedraw-player-b"), teamBid );
-                        }
+                        } */
                         // EnableFormGameDraws();
-                        // RefreshTeamsOption( $("#gamedraw-team-a"), data.teams);
-                        // RefreshTeamsOption( $("#gamedraw-team-b"), data.teams);
+                        // Option_Load_Team( $("#gamedraw-team-a"), data.teams);
+                        // Option_Load_Team( $("#gamedraw-team-b"), data.teams);
                     }else{
                         // DisableFormGameDraws();
-                        $( "#gamedraw-gamemode-team" ).prop("checked", true);
-                        $( "#gamedraw-gamemode-single" ).attr( "disabled", "disabled" );
+                        /* $( "#gamedraw-gamemode-team" ).prop("checked", true);
+                        $( "#gamedraw-gamemode-single" ).attr( "disabled", "disabled" ); */
                     }
                 }else{
                     if( data.count > 0){
-                        msg = "error on load players!";
+                        /* msg = "error on load players!";
 
                         // DisableFormPlayer();
                         // DisableFormGameDraws();
-                        alert("error on load players!");
+                        alert("error on load players!"); */
                     }else{
                         // msg = "Create a teams";
 
@@ -194,20 +205,20 @@ $(document).ready(function(){
                         // DisableFormGameDraws();
                     }
                     if( data.count > 1 ){
-                        $( "#gamedraw-gamemode-single" ).removeAttr( "disabled" );
+                        /* $( "#gamedraw-gamemode-single" ).removeAttr( "disabled" );
                         if( $("#gamedraw-gamemode-single").is(":checked") ){
                             var teamAid = $("#gamedraw-team-a option:selected").val();
                             var teamBid = $("#gamedraw-team-b option:selected").val();
                             GetPlayersByTeam(  $("#gamedraw-player-a"), teamAid );
                             GetPlayersByTeam(  $("#gamedraw-player-b"), teamBid );
-                        }
+                        } */
                         // EnableFormGameDraws();
-                        // RefreshTeamsOption( $("#gamedraw-team-a"), data.teams);
-                        // RefreshTeamsOption( $("#gamedraw-team-b"), data.teams);
+                        // Option_Load_Team( $("#gamedraw-team-a"), data.teams);
+                        // Option_Load_Team( $("#gamedraw-team-b"), data.teams);
                     }else{
                         // DisableFormGameDraws();
-                        $( "#gamedraw-gamemode-team" ).prop("checked", true);
-                        $( "#gamedraw-gamemode-single" ).attr( "disabled", "disabled" );
+                        /* $( "#gamedraw-gamemode-team" ).prop("checked", true);
+                        $( "#gamedraw-gamemode-single" ).attr( "disabled", "disabled" ); */
                     }
 
                     // ErrorMessage( $("#form-gamedraw-msg"), msg );
@@ -244,7 +255,7 @@ $(document).ready(function(){
             playerOptionObject = $("#gamedraw-player-b");
         }
 
-        if( $("#gamedraw-gamemode-single").is(":checked") ){console.log(teamid);
+        if( $("#gamedraw-gamemode-single").is(":checked") ){//console.log(teamid);
             GetPlayersByTeam(playerOptionObject, teamid);
         }
     });
@@ -261,19 +272,6 @@ $(document).ready(function(){
             }
         });
     }
-
-    /* function getGameset(){
-        $.ajax({
-            type: 'GET',
-            dataType: 'json',
-            url: '/scoreboard/controller.php?getGameset=all',
-            success: function(data){
-                // console.log(data.teamA);
-                refreshGamesetTable(data.gameset);
-                // retGamesSet(data);
-            }
-        });
-    } */
 
     function getScores(){
         $.ajax({
@@ -354,7 +352,7 @@ $(document).ready(function(){
         $("#fs-teamB-status").val(data.teamB.pts_stat);
     }
 
-    function RefreshTeamsOption( elemTarget, teamsdata){
+    function Option_Load_Team( elemTarget, teamsdata){
         var opText = "<option value='0'>Select a team</option>";
         for( i=0; i<teamsdata.length; i++){
             opText += "<option value='" + teamsdata[i].id +"'>" + teamsdata[i].name +"</option>";
@@ -362,7 +360,29 @@ $(document).ready(function(){
         elemTarget.html(opText);
     }
 
-    function RefreshTeamsTable( elemTarget, teamsdata){
+    function Option_Load_Player( elemTarget, playersdata){
+        var opText = "<option value='0'>Select a player</option>";
+        for( i=0; i<playersdata.length; i++){
+            opText += "<option value='" + playersdata[i].id +"'>" + playersdata[i].name +"</option>";
+        }//console.log(opText);
+        elemTarget.html(opText);
+    }
+
+    function Radio_Load_GameMode( elemTarget, gamemodesdata){
+        var radioTxt = "";
+        for( i=0; i<gamemodesdata.length; i++){
+            radioTxt += "<div class='form-check form-check-inline'>";
+            radioTxt += "<input type='radio'";
+            if(i==0){
+                radioTxt +=  " checked='checked' ";
+            }
+            radioTxt += "name='gamedraw_gamemode' class='gamedraw-gamemode-cls form-check-input' value='" + gamemodesdata[i].id + "' id='gamedraw-gamemode-" + (gamemodesdata[i].name).toLowerCase() + "'><label for='gamedraw-gamemode-" + (gamemodesdata[i].name).toLowerCase() + "' class='form-check-label'>" + gamemodesdata[i].name + "</label>";
+            radioTxt += "</div>";
+        }
+        elemTarget.html(radioTxt);
+    }
+
+    function Table_Load_Team( elemTarget, teamsdata){
         var tdText = "<tr><th></th><th>Team</th></tr>";
         for( i=0; i<teamsdata.length; i++){
             tdText += "<tr><td><img src='uploads/" + teamsdata[i].logo +"'></td><td><span>" + teamsdata[i].name +"</span></td></tr>";
@@ -370,10 +390,10 @@ $(document).ready(function(){
         elemTarget.html(tdText);
     }
 
-    function RefreshPlayerTable( elemTarget, playersdata){
+    function Table_Load_Player( elemTarget, playersdata){
         var tdText = "<tr><th>Player</th><th>Team</th></tr>";
         for( i=0; i<playersdata.length; i++){
-            var teamname = playersdata[i].team_id==0? "-" : playersdata[i].team_name;
+            var teamname = playersdata[i].team_id==0? "-" : playersdata[i].team['name'];
             tdText += "<tr><td><span>" + playersdata[i].name +"</span></td><td><span>" + teamname +"</span></td></tr>";
         }
         elemTarget.html(tdText);
@@ -421,56 +441,23 @@ $(document).ready(function(){
         elemTarget.html(message);
     }
 
-    function RefreshGameDrawOption( elemTarget, gamesdrawing_data ){
-        var opText = "<option value='0'>Select a game</option>";
-        // if(gamesdrawing_data.length > 0){
-            for( i=0; i<gamesdrawing_data.length; i++){
-                /* var teamAName = (gamesdrawing_data[i].teamA_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamA_name + ")";
-                var teamBName = (gamesdrawing_data[i].teamB_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamB_name + ")";
-                var playerAName = (gamesdrawing_data[i].playerA_name == "" ) ? "" : "" + gamesdrawing_data[i].playerA_name ;
-                var playerBName = (gamesdrawing_data[i].playerB_name == "" ) ? "" : "" + gamesdrawing_data[i].playerB_name ; */
-                opText += "<option value='" + gamesdrawing_data[i].id + "'>" + gamesdrawing_data[i].num + ". " + gamesdrawing_data[i].teamA_name + "" + gamesdrawing_data[i].playerA_name + " vs "+ gamesdrawing_data[i].teamB_name + "" + gamesdrawing_data[i].playerB_name + "</option>";
-            }
-        // }else{
-        //     opText += "";
-        // }
+    function Option_Load_GameDraw( elemTarget, gamesdraws_data ){
+        var opText = "<option value='0'>Select game draw</option>";
+        for( i=0; i<gamesdraws_data.length; i++){
+            opText += "<option value='" + gamesdraws_data[i].id + "'>" + gamesdraws_data[i].num + ". " + gamesdraws_data[i].contestant['contestant_a']['name'] + " vs "+ gamesdraws_data[i].contestant['contestant_b']['name'] + "" + "</option>";
+        }
         $(elemTarget).html(opText);
     }
 
-    function RefreshGameDrawTable( elemTarget, gamesdrawing_data ){
-        var tdText = "<tr><th>Game</th><th>Team A</th><th></th><th>Team B</th><th>Status</th></tr>";
-        // if( gamesdrawing_data.length > 0 ){
-            for( i=0; i<gamesdrawing_data.length; i++){
-                /* var teamAName = (gamesdrawing_data[i].teamA_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamA_name + ")";
-                var teamBName = (gamesdrawing_data[i].teamB_name == "" ) ? "" : "(" + gamesdrawing_data[i].teamB_name + ")";
-                var playerAName = (gamesdrawing_data[i].playerA_name == "" ) ? "" : "" + gamesdrawing_data[i].playerA_name;
-                var playerBName = (gamesdrawing_data[i].playerB_name == "" ) ? "" : "" + gamesdrawing_data[i].playerB_name; */
-                tdText += "<tr><td><span>" + gamesdrawing_data[i].num +"</span></td><td><span>" + gamesdrawing_data[i].teamA_name + "" + gamesdrawing_data[i].playerA_name + "</span></td><td>vs</td><td><span>"+ gamesdrawing_data[i].teamB_name + "" + gamesdrawing_data[i].playerB_name + "</span></td><td><span>"+ gamesdrawing_data[i].status +"</span></td></tr>";
-            }
-        // }else{
-        //     tdText += "<tr><td>0 games</td></tr>";
-        // }
+    function Table_Load_GameDraw( elemTarget, gamesdraws_data ){
+        var tdText = "<tr><th>Game</th><th></th><th>Draw</th><th>Status</th></tr>";
+        for( i=0; i<gamesdraws_data.length; i++){
+            tdText += "<tr><td><span>" + gamesdraws_data[i].num +"</span></td><td><span>" + gamesdraws_data[i].gamemode['name'] + "</span></td><td><span>" + gamesdraws_data[i].contestant['contestant_a']['name'] + " vs "+ gamesdraws_data[i].contestant['contestant_b']['name'] + "</span></td><td><span>"+ gamesdraws_data[i].gamestatus['name'] +"</span></td></tr>";
+        }
         elemTarget.html(tdText);
     }
 
-    /* function refreshGamesDrawingList(games){
-        // console.log(games);
-        var tdText = "<tr><th>Game ke-</th><th>Team A</th><th></th><th>Team B</th><th>Status</th></tr>";
-        if( games.length > 0 ){
-            for( i=0; i<games.length; i++){
-                var teamAName = (games[i].teamA_name == "" ) ? "" : "(" + games[i].teamA_name + ")";
-                var teamBName = (games[i].teamB_name == "" ) ? "" : "(" + games[i].teamB_name + ")";
-                var playerAName = (games[i].playerA_name == "" ) ? "" : " (" + games[i].playerA_name + ")";
-                var playerBName = (games[i].playerB_name == "" ) ? "" : " (" + games[i].playerB_name + ")";
-                tdText += "<tr><td><span>" + games[i].num +"</span></td><td><span>" + teamAName + "" + playerAName + "</span></td><td>vs</td><td><span>"+ teamBName + "" + playerBName + "</span></td><td><span>"+ games[i].status +"</span></td></tr>";
-            }
-        }else{
-            tdText += "<tr><td>0 games</td></tr>";
-        }
-        $("#tbl-game").html(tdText);
-    } */
-
-    function RefreshTeamsOption( elemTarget, teams){
+    /* function Option_Load_Team( elemTarget, teams){
         var opText = "<option value='0'>Select team</option>";
         if(teams.length > 0){
             for( i=0; i<teams.length; i++){
@@ -480,30 +467,6 @@ $(document).ready(function(){
             opText += "";
         }
         $(elemTarget).html(opText);
-    }
-
-    function refreshDrawingOption(teams){
-        var opText = "<option value='0'>Select team</option>";
-        if(teams.length > 0){
-            for( i=0; i<teams.length; i++){
-                opText += "<option value='" + teams[i].id +"'>" + teams[i].name +"</option>";
-            }
-        }else{
-            opText += "";
-        }
-        $("select.game-teams").html(opText);
-    }
-
-    /* function refreshGamesetGameOption(games){//console.log(games);
-        var opText = "<option value='0'>Select games</option>";
-        if(games.length > 0){
-            for( i=0; i<games.length; i++){
-                opText += "<option value='" + games[i].id +"'>" + games[i].num +"</option>";
-            }
-        }else{
-            opText += "";
-        }
-        $("#gameset-games").html(opText);
     } */
 
     function RefreshPlayerOption( playerOptionObject, players){
@@ -516,42 +479,25 @@ $(document).ready(function(){
             opText += "";
         }
         playerOptionObject.html(opText);
-        /* if( team=="A" ){
-            $("#game-playerA").html(opText);
-        }else{
-            $("#game-playerB").html(opText);
-        } */
     }
 
-    /* function refreshGamePlayerOption(team,players){
-        var opText = "<option value='0'>Select player</option>";
-        if(players.length > 0){
-            for( i=0; i<players.length; i++){
-                opText += "<option value='" + players[i].id +"'>" + players[i].name +"</option>";
-            }
-        }else{
-            opText += "";
-        }
-        if( team=="A" ){
-            $("#game-playerA").html(opText);
-        }else{
-            $("#game-playerB").html(opText);
-        }
-    } */
+    $(document).on('change','.gamedraw-gamemode-cls',function(){
 
-    /* function refreshGamesetTable(gameset){
-        var tdText = "<tr><th>Game</th><th>Set</th><th>Status</th></tr>";
-        if( gameset.length > 0 ){
-            for( i=0; i<gameset.length; i++){
-                tdText += "<tr><td><span>" + gameset[i].game +"</span></td><td><span>" + gameset[i].num +"</span></td><td><span>"+ gameset[i].status_desc +"</span></td></tr>";
-            }
-        }else{
-            tdText += "<tr><td>0 gameset</td></tr>";
+        $("select.gamedraw-team-cls").prop("selectedIndex", 0);
+        $("select.gamedraw-player-cls").prop("selectedIndex", 0);
+        if( this.id == "gamedraw-gamemode-beregu" ){
+            $(".gamedraw-player-opt-area-cls").addClass("hide");
+            $(".gamedraw-team-opt-area-cls").removeClass("hide").addClass("show");
         }
-        $("#tbl-gameset").html(tdText);
-    } */
+        else if( this.id == "gamedraw-gamemode-individu" ){
+            $(".gamedraw-team-opt-area-cls").addClass("hide");
+            $(".gamedraw-player-opt-area-cls").removeClass("hide").addClass("show");
+            // GetPlayersByTeam(  $("#gamedraw-player-a, #gamedraw-player-b"), 0 );
+        }
 
-    $(".gamedraw-gamemode-cls").change( function(){
+      });
+
+    /* $(".gamedraw-gamemode-cls").change( function(){
         $("select.gamedraw-team-cls").prop("selectedIndex", 0);
         $("select.gamedraw-player-cls").html("");
         if( $(this).val()==0 ){
@@ -561,7 +507,7 @@ $(document).ready(function(){
             GetPlayersByTeam(  $("#gamedraw-player-a, #gamedraw-player-b"), 0 );
             $(".gamedraw-player-opt-area-cls").removeClass("hide").addClass("show");
         }
-    });
+    }); */
 
     $("#form-gamedraw").on('submit', function(e){
         e.preventDefault();
@@ -586,49 +532,17 @@ $(document).ready(function(){
             // console.log(response);
             response = $.parseJSON(response);
             if( response.status ){
-                getGameDraws();
+                GetGameDraws();
                 // getGames();
                 $("select.gamedraw-team-cls").prop("selectedIndex", 0);
-                $("select.gamedraw-player-cls").html("");
-                $( "#gamedraw-gamemode-team" ).prop("checked", true);
-                $(".gamedraw-player-opt-area-cls").addClass("hide");
+                $("select.gamedraw-player-cls").prop("selectedIndex", 0);
+                /* $( "#gamedraw-gamemode-team" ).prop("checked", true);
+                $(".gamedraw-player-opt-area-cls").addClass("hide"); */
                 // GetPlayersByTeam(  $("#gamedraw-player-a, #gamedraw-player-b"), 0 );
                 $("#form-gamedraw input#gamedraw-num").val(response.next_num);
             }
         });
     });
-
-    /* $("#form-gameset").on('submit', function(e){
-        e.preventDefault();
-
-        if( request){
-            request.abort();
-        }
-
-        var $form = $(this);
-        // var $input = $form.find("input, select, button, textarea");
-        var serializedData = $form.serialize();
-
-        // $input.prop("disabled", true);
-
-        request = $.ajax({
-            url: "/scoreboard/controller.php",
-            type: "POST",
-            data: serializedData,
-        });
-
-        request.done( function( response, textStatus, jqXHR) {
-            var data = $.parseJSON(response);
-            if( data.status ){
-                $("#gameset-games")[0].selectedIndex = 0;
-                $("#gameset-set").val(0);
-                getGameset();
-                // console.log($.parseJSON(response));
-                // console.log("DONE");//getGameset();createScores();
-                // $input.prop("disabled", false);
-            }
-        });
-    }); */
 
     $("#form-team").on('submit', function(e) {
         e.preventDefault();
@@ -645,16 +559,17 @@ $(document).ready(function(){
             },
             success: function(data)
             {
-                // data = $.parseJSON(data);
-                if(data.status=='false')
-                {
-                    alert("error create a team!");
+                data = $.parseJSON(data);
+                if(data.status){
+                    $("#team-logo").val("");
+                    $("#team-name").val("");
+                    $("#team-desc").val("");
+
+                    GetTeams();
                 }
                 else
                 {
-                    $("#team-logo").val("");
-                    $("#team-name").val("");
-                    getTeams();
+                    alert("error create a team!");
                 }
             },
             error: function(e)
@@ -742,7 +657,7 @@ $(document).ready(function(){
             if( data.status ){
                 $("#player-name").val("");
                 $("#player-team")[0].selectedIndex = 0;
-                getPlayers();
+                GetPlayers();
             }
         });
     });
@@ -785,8 +700,8 @@ $("#scoreA-timer-btnplay").click(function(e){
     var intervalA;
     // console.log("play");
     // if(this.id == ''){
-        counterA = $("#fs-teamA-timer").val();
-        playA();
+    counterA = $("#fs-teamA-timer").val();
+    playA();
     // }
     // if(this.id == 'scoreA-timer-btnpause'){
     //     pauseA();

@@ -10,9 +10,15 @@ class GameDraw{
     private $gamemode_id;      //_id_[int]
     private $contestant_id;   //_id_[int]
     private $gamestatus_id;    //_id_[int]
+    private $contestant_a_id;   //_id_[int]
+    private $contestant_b_id;   //_id_[int]
 
     public function __construct( $db ){
         $this->conn = $db;
+    }
+
+    public function SetID( $id ){
+        $this->id = $id;
     }
 
     public function SetNum( $num ){
@@ -27,8 +33,16 @@ class GameDraw{
         $this->contestant_id = $contestant_id;
     }
 
+    public function SetContestantAID( $contestant_a_id ){
+        $this->contestant_a_id = $contestant_a_id;
+    }
+
+    public function SetContestantBID( $contestant_b_id ){
+        $this->contestant_b_id = $contestant_b_id;
+    }
+
     public function CreateGameDraw(){
-        $sql = "INSERT INTO " . $this->table_name . " (gamedraw_num, gamemode_id, contestant_id) VALUES ('{$this->num}', '{$this->gamemode_id}', '{$this->contestant_id}')";
+        $sql = "INSERT INTO " . $this->table_name . " (gamedraw_num, gamemode_id, contestant_a_id, contestant_b_id) VALUES ('{$this->num}', '{$this->gamemode_id}', '{$this->contestant_a_id}', '{$this->contestant_b_id}')";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
@@ -65,13 +79,13 @@ class GameDraw{
                 /*
                 * TO-DO: Harus Dinamis
                 */
-                $contestant = new Contestant($this->conn);
+                /* $contestant = new Contestant($this->conn);
                 $contestant->SetID( $row['contestant_id'] );
                 $contestant->SetGameMode( $row['gamemode_id'] );
                 $tempRes = $contestant->GetContestantByID();
                 if( $tempRes['status'] ){
                     $gamedraws[$i]['contestant'] = $tempRes['contestant'];
-                }
+                } */
 
                 $gamestatus = new GameStatus($this->conn);
                 $gamestatus->SetID( $row['gamestatus_id'] );
@@ -80,11 +94,114 @@ class GameDraw{
                     $gamedraws[$i]['gamestatus'] = $tempRes['gamestatus'];
                 }
 
+                /*
+                * TO-DO: Harus Dinamis
+                */
+                if( $row['gamemode_id'] == 1 ){ // Beregu
+
+                    $team = new Team($this->conn);
+                    $team->SetID( $row['contestant_a_id'] );
+                    $tempRes = $team->GetTeamByID();
+                    if( $tempRes['status'] ){
+                        $gamedraws[$i]['contestant_a'] = $tempRes['team'];
+                    }
+
+                    $team->SetID( $row['contestant_b_id'] );
+                    $tempRes = $team->GetTeamByID();
+                    if( $tempRes['status'] ){
+                        $gamedraws[$i]['contestant_b'] = $tempRes['team'];
+                    }
+                }else if( $row['gamemode_id'] == 2 ){ // Individu
+
+                    $player = new Player($this->conn);
+                    $player->SetID( $row['contestant_a_id'] );
+                    $tempRes = $player->GetPlayerByID();
+                    if( $tempRes['status'] ){
+                        $gamedraws[$i]['contestant_a'] = $tempRes['player'];
+                    }
+
+                    $player->SetID( $row['contestant_b_id'] );
+                    $tempRes = $player->GetPlayerByID();
+                    if( $tempRes['status'] ){
+                        $gamedraws[$i]['contestant_b'] = $tempRes['player'];
+                    }
+                }
+
                 $i++;
             }
 
             $res = array(
                 'gamedraws'      => $gamedraws,
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    public function GetGameDrawByID(){
+        $query = "SELECT * FROM " . $this->table_name ." WHERE gamedraw_id={$this->id}";
+
+        $result = $this->conn->query( $query );//var_dump($result > 0 );
+
+        $res = array( 'gamedraw' => array(), 'status' => $result->num_rows > 0 );
+
+        if( $res['status'] ){
+
+            $gamedraw = null;
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $gamedraw['id'] = $row['gamedraw_id'];
+            $gamedraw['num'] = $row['gamedraw_num'];
+
+            $gamemode = new GameMode($this->conn);
+            $gamemode->SetID( $row['gamemode_id'] );
+            $tempRes = $gamemode->GetGameModeByID();
+            if( $tempRes['status'] ){
+                $gamedraw['gamemode'] = $tempRes['gamemode'];
+            }
+
+            $gamestatus = new GameStatus($this->conn);
+            $gamestatus->SetID( $row['gamestatus_id'] );
+            $tempRes = $gamestatus->GetGameStatusByID();
+            if( $tempRes['status'] ){
+                $gamedraw['gamestatus'] = $tempRes['gamestatus'];
+            }
+
+            /*
+            * TO-DO: Harus Dinamis
+            */
+            if( $row['gamemode_id'] == 1 ){ // Beregu
+
+                $team = new Team($this->conn);
+                $team->SetID( $row['contestant_a_id'] );
+                $tempRes = $team->GetTeamByID();
+                if( $tempRes['status'] ){
+                    $gamedraw['contestant_a'] = $tempRes['team'];
+                }
+
+                $team->SetID( $row['contestant_b_id'] );
+                $tempRes = $team->GetTeamByID();
+                if( $tempRes['status'] ){
+                    $gamedraw['contestant_b'] = $tempRes['team'];
+                }
+            }else if( $row['gamemode_id'] == 2 ){ // Individu
+
+                $player = new Player($this->conn);
+                $player->SetID( $row['contestant_a_id'] );
+                $tempRes = $player->GetPlayerByID();
+                if( $tempRes['status'] ){
+                    $gamedraw['contestant_a'] = $tempRes['player'];
+                }
+
+                $player->SetID( $row['contestant_b_id'] );
+                $tempRes = $player->GetPlayerByID();
+                if( $tempRes['status'] ){
+                    $gamedraw['contestant_b'] = $tempRes['player'];
+                }
+            }
+
+            $res = array(
+                'gamedraw'  => $gamedraw,
                 'status'    => true
             );
         }

@@ -4,14 +4,84 @@ include_once 'config/database.php';
 include_once 'objects/team.php';
 include_once 'objects/player.php';
 include_once 'objects/gamemode.php';
-include_once 'objects/contestant.php';
+// include_once 'objects/contestant.php';
 include_once 'objects/gamedraw.php';
 include_once 'objects/gamestatus.php';
-/* include_once 'objects/gameset.php';
-include_once 'objects/game.php';
-include_once 'objects/score.php'; */
+include_once 'objects/gameset.php';
+include_once 'objects/score.php';
+/* include_once 'objects/game.php'; */
 
+// Get Scoreboard
+if (isset( $_GET['GetGameSet']) && $_GET['GetGameSet'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    if( $_GET['GetGameSet'] == 'all') {
 
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gameset = new GameSet($db);
+        $tempRes = $gameset->GetGameSets();
+        $database->conn->close();
+
+        if( $tempRes['status'] ){
+            $result['status'] = $tempRes['status'];
+            $result['gamesets'] = $tempRes['gamesets'];
+        }
+    }
+    echo json_encode($result);
+}
+
+// Get Score
+if (isset( $_GET['Score']) && $_GET['Score'] != '' && isset( $_GET['draw']) && $_GET['draw'] != '' && isset( $_GET['set']) && $_GET['set'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    if( $_GET['Score'] == 'get') {
+        $result['score'] = null;
+        $gamedraw_id = isset($_GET['draw']) ? $_GET['draw'] : 0;
+        $gameset_id = isset($_GET['set']) ? $_GET['set'] : 0;
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gameset = new GameSet($db);
+        $gameset->SetID( $gameset_id );
+        $tempRes = $gameset->GetGameSetByID();
+
+        if( $tempRes['status'] ){
+            $result['score']['gameset'] = $tempRes['gameset'];
+
+            $contestant_a = $tempRes['gameset']['gamedraw']['contestant_a']['id'];
+            $contestant_b = $tempRes['gameset']['gamedraw']['contestant_b']['id'];
+            $score = new Score($db);
+            $score->SetGameSetID( $gameset_id );
+            $score->SetContestantID( $contestant_a );
+            $tempRes = $score->GetScoreByGameSetAndContestant();
+            if( $tempRes['status'] ){
+                $result['score']['gameset']['score_a'] = $tempRes['score'];
+            }else{
+                $result['message'] = 'ERROR: Load Score';
+            }
+            $score->SetContestantID( $contestant_b );
+            $tempRes = $score->GetScoreByGameSetAndContestant();
+            if( $tempRes['status'] ){
+                $result['status'] = $tempRes['status'];
+                $result['score']['gameset']['score_b'] = $tempRes['score'];
+            }else{
+                $result['message'] = 'ERROR: Load Score';
+            }
+        }else{
+            $result['message'] = 'ERROR: Load Game Set';
+        }
+
+        $database->conn->close();
+    }
+    echo json_encode($result);
+}
 
 // Get Game Draws
 if (isset( $_GET['getGameDraw']) && $_GET['getGameDraw'] != '') {
@@ -111,10 +181,60 @@ if (isset( $_GET['getGameDraw']) && $_GET['getGameDraw'] != '') {
 }
 
 // Create Scoreboard
-if ( isset( $_POST['scoreboard_action']) ) {
-    if( $_POST['scoreboard_action'] == 'create') {
+if ( isset( $_POST['gameset_action']) ) {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    if( $_POST['gameset_action'] == 'create') {
 
-        $result = array( 'status_init' => false );
+        $scoreboarddata['gamedraw_id'] = isset($_POST['gameset_gamedraw']) ? $_POST['gameset_gamedraw'] : 0;
+        $scoreboarddata['setnum'] = isset($_POST['gameset_setnum']) ? $_POST['gameset_setnum'] : 1;
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        /*
+        * TO-DO: Set Num verif. & valid.
+        */
+        $gameset = new GameSet( $db );
+        $gameset->SetGameDrawID( $scoreboarddata['gamedraw_id'] );
+        $gameset->SetNum( $scoreboarddata['setnum'] );
+        $tempRes = $gameset->CreateSet();
+
+        if( $tempRes['status'] ){
+            $scoreboarddata['gameset_id'] = $tempRes['latest_id'];
+
+            $gamedraw = new GameDraw( $db );
+            $gamedraw->SetID( $scoreboarddata['gamedraw_id'] );
+            $tempRes = $gamedraw->GetGameDrawByID();//var_dump($tempRes);echo json_encode($tempRes['gamestatus']);
+
+            if( $tempRes['status'] ){
+                $tempContestantAID = $tempRes['gamedraw']['contestant_a']['id'];
+                $tempContestantBID = $tempRes['gamedraw']['contestant_b']['id'];
+                $score = new Score( $db );
+                $score->SetGameSetID( $scoreboarddata['gameset_id'] );
+                $score->SetContestantID( $tempContestantAID );
+                $tempRes = $score->CreateScore();
+                $score->SetContestantID( $tempContestantBID );
+                $tempRes = $score->CreateScore();
+
+                if( $tempRes['status'] ){
+                    $result['status'] = $tempRes['status'];
+                }else{
+                    $result['message'] = 'ERROR: Create Score';
+                }
+            }else{
+                $result['message'] = 'ERROR: Load Game Draw';
+            }
+
+        }else{
+            $result['message'] = 'ERROR: Create Game Set';
+        }
+
+        $database->conn->close();
+
+        /* $result = array( 'status_init' => false );
         $nGames = countGames();
         $scoreboardData = array(
             'set_num'  => isset($_POST['scoreboard_set']) ? $_POST['scoreboard_set'] : 0,
@@ -146,9 +266,9 @@ if ( isset( $_POST['scoreboard_action']) ) {
 
         if($result['status']){
             $result['next_gamenum'] = $game_data['game_num'] + 1;
-        }
-        echo json_encode($result);
+        } */
     }
+    echo json_encode($result);
 }
 
 if( isset( $_GET['game']) && $_GET['game'] != '' && isset( $_GET['gameset']) && $_GET['gameset'] != ''/*  && isset( $_GET['timA']) && isset( $_GET['timB']) && $_GET['timA'] != '' &&$_GET['timB'] != '' */){
@@ -298,6 +418,35 @@ if (isset( $_GET['GetPlayersByTeam']) && $_GET['GetPlayersByTeam'] != '') {
     echo json_encode($result);
 }
 
+// Get Game Set by Game Draw
+if (isset( $_GET['GetGameSetsByGameDraw']) && $_GET['GetGameSetsByGameDraw'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    $gamedraw_id = isset($_GET['GetGameSetsByGameDraw']) ? $_GET['GetGameSetsByGameDraw'] : 0;
+    if($gamedraw_id > 0){
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gameset = new GameSet($db);
+        $gameset->SetGameDrawID($gamedraw_id);
+        $tempRes = $gameset->GetGameSetsByGameDraw();
+
+        if( $tempRes['status'] ){
+            $result['status'] = $tempRes['status'];
+            $result['gamesets'] = $tempRes['gamesets'];
+        }else{
+            $result['message'] = "ERROR: Load Game Set";
+        }
+        $database->conn->close();
+    }else{
+        $result['message'] = "ERROR: Game Draw ID = 0";
+    }
+    echo json_encode($result);
+}
+
 // Get Gameset
 if (isset( $_GET['getGameset']) && $_GET['getGameset'] != '') {
 
@@ -357,7 +506,7 @@ if ( isset( $_POST['gamedraw_action']) ) {
             $database = new Database();
             $db = $database->getConnection();
 
-            $contestant = new Contestant($db);
+            /* $contestant = new Contestant($db);
             $contestant->SetContestantAID($contestant_a_id);
             $contestant->SetContestantBID($contestant_b_id);
             $tempRes = $contestant->CreateContestant();
@@ -368,24 +517,28 @@ if ( isset( $_POST['gamedraw_action']) ) {
                     'num'  => isset($_POST['gamedraw_num']) ? $_POST['gamedraw_num'] : 0,
                     'contestant_id'    => $tempRes['latest_id'],
                     'gamemode_id'  => $gamemode_id
-                );
+                ); */
 
-                $contestant = new GameDraw($db);
-                $contestant->SetNum($game_data['num']);
-                $contestant->SetGameModeID($game_data['gamemode_id']);
-                $contestant->SetContestantID($game_data['contestant_id']);
-                $tempRes = $contestant->CreateGameDraw();
+                $gamenum = isset($_POST['gamedraw_num']) ? $_POST['gamedraw_num'] : 1;
+
+                $gamedraw = new GameDraw($db);
+                $gamedraw->SetNum($gamenum);
+                $gamedraw->SetGameModeID($gamemode_id);
+                // $contestant->SetContestantID($game_data['contestant_id']);
+                $gamedraw->SetContestantAID($contestant_a_id);
+                $gamedraw->SetContestantBID($contestant_b_id);
+                $tempRes = $gamedraw->CreateGameDraw();
 
                 if( $tempRes['status'] ){
-                    $result['next_num'] = $game_data['num'] + 1;
+                    $result['next_num'] = $gamenum + 1;
                     $result['status'] = $tempRes['status'];
                 }else{
                     $result['message'] = "ERROR: Create Game Draw";
                 }
 
-            }else{
+            /* }else{
                 $result['message'] = "ERROR: Create Contestant";
-            }
+            } */
 
             $database->conn->close();
 

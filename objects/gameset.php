@@ -8,7 +8,6 @@ class GameSet{
     private $id;
     private $gamedraw_id;
     private $num;
-    private $timer;
     private $point;
     private $desc;
     private $status;
@@ -27,10 +26,6 @@ class GameSet{
 
     public function SetNum($num){
         $this->num = $num;
-    }
-
-    public function SetTimer($timer){
-        $this->timer = $timer;
     }
 
     public function SetPoint($point){
@@ -62,6 +57,20 @@ class GameSet{
         return $res;
     }
 
+    /* public function UpdateGameSet(){
+        $sql = "UPDATE " . $this->table_name . " SET gameset_point={$this->point} WHERE gameset_id={$this->id}";
+
+        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    } */
+
     public function GetGameSetsByGameDraw(){
         $query = "SELECT * FROM " . $this->table_name ." WHERE gamedraw_id={$this->gamedraw_id}";
 
@@ -75,8 +84,7 @@ class GameSet{
             while($row = $result->fetch_assoc()) {
                 $gamesets[$i]['id'] = $row['gameset_id'];
                 $gamesets[$i]['num'] = $row['gameset_num'];
-                $gamesets[$i]['timer'] = $row['gameset_timer'];
-                $gamesets[$i]['point'] = $row['gameset_point'];
+                // $gamesets[$i]['point'] = $row['gameset_point'];
                 $gamesets[$i]['desc'] = $row['gameset_desc'];
 
                 $gamestatus = new GameStatus($this->conn);
@@ -111,8 +119,7 @@ class GameSet{
             while($row = $result->fetch_assoc()) {
                 $gamesets[$i]['id'] = $row['gameset_id'];
                 $gamesets[$i]['num'] = $row['gameset_num'];
-                $gamesets[$i]['timer'] = $row['gameset_timer'];
-                $gamesets[$i]['point'] = $row['gameset_point'];
+                // $gamesets[$i]['point'] = $row['gameset_point'];
                 $gamesets[$i]['desc'] = $row['gameset_desc'];
 
                 $gamedraw = new GameDraw($this->conn);
@@ -156,8 +163,7 @@ class GameSet{
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
             $gameset['id'] = $row['gameset_id'];
             $gameset['num'] = $row['gameset_num'];
-            $gameset['timer'] = $row['gameset_timer'];
-            $gameset['point'] = $row['gameset_point'];
+            // $gameset['point'] = $row['gameset_point'];
             $gameset['desc'] = $row['gameset_desc'];
 
             $gamedraw = new GameDraw($this->conn);

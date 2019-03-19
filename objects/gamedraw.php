@@ -56,7 +56,7 @@ class GameDraw{
     }
 
     public function GetGameDraws(){
-        $query = "SELECT * FROM " . $this->table_name;
+        $query = "SELECT * FROM {$this->table_name} ORDER BY gamedraw_num ASC";
 
         $result = $this->conn->query( $query );
 

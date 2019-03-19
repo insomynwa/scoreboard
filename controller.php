@@ -34,6 +34,56 @@ if (isset( $_GET['GetGameSet']) && $_GET['GetGameSet'] != '') {
     echo json_encode($result);
 }
 
+// Get Team By ID
+if (isset( $_GET['GetTeamById']) && $_GET['GetTeamById'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    $teamid = isset($_GET['GetTeamById']) ? $_GET['GetTeamById'] : 0;
+
+    $database = new Database();
+    $db = $database->getConnection();
+
+    $team = new Team($db);
+    $team->SetID($teamid);
+    $tempRes = $team->GetTeamByID();
+    $database->conn->close();
+
+    if( $tempRes['status'] ){
+        $result['status'] = $tempRes['status'];
+        $result['team'] = $tempRes['team'];
+    }else{
+        $result['message'] = "ERROR: Load Team";
+    }
+    echo json_encode($result);
+}
+
+// Get Player By ID
+if (isset( $_GET['GetPlayerByID']) && $_GET['GetPlayerByID'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    $playerid = isset($_GET['GetPlayerByID']) ? $_GET['GetPlayerByID'] : 0;
+
+    $database = new Database();
+    $db = $database->getConnection();
+
+    $player = new Player($db);
+    $player->SetID($playerid);
+    $tempRes = $player->GetPlayerByID();
+    $database->conn->close();
+
+    if( $tempRes['status'] ){
+        $result['status'] = $tempRes['status'];
+        $result['player'] = $tempRes['player'];
+    }else{
+        $result['message'] = "ERROR: Load Player";
+    }
+    echo json_encode($result);
+}
+
 // Get Score
 if (isset( $_GET['Score']) && $_GET['Score'] != '' && isset( $_GET['draw']) && $_GET['draw'] != '' && isset( $_GET['set']) && $_GET['set'] != '') {
     $result = array(
@@ -390,6 +440,32 @@ if ( isset( $_POST['player_action']) ) {
             $tempRes = $player->CreatePlayer();
             if( $tempRes['status'] ){
                 $result['status'] = $tempRes['status'];
+                $result['action'] = 'create';
+            }
+
+            $database->conn->close();
+        }
+
+    }else if( $_POST['player_action'] == 'update') {
+
+        $name = isset($_POST['player_name']) ? $_POST['player_name'] : '';
+        $teamid = isset($_POST['player_team']) ? $_POST['player_team'] : 0;
+        $playerid = isset($_POST['player_id']) ? $_POST['player_id'] : 0;
+
+        if( $name == '' || $teamid == 0 || $playerid == 0 ){
+            $result['message'] = "ERROR: All fields are required!";
+        }else{
+            $database = new Database();
+            $db = $database->getConnection();
+
+            $player = new Player($db);
+            $player->SetID( $playerid );
+            $player->SetName( $name );
+            $player->SetTeamId( $teamid );
+            $tempRes = $player->UpdatePlayer();
+            if( $tempRes['status'] ){
+                $result['status'] = $tempRes['status'];
+                $result['action'] = 'update';
             }
 
             $database->conn->close();

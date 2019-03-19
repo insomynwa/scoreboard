@@ -101,6 +101,19 @@ class Player{
 
         return $res;
     }
+
+    public function UpdatePlayer(){
+        $query = "Update " . $this->table_name ." SET team_id={$this->team_id}, player_name='{$this->name}' WHERE player_id={$this->id}";
+
+        $result = $this->conn->query( $query );//var_dump($result > 0 );
+
+        $res = array( 'status' => false );
+
+        if ($result){
+            $res['status'] = true;
+        }
+        return $res;
+    }
 /*
     public function getAPlayer( $id ){
         $query = "SELECT * FROM " . $this->table_name . " WHERE player_id = {$id}";

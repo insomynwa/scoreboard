@@ -94,8 +94,8 @@
   </div>
   <div id="score-a-control" class="btn-group btn-group-sm">
     <button class="btn btn-outline-dark" disabled>Timer</button>
-    <button class="playTimerA btn btn-info" id="score-a-timer-play">Play</button>
-    <button class="playTimerA btn btn-warning" id="score-a-timer-pause">Pause</button>
+    <button class="btn btn-outline-dark" id="score-a-timer-play" disabled="disabled">Play</button>
+    <button class="btn btn-outline-dark" id="score-a-timer-pause" disabled="disabled">Pause</button>
   </div>
 </div>
 <div id="score-b-area" class="score-area mb-5 container">
@@ -146,8 +146,8 @@
   </div>
   <div id="score-b-control" class="btn-group btn-group-sm">
     <button class="btn btn-outline-dark" disabled>Timer</button>
-    <button class="playTimerB btn btn-info" id="score-b-timer-play" href="#">Play</button>
-    <button class="playTimerB btn btn-warning" id="score-b-timer-pause" href="#">Pause</button>
+    <button class="btn btn-outline-dark" id="score-b-timer-play" disabled="disabled">Play</button>
+    <button class="btn btn-outline-dark" id="score-b-timer-pause" disabled="disabled">Pause</button>
   </div>
 </div>
 <div class="container mb-3">
@@ -184,19 +184,14 @@
   <div class="row">
     <div class="col-lg-6">
       <h4><i class="fas fa-flag"></i> Team</h4>
-      <button type="button" class="btn btn-sm btn-link my-1" data-toggle="modal" data-target="#form-team-modal"><i class="fas fa-plus-square"></i> New Team</button>
+      <button type="button" id="team-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Team</button>
       <table id="tbl-team" class="table table-sm table-hover"><tr><td>0 team. buat dulu!</td></tr></table>
     </div>
     <div class="col-lg-6">
       <h4><i class="fas fa-users"></i> Player</h4>
-      <button type="button" class="btn btn-sm btn-link my-1" data-toggle="modal" data-target="#form-player-modal"><i class="fas fa-plus-square"></i> New Player</button>
+      <button type="button" id="player-create-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Player</button>
       <table id="tbl-player" class="table table-sm table-hover"><tr><td>0 player. buat dulu!</td></tr></table>
     </div>
-    <!-- <div class="col-lg-6">
-      <h4>Game Draw</h4>
-      <button type="button" class="btn btn-sm btn-link my-1" data-toggle="modal" data-target="#form-gamedraw-modal"><i class="fas fa-plus-square"></i> New Draw</button>
-      <table id="tbl-gamedraw" class="table table-sm"><tr><td>0 game draw. buat dulu!</td></tr></table>
-    </div> -->
   </div>
 </div>
 <!-- <div class="container mb-3">
@@ -273,7 +268,7 @@
     </div>
   </div>
 </div> -->
-<!-- The Modal -->
+<!-- The Modal Game Set -->
 <div class="modal" id="form-gameset-modal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -310,14 +305,14 @@
     </div>
   </div>
 </div>
-<!-- The Modal -->
+<!-- The Modal Team -->
 <div class="modal" id="form-team-modal">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">New Team</h4>
+        <h4 id="team-modal-title" class="modal-title">New Team</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -325,6 +320,7 @@
       <div class="modal-body">
         <form action="tools/uploader.php" id="form-team" method="post" enctype="multipart/form-data">
           <div class="form-group">
+            <img id="team-modal-image" src="" class="hide"><br>
             <label for="team-logo">Logo</label>
             <input type="file" name="team_logo" id="team-logo" accept="image/*" class="form-control-file">
           </div>
@@ -336,7 +332,8 @@
             <label for="team-desc">Description</label>
             <textarea name="team_desc" id="team-desc" cols="30" rows="5" class="form-control"></textarea>
           </div>
-          <input type="hidden" name="team_action" value="create">
+          <input type="hidden" id="team-id" name="team_id" value="0">
+          <input type="hidden" id="team-action" name="team_action" value="create">
           <input type="submit" value="Save" class="btn btn-primary" id="team-submit">
         </form>
       </div>
@@ -349,14 +346,14 @@
     </div>
   </div>
 </div>
-<!-- The Modal -->
+<!-- The Modal Player -->
 <div class="modal" id="form-player-modal">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">New Player</h4>
+        <h4 id="player-modal-title" class="modal-title">New Player</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -372,9 +369,10 @@
             <select name="player_team" class="form-control" id="player-team">
               <option value='0'>-</option>
             </select>
-            <input type="hidden" name="player_action" value="create">
+            <input type="hidden" id="player-id" name="player_id" value="0">
+            <input type="hidden" id="player-action" name="player_action" value="create">
           </div>
-          <input type="submit" value="Create" class="btn btn-primary">
+          <input type="submit" value="Save" class="btn btn-primary" id="player-submit">
         </form>
       </div>
 
@@ -386,7 +384,7 @@
     </div>
   </div>
 </div>
-<!-- The Modal -->
+<!-- The Modal Game Draw -->
 <div class="modal" id="form-gamedraw-modal">
   <div class="modal-dialog">
     <div class="modal-content">

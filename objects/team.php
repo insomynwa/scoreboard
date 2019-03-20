@@ -10,6 +10,8 @@ class Team{
     private $name;          //_[string]
     private $initial;       //_[string][3]
     private $description;   //_[int]
+    private $arr_players = array();
+    private $arr_gamedraws = array();
 
     public function __construct( $db ){
         $this->conn = $db;
@@ -19,18 +21,32 @@ class Team{
         $this->id = $teamid;
     }
 
-    public function GetTeams(){
+    public function GetGameDraws(){
+        $gamedraws = new GameDraw($this->conn);
+        $gamedraws->SetContestantID($this->id);
+        $res = $gamedraws->GetGameDrawsByTeamID();
+        if( $res['status'] ){
+            $this->arr_gamedraws = $res['gamedraws'];
+        }
+        return $this->arr_gamedraws;
+    }
+
+    public function GetPlayers(){
+        $players = new Player($this->conn);
+        $players->SetTeamId($this->id);
+        $res = $players->GetPlayersByTeamID();
+        if( $res['status'] ){
+            $this->arr_players = $res['players'];
+        }
+        return $this->arr_players;
+    }
+
+    public function GetTeam(){
+        $res = array( 'status' => false );
         $query = "SELECT * FROM " . $this->table_name;
 
-        $result = $this->conn->query( $query );
-
-        $res = array(
-            'teams' => array(),
-            'status' => $result->num_rows > 0
-        );
-
-        if( $res['status'] ){
-            $teams = null;
+        if( $result = $this->conn->query( $query ) ){
+            $teams = array();
             $i = 0;
             while($row = $result->fetch_assoc()) {
                 $teams[$i]['id'] = $row['team_id'];
@@ -41,22 +57,22 @@ class Team{
                 $i++;
             }
 
-            $res['teams']= $teams;
+            $res = array(
+                'teams'      => $teams,
+                'status'    => true
+            );
         }
 
         return $res;
     }
 
     public function GetTeamByID(){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE team_id={$this->id}";
+        $res = array( 'status' => false );
+        $query = "SELECT * FROM {$this->table_name} WHERE team_id={$this->id} LIMIT 1";
 
-        $result = $this->conn->query( $query );//var_dump($result > 0 );
+        if( $result = $this->conn->query( $query ) ){
 
-        $res = array( 'team' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
-
-            $team = null;
+            $team = array();
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
             $team['id'] = $row['team_id'];
             $team['logo'] = $row['team_logo'];
@@ -72,67 +88,19 @@ class Team{
 
         return $res;
     }
-/*
-    public function countTeams(){
-        $sql = "SELECT COUNT(*) as nTeams FROM " . $this->table_name;
 
-        $result = $this->conn->query( $sql );
-        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+    public function DeleteTeam(){
+        $sql = "DELETE FROM {$this->table_name} WHERE team_id={$this->id}";
 
-        return $row['nTeams'];
-    }
-
-    public function getTeams(){
-        $query = "SELECT * FROM " . $this->table_name;
-
-        $result = $this->conn->query( $query );
-
-        $res = array( 'teams' => array(), 'status' => false );
-
-        if( $result->num_rows > 0){
-            $teams = null;
-            $i = 0;
-            while($row = $result->fetch_assoc()) {
-                $teams[$i]['id'] = $row['tim_id'];
-                $teams[$i]['logo'] = $row['tim_logo'];
-                $teams[$i]['name'] = $row['tim_name'];
-                $i++;
-            }
+        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        if($this->conn->query($sql) === TRUE) {
 
             $res = array(
-                'teams'      => $teams,
-                'status'    => 'true'
-            );
-
-            return $res;
-        }
-
-        return $res;
-    }
-
-    public function getTeamById($teamid){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE tim_id={$teamid}";
-
-        $result = $this->conn->query( $query );
-
-        $res = array( 'team' => array(), 'status' => false );
-
-        if( $result->num_rows > 0){
-
-            $team = null;
-            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-            $team['id'] = $row['tim_id'];
-            $team['name'] = $row['tim_name'];
-            $team['logo'] = $row['tim_logo'];
-
-            $res = array(
-                'team'      => $team,
                 'status'    => true
             );
         }
 
         return $res;
     }
- */
 }
 ?>

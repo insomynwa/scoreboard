@@ -154,7 +154,7 @@
   <div class="row">
     <div class="col-lg-6">
       <h4><i class="fas fa-trophy"></i> Game Draw</h4>
-      <button type="button" class="btn btn-sm btn-link my-1" data-toggle="modal" data-target="#form-gamedraw-modal"><i class="fas fa-plus-square"></i> New Game Draw</button>
+      <button type="button" id="gamedraw-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Draw</button>
       <table id="tbl-gamedraw" class="table table-sm table-hover"><tr><td>0 game draw. buat dulu!</td></tr></table>
       <!-- <h4>Create Game Set</h4>
       <p id="form-gameset-msg"></p>
@@ -175,7 +175,7 @@
     </div>
     <div class="col-lg-6">
       <h4><i class="fas fa-ellipsis-v"></i> Game Set</h4>
-      <button type="button" class="btn btn-sm btn-link my-1" data-toggle="modal" data-target="#form-gameset-modal"><i class="fas fa-plus-square"></i> New Game Set</button>
+      <button type="button" id="gameset-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Set</button>
       <table id="gameset-table" class="table table-sm table-hover"></table>
     </div>
   </div>
@@ -275,7 +275,7 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">New Game Set</h4>
+        <h4 id="gameset-modal-title" class="modal-title">New Game Set</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -292,8 +292,9 @@
             <label for="gameset-setnum">Set:</label>
             <input type="number" name="gameset_setnum" min="1" class="form-control" max="5" id="gameset-setnum" value="1">
           </div>
+            <input type="hidden" id="gameset-id" name="gameset_id" value="0">
             <input type="hidden" id="gameset-action" name="gameset_action" value="create">
-            <input type="submit" value="Create" class="btn btn-primary" id="gameset-submit">
+            <input type="submit" value="Save" class="btn btn-primary" id="gameset-submit">
         </form>
       </div>
 
@@ -318,7 +319,7 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-        <form action="tools/uploader.php" id="form-team" method="post" enctype="multipart/form-data">
+        <form action="controller.php" id="form-team" method="post" enctype="multipart/form-data">
           <div class="form-group">
             <img id="team-modal-image" src="" class="hide"><br>
             <label for="team-logo">Logo</label>
@@ -391,7 +392,7 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">New Game Draw</h4>
+        <h4 id="gamedraw-modal-title" class="modal-title">New Game Draw</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -424,6 +425,7 @@
               <select name="gamedraw_player_b" id="gamedraw-player-b" class="form-control gamedraw-player-cls"></select>
             </div>
           </div>
+          <input type="hidden" id="gamedraw-id" name="gamedraw_id" value="create">
           <input type="hidden" id="gamedraw-action" name="gamedraw_action" value="create">
           <input type="submit" value="Create" id="gamedraw-submit" class="btn btn-primary">
         </form>

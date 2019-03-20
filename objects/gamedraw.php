@@ -12,6 +12,7 @@ class GameDraw{
     private $gamestatus_id;    //_id_[int]
     private $contestant_a_id;   //_id_[int]
     private $contestant_b_id;   //_id_[int]
+    private $arr_gamesets = array();
 
     public function __construct( $db ){
         $this->conn = $db;
@@ -39,6 +40,16 @@ class GameDraw{
 
     public function SetContestantBID( $contestant_b_id ){
         $this->contestant_b_id = $contestant_b_id;
+    }
+
+    public function GetGameSets(){
+        $gameset = new GameSet($this->conn);
+        $gameset->SetGameDrawID($this->id);
+        $res = $gameset->GetGameSetsByGameDraw();
+        if( $res['status'] ){
+            $this->arr_gamesets = $res['gamesets'];
+        }
+        return $this->arr_gamesets;
     }
 
     public function CreateGameDraw(){
@@ -74,6 +85,8 @@ class GameDraw{
                 $tempRes = $gamemode->GetGameModeByID();
                 if( $tempRes['status'] ){
                     $gamedraws[$i]['gamemode'] = $tempRes['gamemode'];
+                }else{
+                    $gamedraws[$i]['gamemode'] = array();
                 }
 
                 /*
@@ -92,6 +105,8 @@ class GameDraw{
                 $tempRes = $gamestatus->GetGameStatusByID();
                 if( $tempRes['status'] ){
                     $gamedraws[$i]['gamestatus'] = $tempRes['gamestatus'];
+                }else{
+                    $gamedraws[$i]['gamestatus'] = array();
                 }
 
                 /*
@@ -104,12 +119,16 @@ class GameDraw{
                     $tempRes = $team->GetTeamByID();
                     if( $tempRes['status'] ){
                         $gamedraws[$i]['contestant_a'] = $tempRes['team'];
+                    }else{
+                        $gamedraws[$i]['contestant_a'] = array();
                     }
 
                     $team->SetID( $row['contestant_b_id'] );
                     $tempRes = $team->GetTeamByID();
                     if( $tempRes['status'] ){
                         $gamedraws[$i]['contestant_b'] = $tempRes['team'];
+                    }else{
+                        $gamedraws[$i]['contestant_b'] = array();
                     }
                 }else if( $row['gamemode_id'] == 2 ){ // Individu
 
@@ -118,12 +137,16 @@ class GameDraw{
                     $tempRes = $player->GetPlayerByID();
                     if( $tempRes['status'] ){
                         $gamedraws[$i]['contestant_a'] = $tempRes['player'];
+                    }else{
+                        $gamedraws[$i]['contestant_a'] = array();
                     }
 
                     $player->SetID( $row['contestant_b_id'] );
                     $tempRes = $player->GetPlayerByID();
                     if( $tempRes['status'] ){
                         $gamedraws[$i]['contestant_b'] = $tempRes['player'];
+                    }else{
+                        $gamedraws[$i]['contestant_b'] = array();
                     }
                 }
 
@@ -140,7 +163,7 @@ class GameDraw{
     }
 
     public function GetGameDrawByID(){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE gamedraw_id={$this->id}";
+        $query = "SELECT * FROM {$this->table_name} WHERE gamedraw_id={$this->id}";
 
         $result = $this->conn->query( $query );//var_dump($result > 0 );
 
@@ -158,6 +181,8 @@ class GameDraw{
             $tempRes = $gamemode->GetGameModeByID();
             if( $tempRes['status'] ){
                 $gamedraw['gamemode'] = $tempRes['gamemode'];
+            }else{
+                $gamedraw['gamemode'] = array();
             }
 
             $gamestatus = new GameStatus($this->conn);
@@ -165,6 +190,8 @@ class GameDraw{
             $tempRes = $gamestatus->GetGameStatusByID();
             if( $tempRes['status'] ){
                 $gamedraw['gamestatus'] = $tempRes['gamestatus'];
+            }else{
+                $gamedraw['gamestatus'] = array();
             }
 
             /*
@@ -177,12 +204,16 @@ class GameDraw{
                 $tempRes = $team->GetTeamByID();
                 if( $tempRes['status'] ){
                     $gamedraw['contestant_a'] = $tempRes['team'];
+                }else{
+                    $gamedraw['contestant_a'] = array();
                 }
 
                 $team->SetID( $row['contestant_b_id'] );
                 $tempRes = $team->GetTeamByID();
                 if( $tempRes['status'] ){
                     $gamedraw['contestant_b'] = $tempRes['team'];
+                }else{
+                    $gamedraw['contestant_b'] = array();
                 }
             }else if( $row['gamemode_id'] == 2 ){ // Individu
 
@@ -191,12 +222,16 @@ class GameDraw{
                 $tempRes = $player->GetPlayerByID();
                 if( $tempRes['status'] ){
                     $gamedraw['contestant_a'] = $tempRes['player'];
+                }else{
+                    $gamedraw['contestant_a'] = array();
                 }
 
                 $player->SetID( $row['contestant_b_id'] );
                 $tempRes = $player->GetPlayerByID();
                 if( $tempRes['status'] ){
                     $gamedraw['contestant_b'] = $tempRes['player'];
+                }else{
+                    $gamedraw['contestant_b'] = array();
                 }
             }
 
@@ -208,92 +243,23 @@ class GameDraw{
 
         return $res;
     }
-/*
-    public function getGame( $id ){
-        $query = "SELECT * FROM " . $this->table_name . " WHERE gamedraw_num = {$id}";
 
-        $stmt = $this->conn->query( $query );
+    public function UpdateGameDraw(){
+        $sql = "UPDATE {$this->table_name} SET gamedraw_num={$this->num} WHERE gamedraw_id={$this->id}";
 
-        return $stmt->fetch_assoc();
-    }
-
-    public function getDraws(){
-        $query = "SELECT * FROM " . $this->table_name;
-
-        $result = $this->conn->query( $query );
-
-        $draws;
-        $res = null;
-
-        if( $result->num_rows > 0){
-            $i = 0;
-            while($row = $result->fetch_assoc()) {
-                $draws[$i]['id'] = $row['gamedraw_id'];
-                $draws[$i]['num'] = $row['gamedraw_num'];
-                $draws[$i]['teamA'] = $row['tim_a_id'];
-                $draws[$i]['teamB'] = $row['tim_b_id'];
-                $draws[$i]['playerA'] = $row['player_a_id'];
-                $draws[$i]['playerB'] = $row['player_b_id'];
-                $draws[$i]['status'] = $row['game_status'];
-                $i++;
-            }
+        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        if($this->conn->query($sql) === TRUE) {
 
             $res = array(
-                'draws'      => $draws,
                 'status'    => true
             );
-
-            return $res;
         }
-        $res = array( 'draws' => array(), 'status' => false );
 
         return $res;
     }
 
-    public function getGames(){
-        $query = "SELECT * FROM " . $this->table_name;
-
-        $result = $this->conn->query( $query );
-
-        $games;
-        $res = null;
-
-        if( $result->num_rows > 0){
-            $i = 0;
-            while($row = $result->fetch_assoc()) {
-                $games[$i]['id'] = $row['game_id'];
-                $games[$i]['num'] = $row['game_num'];
-                $games[$i]['teamA'] = $row['tim_a_id'];
-                $games[$i]['teamB'] = $row['tim_b_id'];
-                $games[$i]['playerA'] = $row['player_a_id'];
-                $games[$i]['playerB'] = $row['player_b_id'];
-                $games[$i]['status'] = $row['game_status'];
-                $i++;
-            }
-
-            $res = array(
-                'games'      => $games,
-                'status'    => true
-            );
-
-            return $res;
-        }
-        $res = array( 'games' => array(), 'status' => false );
-
-        return $res;
-    }
-
-    public function countGames(){
-        $sql = "SELECT COUNT(*) as nGames FROM " . $this->table_name;
-
-        $result = $this->conn->query( $sql );
-        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-
-        return $row['nGames'];
-    }
-
-    public function createGame( $game_data){
-        $sql = "INSERT INTO " . $this->table_name . " (game_num, tim_a_id, tim_b_id, player_a_id, player_b_id, game_teamgame) VALUES ('{$game_data['num']}', '{$game_data['team_a']}', '{$game_data['team_b']}', '{$game_data['player_a']}', '{$game_data['player_b']}', '{$game_data['teamgame']}')";
+    public function DeleteGameDraw(){
+        $sql = "DELETE FROM {$this->table_name} WHERE gamedraw_id={$this->id}";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
@@ -301,71 +267,163 @@ class GameDraw{
             $res = array(
                 'status'    => true
             );
-
-            return $res;
         }
 
         return $res;
     }
 
-    public function getTeamsByGame($gameid){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE game_id={$gameid}";
+    public function DeleteGameDrawsByPlayer(){
+        $res = array( 'status' => false );
+        if( $this->countGameDrawByPlayer() > 0){
+            $sql = "DELETE FROM {$this->table_name} WHERE gamemode_id=2 AND ( contestant_a_id={$this->contestant_id} OR contestant_b_id={$this->contestant_id} )";
 
-        $result = $this->conn->query( $query );
+            if($this->conn->query($sql) === TRUE) {
 
-        $res = array( 'teams' => array(), 'status' => false );
-
-        // var_dump($result);
-        if( $result->num_rows > 0){
-            $teams = null;
-            // $i = 0;
-            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-            // var_dump($row);die;
-            // while($row = $result->fetch_assoc()) {
-                $teams[0] = $row['tim_a_id'];
-                $teams[1] = $row['tim_b_id'];
-                // $i++;
-            // }
-
-            $res = array(
-                'teams'      => $teams,
-                'status'    => 'true'
-            );
-
-            return $res;
+                $res = array(
+                    'status'    => true
+                );
+            }
+        }else{
         }
 
         return $res;
     }
 
-    public function getContestantByGame($gameid){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE game_id={$gameid}";
+    private function countGameDrawByPlayer(){
+        $sql = "SELECT COUNT(*) as nGameDraw FROM {$this->table_name} WHERE gamemode_id={$this->gamemode_id} AND ( contestant_a_id={$this->contestant_id} OR contestant_b_id={$this->contestant_id} )";
+
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        return $row['nGameDraw'];
+    }
+
+    public function GetGameDrawsByPlayerID(){
+        /*
+        * TO-DO: Harus Dinamis
+        */
+        $query = "SELECT * FROM {$this->table_name} WHERE gamemode_id=2 AND ( contestant_a_id={$this->contestant_id} OR contestant_b_id={$this->contestant_id} )";
 
         $result = $this->conn->query( $query );
 
-        $res = array( 'contestants' => array(), 'status' => false );
+        $res = array( 'gamedraws' => array(), 'status' => $result->num_rows > 0 );
 
-        // var_dump($result);
-        if( $result->num_rows > 0){
-            $contestants = null;
-            // $i = 0;
-            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-            // var_dump($row);die;
-            // while($row = $result->fetch_assoc()) {
-                $contestants[0] = $row['tim_a_id'];
-                $contestants[1] = $row['tim_b_id'];
-                // $i++;
-            // }
+        if( $res['status'] ){
+            $i = 0;
+            $gamedraws = null;
+            while($row = $result->fetch_assoc()) {
+                $gamedraws[$i]['id'] = $row['gamedraw_id'];
+                $gamedraws[$i]['num'] = $row['gamedraw_num'];
+
+                $gamemode = new GameMode($this->conn);
+                $gamemode->SetID( $row['gamemode_id'] );
+                $tempRes = $gamemode->GetGameModeByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['gamemode'] = $tempRes['gamemode'];
+                }else{
+                    $gamedraws[$i]['gamemode'] = array();
+                }
+
+                $gamestatus = new GameStatus($this->conn);
+                $gamestatus->SetID( $row['gamestatus_id'] );
+                $tempRes = $gamestatus->GetGameStatusByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['gamestatus'] = $tempRes['gamestatus'];
+                }else{
+                    $gamedraws[$i]['gamestatus'] = array();
+                }
+
+                $player = new Player($this->conn);
+                $player->SetID( $row['contestant_a_id'] );
+                $tempRes = $player->GetPlayerByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['contestant_a'] = $tempRes['player'];
+                }else{
+                    $gamedraws[$i]['contestant_a'] = array();
+                }
+
+                $player->SetID( $row['contestant_b_id'] );
+                $tempRes = $player->GetPlayerByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['contestant_b'] = $tempRes['player'];
+                }else{
+                    $gamedraws[$i]['contestant_b'] = array();
+                }
+
+                $i++;
+            }
 
             $res = array(
-                'contestants'      => $contestants,
-                'status'    => 'true'
+                'gamedraws'      => $gamedraws,
+                'status'    => true
             );
-
-            return $res;
         }
 
         return $res;
-    } */
+    }
+
+    public function GetGameDrawsByTeamID(){
+        /*
+        * TO-DO: Harus Dinamis
+        */
+        $query = "SELECT * FROM {$this->table_name} WHERE gamemode_id=1 AND ( contestant_a_id={$this->contestant_id} OR contestant_b_id={$this->contestant_id} )";
+
+        $result = $this->conn->query( $query );
+
+        $res = array( 'gamedraws' => array(), 'status' => $result->num_rows > 0 );
+
+        if( $res['status'] ){
+            $i = 0;
+            $gamedraws = null;
+            while($row = $result->fetch_assoc()) {
+                $gamedraws[$i]['id'] = $row['gamedraw_id'];
+                $gamedraws[$i]['num'] = $row['gamedraw_num'];
+
+                $gamemode = new GameMode($this->conn);
+                $gamemode->SetID( $row['gamemode_id'] );
+                $tempRes = $gamemode->GetGameModeByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['gamemode'] = $tempRes['gamemode'];
+                }else{
+                    $gamedraws[$i]['gamemode'] = array();
+                }
+
+                $gamestatus = new GameStatus($this->conn);
+                $gamestatus->SetID( $row['gamestatus_id'] );
+                $tempRes = $gamestatus->GetGameStatusByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['gamestatus'] = $tempRes['gamestatus'];
+                }else{
+                    $gamedraws[$i]['gamestatus'] = array();
+                }
+
+                $team = new Team($this->conn);
+                $team->SetID( $row['contestant_a_id'] );
+                $tempRes = $team->GetTeamByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['contestant_a'] = $tempRes['team'];
+                }else{
+                    $gamedraws[$i]['contestant_a'] = array();
+                }
+
+                $team->SetID( $row['contestant_b_id'] );
+                $tempRes = $team->GetTeamByID();
+                if( $tempRes['status'] ){
+                    $gamedraws[$i]['contestant_b'] = $tempRes['team'];
+                }else{
+                    $gamedraws[$i]['contestant_b'] = array();
+                }
+
+                $i++;
+            }
+
+            $res = array(
+                'gamedraws'      => $gamedraws,
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
 }
 ?>

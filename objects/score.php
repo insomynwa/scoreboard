@@ -99,6 +99,34 @@ class Score{
         return $res;
     }
 
+    public function DeleteScore(){
+        $sql = "DELETE FROM {$this->table_name} WHERE score_id={$this->id}";
+
+        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    public function DeleteScoreByGameSetID(){
+        $sql = "DELETE FROM {$this->table_name} WHERE gameset_id={$this->gameset_id}";
+
+        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
     public function GetScoreByGameSetAndContestant(){
         $query = "SELECT * FROM " . $this->table_name ." WHERE gameset_id={$this->gameset_id} AND contestant_id={$this->contestant_id}";
 
@@ -132,38 +160,41 @@ class Score{
         return $res;
     }
 
-    /* public function getScore( $gamesetid, $teamid ){
-        $query = "SELECT * FROM " . $this->table_name . " WHERE gameset_id = {$gamesetid} AND tim_id = {$teamid}";
+    public function GetScoresByGameSet(){
+        $query = "SELECT * FROM {$this->table_name} WHERE gameset_id={$this->gameset_id}";
 
-        $stmt = $this->conn->query( $query );
+        $result = $this->conn->query( $query );
 
-        return $stmt->fetch_assoc();
-    }
+        $res = array( 'scores' => array(), 'status' => $result->num_rows > 0 );
 
-    public function updateScore( $score_data){
-        $sql = "UPDATE " . $this->table_name . " SET timer={$score_data['timer']}, score_1={$score_data['pts1']}, score_2={$score_data['pts2']}, score_3={$score_data['pts3']}, score_4={$score_data['pts4']}, score_5={$score_data['pts5']}, score_6={$score_data['pts6']}, set_points={$score_data['setpts']}, score_status='{$score_data['status']}' WHERE score_id={$score_data['scoreid']}";
+        if( $res['status'] ){
+            $i = 0;
+            $scores = null;
+            while($row = $result->fetch_assoc()) {
+                $scores[$i]['id'] = $row['score_id'];
+                $scores[$i]['gameset_id'] = $this->gameset_id;
+                $scores[$i]['contestant_id'] = $row['contestant_id'];
+                $scores[$i]['timer'] = $row['score_timer'];
+                $scores[$i]['score_1'] = $row['score_1'];
+                $scores[$i]['score_2'] = $row['score_2'];
+                $scores[$i]['score_3'] = $row['score_3'];
+                $scores[$i]['score_4'] = $row['score_4'];
+                $scores[$i]['score_5'] = $row['score_5'];
+                $scores[$i]['score_6'] = $row['score_6'];
+                $scores[$i]['point'] = $row['set_points'];
+                $scores[$i]['desc'] = $row['score_desc'];
 
-        $res = $this->conn->query($sql);
-        return $res;
-    }
-
-    public function createScore( $score_data){
-        $res = null;//var_dump($score_data);
-        $res['status'] = false;
-        for( $i = 0; $i<sizeof( $score_data['teams']['teams']); $i++ ){
-            $team = $score_data['teams']['teams'][$i];
-
-            $sql = "INSERT INTO " . $this->table_name . " (tim_id, gameset_id) VALUES ('{$team}', '{$score_data['gameset_id']}')";
-
-            if($this->conn->query($sql) === TRUE) {
-                $res = array(
-                    'status'    => true
-                );
+                $i++;
             }
+
+            $res = array(
+                'scores'      => $scores,
+                'status'    => true
+            );
         }
 
         return $res;
-    } */
+    }
 }
 
 ?>

@@ -48,23 +48,18 @@ class GameStatus{
     } */
 
     public function GetGameStatusByID(){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE gamestatus_id={$this->id}";
+        $res = array ( 'status' => false );
+        $query = "SELECT * FROM {$this->table_name} WHERE gamestatus_id={$this->id}";
 
-        $result = $this->conn->query( $query );//var_dump($result > 0 );
+        if( $result = $this->conn->query( $query ) ){
 
-        $res = array( 'gamestatus' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
-
-            $gamestatus = null;
+            $gamestatus = array();
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
             $gamestatus['id'] = $row['gamestatus_id'];
             $gamestatus['name'] = $row['gamestatus_name'];
 
-            $res = array(
-                'gamestatus'      => $gamestatus,
-                'status'    => true
-            );
+            $res['status'] = true;
+            $res['gamestatus'] = $gamestatus;
         }
 
         return $res;

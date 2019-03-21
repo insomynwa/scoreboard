@@ -52,9 +52,9 @@ class GameSet{
     }
 
     public function CreateSet(){
+        $res = array( 'status' => false );
         $sql = "INSERT INTO " . $this->table_name . " (gamedraw_id, gameset_num) VALUES ('{$this->gamedraw_id}', '{$this->num}')";
 
-        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $latest_id = $this->conn->insert_id;
@@ -97,29 +97,27 @@ class GameSet{
     }
 
     public function GetGameSetsByGameDraw(){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE gamedraw_id={$this->gamedraw_id}";
+        $res = array( 'status' => false );
+        $query = "SELECT * FROM {$this->table_name} WHERE gamedraw_id={$this->gamedraw_id}";
 
-        $result = $this->conn->query( $query );
-
-        $res = array( 'gamesets' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
+        if( $result = $this->conn->query( $query ) ){
             $i = 0;
-            $gamesets = null;
+            $gamesets = array();
             while($row = $result->fetch_assoc()) {
                 $gamesets[$i]['id'] = $row['gameset_id'];
                 $gamesets[$i]['num'] = $row['gameset_num'];
                 // $gamesets[$i]['point'] = $row['gameset_point'];
                 $gamesets[$i]['desc'] = $row['gameset_desc'];
+                $gamesets[$i]['gameset_status'] = $row['gameset_status'];
 
-                $gamestatus = new GameStatus($this->conn);
+                /* $gamestatus = new GameStatus($this->conn);
                 $gamestatus->SetID( $row['gameset_status'] );
                 $tempRes = $gamestatus->GetGameStatusByID();
                 if( $tempRes['status'] ){
                     $gamesets[$i]['gamestatus'] = $tempRes['gamestatus'];
                 }else{
                     $gamesets[$i]['gamestatus'] = array();
-                }
+                } */
 
                 $i++;
             }
@@ -143,38 +141,37 @@ class GameSet{
     }
 
     public function GetGameSets(){
+        $res = array( 'status' => false );
         $query = "SELECT * FROM " . $this->table_name;
 
-        $result = $this->conn->query( $query );
-
-        $res = array( 'gamesets' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
+        if( $result = $this->conn->query( $query ) ){
             $i = 0;
-            $gamesets = null;
+            $gamesets = array();
             while($row = $result->fetch_assoc()) {
                 $gamesets[$i]['id'] = $row['gameset_id'];
                 $gamesets[$i]['num'] = $row['gameset_num'];
-                // $gamesets[$i]['point'] = $row['gameset_point'];
                 $gamesets[$i]['desc'] = $row['gameset_desc'];
+                $gamesets[$i]['gamedraw_id'] = $row['gamedraw_id'];
+                $gamesets[$i]['gameset_status'] = $row['gameset_status'];
+                // $gamesets[$i]['point'] = $row['gameset_point'];
 
-                $gamedraw = new GameDraw($this->conn);
+                /* $gamedraw = new GameDraw($this->conn);
                 $gamedraw->SetID( $row['gamedraw_id'] );
                 $tempRes = $gamedraw->GetGameDrawByID();
                 if( $tempRes['status'] ){
                     $gamesets[$i]['gamedraw'] = $tempRes['gamedraw'];
                 }else{
                     $gamesets[$i]['gamedraw'] = array();
-                }
+                } */
 
-                $gamestatus = new GameStatus($this->conn);
+                /* $gamestatus = new GameStatus($this->conn);
                 $gamestatus->SetID( $row['gameset_status'] );
                 $tempRes = $gamestatus->GetGameStatusByID();
                 if( $tempRes['status'] ){
                     $gamesets[$i]['gamestatus'] = $tempRes['gamestatus'];
                 }else{
                     $gamesets[$i]['gamestatus'] = array();
-                }
+                } */
 
                 $i++;
             }
@@ -189,38 +186,37 @@ class GameSet{
     }
 
     public function GetGameSetByID(){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE gameset_id={$this->id}";
+        $res = array( 'status' => false );
+        $query = "SELECT * FROM {$this->table_name} WHERE gameset_id={$this->id}";
 
-        $result = $this->conn->query( $query );//var_dump($result > 0 );
+        if( $result = $this->conn->query( $query ) ){
 
-        $res = array( 'gameset' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
-
-            $gameset = null;
+            $gameset = array();
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
             $gameset['id'] = $row['gameset_id'];
             $gameset['num'] = $row['gameset_num'];
-            // $gameset['point'] = $row['gameset_point'];
             $gameset['desc'] = $row['gameset_desc'];
+            $gameset['gamedraw_id'] = $row['gamedraw_id'];
+            $gameset['gameset_status'] = $row['gameset_status'];
+            // $gameset['point'] = $row['gameset_point'];
 
-            $gamedraw = new GameDraw($this->conn);
+            /* $gamedraw = new GameDraw($this->conn);
             $gamedraw->SetID( $row['gamedraw_id'] );
             $tempRes = $gamedraw->GetGameDrawByID();
             if( $tempRes['status'] ){
                 $gameset['gamedraw'] = $tempRes['gamedraw'];
             }else{
                 $gameset['gamedraw'] = array();
-            }
+            } */
 
-            $gamestatus = new GameStatus($this->conn);
+            /* $gamestatus = new GameStatus($this->conn);
             $gamestatus->SetID( $row['gameset_status'] );
             $tempRes = $gamestatus->GetGameStatusByID();
             if( $tempRes['status'] ){
                 $gameset['gamestatus'] = $tempRes['gamestatus'];
             }else{
                 $gameset['gamestatus'] = array();
-            }
+            } */
 
             $res = array(
                 'gameset'      => $gameset,

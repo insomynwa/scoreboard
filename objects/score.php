@@ -128,15 +128,12 @@ class Score{
     }
 
     public function GetScoreByGameSetAndContestant(){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE gameset_id={$this->gameset_id} AND contestant_id={$this->contestant_id}";
+        $res = array( 'status' => false );
+        $query = "SELECT * FROM {$this->table_name} WHERE gameset_id={$this->gameset_id} AND contestant_id={$this->contestant_id}";
 
-        $result = $this->conn->query( $query );//var_dump($result > 0 );
+        if( $result = $this->conn->query( $query ) ){
 
-        $res = array( 'score' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
-
-            $score = null;
+            $score = array();
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
             $score['id'] = $row['score_id'];
             $score['gameset_id'] = $this->gameset_id;
@@ -161,15 +158,12 @@ class Score{
     }
 
     public function GetScoresByGameSet(){
+        $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE gameset_id={$this->gameset_id}";
 
-        $result = $this->conn->query( $query );
-
-        $res = array( 'scores' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
+        if( $result = $this->conn->query( $query ) ){
             $i = 0;
-            $scores = null;
+            $scores = array();
             while($row = $result->fetch_assoc()) {
                 $scores[$i]['id'] = $row['score_id'];
                 $scores[$i]['gameset_id'] = $this->gameset_id;

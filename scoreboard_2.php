@@ -84,7 +84,7 @@
                 <input type="hidden" name="score_a_gameset_id" id="score-a-gameset-id" value="">
                 <input type="hidden" name="score_a_id" id="score-a-id" value="">
                 <input type="hidden" name="score_action" value="update-a">
-                <input type="submit" value="Update" class="btn btn-primary">
+                <input type="submit" value="Update" id="score-a-submit" class="btn btn-primary">
               </td>
             </tr>
           </tbody>
@@ -136,7 +136,7 @@
                 <input type="hidden" name="score_b_gameset_id" id="score-b-gameset-id" value="">
                 <input type="hidden" name="score_b_id" id="score-b-id" value="">
                 <input type="hidden" name="score_action" value="update-b">
-                <input type="submit" value="Update" class="btn btn-primary">
+                <input type="submit" value="Update" id="score-b-submit" class="btn btn-primary">
               </td>
             </tr>
           </tbody>

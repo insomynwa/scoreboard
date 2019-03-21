@@ -42,27 +42,25 @@ class Player{
     }
 
     public function GetPlayersByTeamID(){
+        $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE team_id={$this->team_id}";
 
-        $result = $this->conn->query( $query );
-
-        $res = array( 'players' => array(), 'status' => false );
-
-        if( $result->num_rows > 0){
+        if( $result = $this->conn->query( $query )){
             $i = 0;
-            $players = null;
+            $players = array();
             while($row = $result->fetch_assoc()) {
                 $players[$i]['id'] = $row['player_id'];
                 $players[$i]['name'] = $row['player_name'];
+                $players[$i]['team_id'] = $row['team_id'];
 
-                $team = new Team($this->conn);
+                /* $team = new Team($this->conn);
                 $team->SetID( $this->team_id );
                 $tempRes = $team->GetTeamByID();
                 if( $tempRes['status'] ){
                     $players[$i]['team'] = $tempRes['team'];
                 }else{
                     $players[$i]['team'] = array();
-                }
+                } */
 
                 $i++;
             }
@@ -92,24 +90,22 @@ class Player{
 
         if($result = $this->conn->query( $query )){
             $players = array();
-            if( $result->num_rows > 0){
-                $i = 0;
-                while($row = $result->fetch_assoc()) {
-                    $players[$i]['id'] = $row['player_id'];
-                    $players[$i]['name'] = $row['player_name'];
-                    $players[$i]['team_id'] = $row['team_id'];
+            $i = 0;
+            while($row = $result->fetch_assoc()) {
+                $players[$i]['id'] = $row['player_id'];
+                $players[$i]['name'] = $row['player_name'];
+                $players[$i]['team_id'] = $row['team_id'];
 
-                    /* $team = new Team($this->conn);
-                    $team->SetID( $row['team_id'] );
-                    $tempRes = $team->GetTeamByID();
-                    if( $tempRes['status'] ){
-                        $players[$i]['team'] = $tempRes['team'];
-                    }else{
-                        $players[$i]['team'] = array();
-                    } */
+                /* $team = new Team($this->conn);
+                $team->SetID( $row['team_id'] );
+                $tempRes = $team->GetTeamByID();
+                if( $tempRes['status'] ){
+                    $players[$i]['team'] = $tempRes['team'];
+                }else{
+                    $players[$i]['team'] = array();
+                } */
 
-                    $i++;
-                }
+                $i++;
             }
             $res['status'] = true;
             $res['players'] = $players;

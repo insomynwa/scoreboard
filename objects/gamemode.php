@@ -49,24 +49,19 @@ class GameMode{
     }
 
     public function GetGameModeByID(){
-        $query = "SELECT * FROM " . $this->table_name ." WHERE gamemode_id={$this->id}";
+        $res = array ( 'status' => false );
+        $query = "SELECT * FROM {$this->table_name} WHERE gamemode_id={$this->id}";
 
-        $result = $this->conn->query( $query );//var_dump($result > 0 );
+        if( $result = $this->conn->query( $query ) ){
 
-        $res = array( 'gamemode' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
-
-            $gamemode = null;
+            $gamemode = array();
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
             $gamemode['id'] = $row['gamemode_id'];
             $gamemode['name'] = $row['gamemode_name'];
             $gamemode['desc'] = $row['gamemode_desc'];
 
-            $res = array(
-                'gamemode'      => $gamemode,
-                'status'    => true
-            );
+            $res['status'] = true;
+            $res['gamemode'] = $gamemode;
         }
 
         return $res;

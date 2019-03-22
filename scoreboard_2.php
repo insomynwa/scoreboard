@@ -156,22 +156,6 @@
       <h4><i class="fas fa-trophy"></i> Game Draw</h4>
       <button type="button" id="gamedraw-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Draw</button>
       <table id="tbl-gamedraw" class="table table-sm table-hover"><tr><td>0 game draw. buat dulu!</td></tr></table>
-      <!-- <h4>Create Game Set</h4>
-      <p id="form-gameset-msg"></p>
-      <form id="form-gameset" action="controller.php" method="post">
-        <div class="form-group">
-          <label for="gameset-gamedraw">Game</label>
-          <select name="gameset_gamedraw" id="gameset-gamedraw" class="form-control">
-            <option value='0'>Select a game draw!</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="gameset-setnum">Set:</label>
-          <input type="number" name="gameset_setnum" min="1" class="form-control" max="5" id="gameset-setnum" value="1">
-        </div>
-          <input type="hidden" id="gameset-action" name="gameset_action" value="create">
-          <input type="submit" value="Create" class="btn btn-primary" id="gameset-submit">
-      </form> -->
     </div>
     <div class="col-lg-6">
       <h4><i class="fas fa-ellipsis-v"></i> Game Set</h4>
@@ -194,80 +178,6 @@
     </div>
   </div>
 </div>
-<!-- <div class="container mb-3">
-  <div class="row">
-    <div class="col-lg-3">
-      <h4>Create Team</h4>
-      <form action="tools/uploader.php" id="form-team" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="team-logo">Logo</label>
-          <input type="file" name="team_logo" id="team-logo" accept="image/*" class="form-control-file">
-        </div>
-        <div class="form-group">
-          <label for="team-name">Name</label>
-          <input type="text" name="team_name" id="team-name" placeholder="team name" class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="team-desc">Description</label>
-          <textarea name="team_desc" id="team-desc" cols="30" rows="5" class="form-control"></textarea>
-        </div>
-        <input type="hidden" name="team_action" value="create">
-        <input type="submit" value="Create" class="btn btn-primary">
-      </form>
-    </div>
-    <div class="col-lg-3">
-      <h4>Create Player</h4>
-      <form action="controller.php" id="form-player" method="post">
-        <div class="form-group">
-          <label for="player-name">Name</label>
-          <input type="text" name="player_name" id="player-name" class="form-control" placeholder="player name">
-        </div>
-        <div class="form-group">
-          <label for="player-team">Team</label>
-          <select name="player_team" class="form-control" id="player-team">
-            <option value='0'>-</option>
-          </select>
-          <input type="hidden" name="player_action" value="create">
-        </div>
-        <input type="submit" value="Create" class="btn btn-primary">
-      </form>
-    </div>
-    <div class="col-lg-6">
-      <h4>Game Draws</h4>
-      <p id="form-gamedraw-msg"></p>
-      <form id="form-gamedraw" action="controller.php" method="post">
-        <div class="form-group">
-          <label for="gamedraw-num">Draws</label>
-          <input type="number" name="gamedraw_num" id="gamedraw-num" min="1" max="100" value="1" class="form-control">
-        </div>
-        <div id="gamedraw-radio-area" class="form-group">
-        </div>
-        <div class="form-group">
-          <div class="gamedraw-team-opt-area-cls">
-            <label for="gamedraw-team-a">Team A:</label>
-            <select name="gamedraw_team_a" id="gamedraw-team-a" class="gamedraw-team-cls form-control"></select>
-          </div>
-          <div class="gamedraw-player-opt-area-cls hide">
-            <label for="gamedraw-player-a">Player A:</label>
-            <select name="gamedraw_player_a" id="gamedraw-player-a" class="form-control gamedraw-player-cls"></select>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="gamedraw-team-opt-area-cls">
-            <label for="gamedraw-team-b">Team B:</label>
-            <select name="gamedraw_team_b" id="gamedraw-team-b" class="form-control gamedraw-team-cls"></select>
-          </div>
-          <div class="gamedraw-player-opt-area-cls hide">
-            <label for="gamedraw-player-b">Player B:</label>
-            <select name="gamedraw_player_b" id="gamedraw-player-b" class="form-control gamedraw-player-cls"></select>
-          </div>
-        </div>
-        <input type="hidden" id="gamedraw-action" name="gamedraw_action" value="create">
-        <input type="submit" value="Create" id="gamedraw-submit" class="btn btn-primary">
-      </form>
-    </div>
-  </div>
-</div> -->
 <!-- The Modal Game Set -->
 <div class="modal" id="form-gameset-modal">
   <div class="modal-dialog">

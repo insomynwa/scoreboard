@@ -85,8 +85,36 @@ class Score{
         return $res;
     }
 
-    public function UpdateScore(){
+    /* public function UpdateScore(){
         $sql = "UPDATE " . $this->table_name . " SET score_timer={$this->timer}, score_1={$this->score_1}, score_2={$this->score_2}, score_3={$this->score_3}, score_4={$this->score_4}, score_5={$this->score_5}, score_6={$this->score_6}, score_desc='{$this->desc}', set_points='{$this->point}' WHERE score_id={$this->id}";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    } */
+
+    public function UpdateScore(){
+        $sql = "UPDATE " . $this->table_name . " SET score_1={$this->score_1}, score_2={$this->score_2}, score_3={$this->score_3}, score_4={$this->score_4}, score_5={$this->score_5}, score_6={$this->score_6}, score_desc='{$this->desc}', set_points='{$this->point}' WHERE score_id={$this->id}";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    public function UpdateScoreTimer(){
+        $sql = "UPDATE " . $this->table_name . " SET score_timer={$this->timer} WHERE score_id={$this->id}";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
@@ -102,7 +130,7 @@ class Score{
     public function DeleteScore(){
         $sql = "DELETE FROM {$this->table_name} WHERE score_id={$this->id}";
 
-        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $res = array(
@@ -116,7 +144,7 @@ class Score{
     public function DeleteScoreByGameSetID(){
         $sql = "DELETE FROM {$this->table_name} WHERE gameset_id={$this->gameset_id}";
 
-        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $res = array(

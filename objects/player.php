@@ -106,15 +106,6 @@ class Player{
                 $players[$i]['name'] = $row['player_name'];
                 $players[$i]['team_id'] = $row['team_id'];
 
-                /* $team = new Team($this->conn);
-                $team->SetID( $row['team_id'] );
-                $tempRes = $team->GetTeamByID();
-                if( $tempRes['status'] ){
-                    $players[$i]['team'] = $tempRes['team'];
-                }else{
-                    $players[$i]['team'] = array();
-                } */
-
                 $i++;
             }
             $res['status'] = true;
@@ -135,14 +126,6 @@ class Player{
             $player['name'] = $row['player_name'];
             $player['team_id'] = $row['team_id'];
 
-            /* $team = new Team($this->conn);
-            $team->SetID( $row['team_id'] );
-            $tempRes = $team->GetTeamByID();
-            if( $tempRes['status'] ){
-                $player['team'] = $tempRes['team'];
-            }else{
-                $player['team'] = array();
-            } */
             $res['status'] = true;
             $res['player'] = $player;
         }
@@ -153,7 +136,7 @@ class Player{
     public function UpdatePlayer(){
         $query = "Update " . $this->table_name ." SET team_id={$this->team_id}, player_name='{$this->name}' WHERE player_id={$this->id}";
 
-        $result = $this->conn->query( $query );//var_dump($result > 0 );
+        $result = $this->conn->query( $query );
 
         $res = array( 'status' => false );
 
@@ -166,7 +149,7 @@ class Player{
     public function DeletePlayer(){
         $sql = "DELETE FROM {$this->table_name} WHERE player_id={$this->id}";
 
-        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $res = array(

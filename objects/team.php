@@ -92,7 +92,7 @@ class Team{
     public function DeleteTeam(){
         $sql = "DELETE FROM {$this->table_name} WHERE team_id={$this->id}";
 
-        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $res = array(

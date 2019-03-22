@@ -149,76 +149,6 @@ class GameDraw{
                 $gamedraws[$i]['contestant_a_id'] = $row['contestant_a_id'];
                 $gamedraws[$i]['contestant_b_id'] = $row['contestant_b_id'];
 
-                /* $gamemode = new GameMode($this->conn);
-                $gamemode->SetID( $row['gamemode_id'] );
-                $tempRes = $gamemode->GetGameModeByID();
-                if( $tempRes['status'] ){
-                    $gamedraws[$i]['gamemode'] = $tempRes['gamemode'];
-                }else{
-                    $gamedraws[$i]['gamemode'] = array();
-                } */
-
-                /*
-                * TO-DO: Harus Dinamis
-                */
-                /* $contestant = new Contestant($this->conn);
-                $contestant->SetID( $row['contestant_id'] );
-                $contestant->SetGameMode( $row['gamemode_id'] );
-                $tempRes = $contestant->GetContestantByID();
-                if( $tempRes['status'] ){
-                    $gamedraws[$i]['contestant'] = $tempRes['contestant'];
-                } */
-
-                /* $gamestatus = new GameStatus($this->conn);
-                $gamestatus->SetID( $row['gamestatus_id'] );
-                $tempRes = $gamestatus->GetGameStatusByID();
-                if( $tempRes['status'] ){
-                    $gamedraws[$i]['gamestatus'] = $tempRes['gamestatus'];
-                }else{
-                    $gamedraws[$i]['gamestatus'] = array();
-                } */
-
-                /*
-                * TO-DO: Harus Dinamis
-                */
-                /* if( $row['gamemode_id'] == 1 ){ // Beregu
-
-                    $team = new Team($this->conn);
-                    $team->SetID( $row['contestant_a_id'] );
-                    $tempRes = $team->GetTeamByID();
-                    if( $tempRes['status'] ){
-                        $gamedraws[$i]['contestant_a'] = $tempRes['team'];
-                    }else{
-                        $gamedraws[$i]['contestant_a'] = array();
-                    }
-
-                    $team->SetID( $row['contestant_b_id'] );
-                    $tempRes = $team->GetTeamByID();
-                    if( $tempRes['status'] ){
-                        $gamedraws[$i]['contestant_b'] = $tempRes['team'];
-                    }else{
-                        $gamedraws[$i]['contestant_b'] = array();
-                    }
-                }else if( $row['gamemode_id'] == 2 ){ // Individu
-
-                    $player = new Player($this->conn);
-                    $player->SetID( $row['contestant_a_id'] );
-                    $tempRes = $player->GetPlayerByID();
-                    if( $tempRes['status'] ){
-                        $gamedraws[$i]['contestant_a'] = $tempRes['player'];
-                    }else{
-                        $gamedraws[$i]['contestant_a'] = array();
-                    }
-
-                    $player->SetID( $row['contestant_b_id'] );
-                    $tempRes = $player->GetPlayerByID();
-                    if( $tempRes['status'] ){
-                        $gamedraws[$i]['contestant_b'] = $tempRes['player'];
-                    }else{
-                        $gamedraws[$i]['contestant_b'] = array();
-                    }
-                } */
-
                 $i++;
             }
             $res['gamedraws'] = $gamedraws;
@@ -242,65 +172,6 @@ class GameDraw{
             $gamedraw['gamestatus_id'] = $row['gamestatus_id'];
             $gamedraw['contestant_a_id'] = $row['contestant_a_id'];
             $gamedraw['contestant_b_id'] = $row['contestant_b_id'];
-
-            /* $gamemode = new GameMode($this->conn);
-            $gamemode->SetID( $row['gamemode_id'] );
-            $tempRes = $gamemode->GetGameModeByID();
-            if( $tempRes['status'] ){
-                $gamedraw['gamemode'] = $tempRes['gamemode'];
-            }else{
-                $gamedraw['gamemode'] = array();
-            } */
-
-            /* $gamestatus = new GameStatus($this->conn);
-            $gamestatus->SetID( $row['gamestatus_id'] );
-            $tempRes = $gamestatus->GetGameStatusByID();
-            if( $tempRes['status'] ){
-                $gamedraw['gamestatus'] = $tempRes['gamestatus'];
-            }else{
-                $gamedraw['gamestatus'] = array();
-            } */
-
-            /*
-            * TO-DO: Harus Dinamis
-            */
-            /* if( $row['gamemode_id'] == 1 ){ // Beregu
-
-                $team = new Team($this->conn);
-                $team->SetID( $row['contestant_a_id'] );
-                $tempRes = $team->GetTeamByID();
-                if( $tempRes['status'] ){
-                    $gamedraw['contestant_a'] = $tempRes['team'];
-                }else{
-                    $gamedraw['contestant_a'] = array();
-                }
-
-                $team->SetID( $row['contestant_b_id'] );
-                $tempRes = $team->GetTeamByID();
-                if( $tempRes['status'] ){
-                    $gamedraw['contestant_b'] = $tempRes['team'];
-                }else{
-                    $gamedraw['contestant_b'] = array();
-                }
-            }else if( $row['gamemode_id'] == 2 ){ // Individu
-
-                $player = new Player($this->conn);
-                $player->SetID( $row['contestant_a_id'] );
-                $tempRes = $player->GetPlayerByID();
-                if( $tempRes['status'] ){
-                    $gamedraw['contestant_a'] = $tempRes['player'];
-                }else{
-                    $gamedraw['contestant_a'] = array();
-                }
-
-                $player->SetID( $row['contestant_b_id'] );
-                $tempRes = $player->GetPlayerByID();
-                if( $tempRes['status'] ){
-                    $gamedraw['contestant_b'] = $tempRes['player'];
-                }else{
-                    $gamedraw['contestant_b'] = array();
-                }
-            } */
             $res['gamedraw'] = $gamedraw;
             $res['status'] = true;
         }
@@ -311,7 +182,7 @@ class GameDraw{
     public function UpdateGameDraw(){
         $sql = "UPDATE {$this->table_name} SET gamedraw_num={$this->num} WHERE gamedraw_id={$this->id}";
 
-        $res = array( 'status' => false );//var_dump($this->timer, $this->point, $this->desc, $this->id);
+        $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
             $res = array(
@@ -446,41 +317,6 @@ class GameDraw{
                 $gamedraws[$i]['gamestatus_id'] = $row['gamestatus_id'];
                 $gamedraws[$i]['contestant_a_id'] = $row['contestant_a_id'];
                 $gamedraws[$i]['contestant_b_id'] = $row['contestant_b_id'];
-
-                /* $gamemode = new GameMode($this->conn);
-                $gamemode->SetID( $row['gamemode_id'] );
-                $tempRes = $gamemode->GetGameModeByID();
-                if( $tempRes['status'] ){
-                    $gamedraws[$i]['gamemode'] = $tempRes['gamemode'];
-                }else{
-                    $gamedraws[$i]['gamemode'] = array();
-                } */
-
-                /* $gamestatus = new GameStatus($this->conn);
-                $gamestatus->SetID( $row['gamestatus_id'] );
-                $tempRes = $gamestatus->GetGameStatusByID();
-                if( $tempRes['status'] ){
-                    $gamedraws[$i]['gamestatus'] = $tempRes['gamestatus'];
-                }else{
-                    $gamedraws[$i]['gamestatus'] = array();
-                } */
-
-                /* $team = new Team($this->conn);
-                $team->SetID( $row['contestant_a_id'] );
-                $tempRes = $team->GetTeamByID();
-                if( $tempRes['status'] ){
-                    $gamedraws[$i]['contestant_a'] = $tempRes['team'];
-                }else{
-                    $gamedraws[$i]['contestant_a'] = array();
-                } */
-
-                /* $team->SetID( $row['contestant_b_id'] );
-                $tempRes = $team->GetTeamByID();
-                if( $tempRes['status'] ){
-                    $gamedraws[$i]['contestant_b'] = $tempRes['team'];
-                }else{
-                    $gamedraws[$i]['contestant_b'] = array();
-                } */
 
                 $i++;
             }

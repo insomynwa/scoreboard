@@ -4,12 +4,10 @@ include_once 'config/database.php';
 include_once 'objects/team.php';
 include_once 'objects/player.php';
 include_once 'objects/gamemode.php';
-// include_once 'objects/contestant.php';
 include_once 'objects/gamedraw.php';
 include_once 'objects/gamestatus.php';
 include_once 'objects/gameset.php';
 include_once 'objects/score.php';
-/* include_once 'objects/game.php'; */
 
 
 $valid_extensions = array('jpeg', 'jpg', 'png', 'gif', 'bmp' , 'pdf' , 'doc' , 'ppt'); // valid extensions
@@ -1643,54 +1641,6 @@ if (isset( $_GET['GetGameSet']) && $_GET['GetGameSet'] != '') {
     echo json_encode($result);
 }
 
-// Get Game Set By ID
-/* if (isset( $_GET['GetGameSetByID']) && $_GET['GetGameSetByID'] != '') {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    $gameset_id = isset($_GET['GetGameSetByID']) ? $_GET['GetGameSetByID'] : 0;
-
-    $database = new Database();
-    $db = $database->getConnection();
-
-    $gameset = new GameSet($db);
-    $gameset->SetID( $gameset_id );
-    $tempRes = $gameset->GetGameSetByID();
-
-    if( $tempRes['status'] ){
-        $result['status'] = $tempRes['status'];
-        $result['gameset'] = $tempRes['gameset'];
-    }else{
-        $result['message'] = "ERROR: Load Gameset";
-    }
-    echo json_encode($result);
-} */
-
-// Get Game Draw By ID
-/* if (isset( $_GET['GetGameDrawByID']) && $_GET['GetGameDrawByID'] != '') {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    $gamedraw_id = isset($_GET['GetGameDrawByID']) ? $_GET['GetGameDrawByID'] : 0;
-
-    $database = new Database();
-    $db = $database->getConnection();
-
-    $gamedraw = new GameDraw($db);
-    $gamedraw->SetID( $gamedraw_id );
-    $tempRes = $gamedraw->GetGameDrawByID();
-
-    if( $tempRes['status'] ){
-        $result['status'] = $tempRes['status'];
-        $result['gamedraw'] = $tempRes['gamedraw'];
-    }else{
-        $result['message'] = "ERROR: Load Game Draw";
-    }
-    echo json_encode($result);
-} */
-
 // Update Score
 if ( isset( $_POST['score_action']) ) {
     $result = array(
@@ -1767,11 +1717,47 @@ if ( isset( $_POST['score_action']) ) {
 
             // if( $tempRes['status'] ){
                 $result['status'] = $tempRes['status'];
-            // }else{
-            //     $result['message'] = "ERROR: Update Game Set";
-            // }
         }else{
             $result['message'] = "ERROR: Update Score";
+        }
+
+        $database->conn->close();
+    }
+    echo json_encode($result);
+}
+
+// Update Timer
+if ( isset( $_POST['score_timer_action']) ) {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    if( $_POST['score_timer_action'] != ''){
+        $score_id = 0;
+        $timer = 120;
+        if( $_POST['score_timer_action'] == 'update-timer-a'){
+
+            $score_id = isset($_POST['score_a_id']) ? $_POST['score_a_id'] : 0;
+            $timer = isset($_POST['timer_a']) ? $_POST['timer_a'] : 0;
+
+        }else if( $_POST['score_timer_action'] == 'update-timer-b'){
+
+            $score_id = isset($_POST['score_b_id']) ? $_POST['score_b_id'] : 0;
+            $timer = isset($_POST['timer_b']) ? $_POST['timer_b'] : 0;
+        }
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $score = new Score($db);
+        $score->SetID($score_id);
+        $score->SetTimer($timer);
+        $tempRes = $score->UpdateScoreTimer();
+
+        if( $tempRes['status'] ){
+            $result['status'] = true;
+        }else{
+            $result['message'] = "ERROR: Update Score Timer";
         }
 
         $database->conn->close();
@@ -1803,4 +1789,92 @@ function getPlayersByTeam($teamid){
     return $players;
 }
 
+/**
+ * VMIX FUNCTION
+ */
+
+// Get Scoreboard
+if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    $scoreboard = $_GET['GetScoreboard'];
+    if(is_numeric($scoreboard)){
+        if ( $scoreboard == 1 ) {
+            $database = new Database();
+            $db = $database->getConnection();
+
+            $gameset = new GameSet($db);
+            $resLiveGameSet = $gameset->GetLiveGameSets();
+
+            if($resLiveGameSet['status']){
+                $result['status'] = true;
+                $liveGameSet = $resLiveGameSet['gameset'];
+                $result['scoreboard']['set'] = "Set " . $liveGameSet['num'];
+                $gameset->SetGameDrawID($liveGameSet['gamedraw_id']);
+                $resGameDraw = $gameset->GetGameDraw();
+
+                $gamedraw = new GameDraw($db);
+                $gamedraw->SetContestantAID($resGameDraw['contestant_a_id']);
+                $gamedraw->SetContestantBID($resGameDraw['contestant_b_id']);
+                /**
+                 * TO-DO: Dinamis Game Mode
+                 */
+                if($resGameDraw['gamemode_id'] == 1){
+                    $result['scoreboard']['contestant_a'] = $gamedraw->GetTeamContestantA()['name'];
+                    $result['scoreboard']['contestant_b'] = $gamedraw->GetTeamContestantB()['name'];
+                    $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $gamedraw->GetTeamContestantA()['logo'];
+                    $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $gamedraw->GetTeamContestantB()['logo'];
+                }else if($gamedraws[$i]['gamemode_id'] == 2){
+                    $result['scoreboard']['contestant_a'] = $gamedraw->GetPlayerContestantA()['name'];
+                    $result['scoreboard']['contestant_b'] = $gamedraw->GetPlayerContestantB()['name'];
+                    $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
+                    $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
+                }
+
+                $score = new Score($db);
+                $score->SetGameSetID($liveGameSet['id']);
+                $score->SetContestantID($resGameDraw['contestant_a_id']);
+                $resScore = $score->GetScoreByGameSetAndContestant();
+
+                if($resScore['status']){
+                    $result['status'] = true && $result['status'];
+                    $score_a = $resScore['score'];
+                    $total_a = $score_a['score_1'] + $score_a['score_2'] + $score_a['score_3'] + $score_a['score_4'] + $score_a['score_5'] + $score_a['score_6'];
+                    $result['scoreboard']['total_a'] = $total_a;
+                    $result['scoreboard']['timer_a'] = $score_a['timer'] . "s";
+                    $result['scoreboard']['setpoints_a'] = $score_a['point'];
+                }else{
+                    $result['message'][] = "ERROR: Load Score A";
+                }
+
+                $score->SetContestantID($resGameDraw['contestant_b_id']);
+                $resScore = $score->GetScoreByGameSetAndContestant();
+
+                if($resScore['status']){
+                    $result['status'] = true && $result['status'];
+                    $score_b = $resScore['score'];
+                    $total_b = $score_b['score_1'] + $score_b['score_2'] + $score_b['score_3'] + $score_b['score_4'] + $score_b['score_5'] + $score_b['score_6'];
+                    $result['scoreboard']['total_b'] = $total_b;
+                    $result['scoreboard']['timer_b'] = $score_b['timer'] . "s";
+                    $result['scoreboard']['setpoints_b'] = $score_b['point'];
+                }else{
+                    $result['message'][] = "ERROR: Load Score B";
+                }
+            }else{
+                $result['message'][] = "ERROR: LOAD Live Game Set";
+            }
+            $database->conn->close();
+
+        }
+    }else{
+        $result['message'][] = "ERROR: NUMERIC";
+    }
+    if($result['status']){
+        echo "[". json_encode($result['scoreboard']) . "]";
+    }else{
+        echo "[". json_encode($result['message']) . "]";
+    }
+}
 ?>

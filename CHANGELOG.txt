@@ -1,0 +1,8 @@
+[+] TODO, CHANGELOG
+[+] VMIX FUNCTION MODE 1
+[+] NO Team default image
+
+[*] Update Score >> Update Score Point & Update Score Point
+[*] Play Timer update score timer
+
+[-] contestant.php, game.php, tim.php, uploader.php, score.js

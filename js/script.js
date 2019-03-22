@@ -552,6 +552,7 @@ $(document).ready(function () {
 
     function Table_Load_GameDraw(elemTarget, gamesdraws_data) {
         var tdText = "<thead class='thead-dark'><tr><th>Game</th><th></th><th>Draw</th><th>Status</th><th></th></tr></thead>";
+        tdText += "<tbody>";
         for (i = 0; i < gamesdraws_data.length; i++) {
             tdText += "<tr><td><span>" + gamesdraws_data[i].num + "</span></td>";
             tdText += "<td><span>" + gamesdraws_data[i].gamemode['name'] + "</span></td>";
@@ -560,11 +561,13 @@ $(document).ready(function () {
             tdText += "<td><button data-gamedrawid='" + gamesdraws_data[i].id + "' class='btn btn-sm btn-outline-warning mr-2 gamedraw-update-btn-cls'><i class='fas fa-edit'></i></button>";
             tdText += "<button data-gamedrawid='" + gamesdraws_data[i].id + "' class='btn btn-sm btn-outline-danger gamedraw-delete-btn-cls'><i class='fas fa-trash-alt'></i></button></td></tr>";
         }
+        tdText += "</tbody>";
         elemTarget.html(tdText);
     }
 
     function Table_Load_GameSet(elemTarget, gamesetsdata) {
         var tdText = "<thead class='thead-dark'><tr><th>Game</th><th>Draw</th><th>Set</th><th>Status</th><th></th><th></th></tr></thead>";
+        tdText += "<tbody>";
         for (i = 0; i < gamesetsdata.length; i++) {
             tdText += "<tr><td><span>" + gamesetsdata[i].gamedraw['num'] + "</span></td>";
             tdText += "<td><span>" + gamesetsdata[i].gamedraw['contestant_a']['name'] + " vs " + gamesetsdata[i].gamedraw['contestant_b']['name'] + "</span></td>";
@@ -573,6 +576,7 @@ $(document).ready(function () {
             tdText += "<td><button data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-outline-warning mr-2 gameset-update-btn-cls'><i class='fas fa-edit'></i></button>";
             tdText += "<button data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-outline-danger gameset-delete-btn-cls'><i class='fas fa-trash-alt'></i></button></td></tr>";
         }
+        tdText += "</tbody>";
         elemTarget.html(tdText);
     }
 
@@ -1048,14 +1052,32 @@ function pauseB() {
 function playA() {
     if (timer !== null) return;
     timer = setInterval(function () {
+        if(counterA<0) counterA = 0;
         $("#score-a-timer").val(counterA + "s");
+        $.post("controller.php",{
+            score_timer_action: 'update-timer-a',
+            score_a_id: $("#score-a-id").val(),
+            timer_a: counterA
+        },
+        function(data, status){
+            // console.log(data);
+        });
         counterA--;
     }, interval);
 }
 function playB() {
     if (timerB !== null) return;
     timerB = setInterval(function () {
+        if(counterB<0) counterB = 0;
         $("#score-b-timer").val(counterB + "s");
+        $.post("controller.php",{
+            score_timer_action: 'update-timer-b',
+            score_b_id: $("#score-b-id").val(),
+            timer_b: counterB
+        },
+        function(data, status){
+            // console.log(data);
+        });
         counterB--;
     }, interval);
 }

@@ -918,6 +918,163 @@ if (isset( $_GET['GetGameSetsByGameDraw']) && $_GET['GetGameSetsByGameDraw'] != 
     echo json_encode($result);
 }
 
+if (isset($_GET['LoadData']) && $_GET['LoadData'] != ""){
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    if( $_GET['LoadData'] == 'all' ){
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $team = new Team($db);
+        $resTeams = $team->GetTeam();
+
+        if($resTeams['status']){
+            $teams = $resTeams['teams'];
+            $result['teams'] = $teams;
+            /* for( $i=0; $i<sizeof($teams); $i++){
+                $team->SetID($teams[$i]['id']);
+                $players = $team->GetPlayers();
+                $result['teams'][$i]['players'] = $players;
+                for( $j=0; $j<sizeof($players); $j++ ){
+                    $player = new Player($db);
+                    $player->SetID($players[$j]['id']);
+                    $gamedraws = $player->GetGameDraws();
+                    $result['teams'][$i]['players'][$j]['gamedraws'] = $gamedraws;
+                    for( $k=0; $k<sizeof($gamedraws); $k++ ){
+                        $gamedraw = new GameDraw($db);
+                        $gamedraw->SetID($gamedraws[$k]['id']);
+                        $gamesets = $gamedraw->GetGameSets();
+                        $result['teams'][$i]['players'][$j]['gamedraws'][$k]['gamesets'] = $gamesets;
+                        for( $l=0; $l<sizeof($gamesets); $l++ ){
+                            $gameset = new GameSet($db);
+                            $gameset->SetID($gamesets[$l]['id']);
+                            $scores = $gameset->GetScores();
+                            $result['teams'][$i]['players'][$j]['gamedraws'][$k]['gamesets'][$l]['scores'] = $scores;
+                        }
+                    }
+                }
+                $teamGameDraws = $team->GetGameDraws();
+                $result['teams'][$i]['gamedraws'] = $teamGameDraws;
+                for( $j=0; $j<sizeof($teamGameDraws); $j++ ){
+                    $teamGamedraw = new GameDraw($db);
+                    $teamGamedraw->SetID($teamGameDraws[$j]['id']);
+                    $teamGamesets = $teamGamedraw->GetGameSets();
+                    $result['teams'][$i]['gamedraws'][$j]['gamesets'] = $teamGamesets;
+                    for( $k=0; $k<sizeof($teamGamesets); $k++ ){
+                        $teamGameset = new GameSet($db);
+                        $teamGameset->SetID($teamGamesets[$k]['id']);
+                        $teamScores = $teamGameset->GetScores();
+                        $result['teams'][$i]['gamedraws'][$j]['gamesets'][$k]['scores'] = $teamScores;
+                    }
+                }
+            } */
+            $result['status'] = true;
+        }else{
+            $result['message'][] = "ERROR: Load Team.";
+        }
+
+        $player = new Player($db);
+        $resPlayers = $player->GetPlayer();
+
+        if($resPlayers['status']){
+            $players = $resPlayers['players'];
+            $result['players'] = $players;
+            for( $i=0; $i<sizeof($players); $i++){
+                $player->SetID($players[$i]['id']);
+                $player->SetTeamId($players[$i]['team_id']);
+                $result['players'][$i]['team'] = $player->GetTeam();
+                /* $playerGameDraws = $player->GetGameDraws();
+                $result['players'][$i]['gamedraws'] = $playerGameDraws;
+                for( $j=0; $j<sizeof($playerGameDraws); $j++ ){
+                    $playerGamedraw = new GameDraw($db);
+                    $playerGamedraw->SetID($playerGameDraws[$j]['id']);
+                    $playerGamesets = $playerGamedraw->GetGameSets();
+                    $result['players'][$i]['gamedraws'][$j]['gamesets'] = $playerGamesets;
+                    for( $k=0; $k<sizeof($gamesets); $k++ ){
+                        $playerGameset = new GameSet($db);
+                        $playerGameset->SetID($gamesets[$k]['id']);
+                        $playerScores = $playerGameset->GetScores();
+                        $result['players'][$i]['gamedraws'][$j]['gamesets'][$k]['scores'] = $playerScores;
+                    }
+                } */
+            }
+            $result['status'] = true && $result['status'];
+        }else{
+            $result['message'][] = "ERROR: Load Player.";
+        }
+
+        $gamedraw = new GameDraw($db);
+        $resGameDraws = $gamedraw->GetGameDraws();
+
+        if($resGameDraws['status']){
+            $gamedraws = $resGameDraws['gamedraws'];
+            $result['gamedraws'] = $gamedraws;
+            for( $i=0; $i<sizeof($gamedraws); $i++){
+                $gamedraw->SetID($gamedraws[$i]['id']);
+                /**
+                 * TO-DO: Game Mode
+                 */
+                $gamedraw->SetContestantAID($gamedraws[$i]['contestant_a_id']);
+                $gamedraw->SetContestantBID($gamedraws[$i]['contestant_b_id']);
+                if($gamedraws[$i]['gamemode_id'] == 1){
+                    $result['gamedraws'][$i]['contestant_a'] = $gamedraw->GetTeamContestantA();
+                    $result['gamedraws'][$i]['contestant_b'] = $gamedraw->GetTeamContestantB();
+                }else if($gamedraws[$i]['gamemode_id'] == 2){
+                    $result['gamedraws'][$i]['contestant_a'] = $gamedraw->GetPlayerContestantA();
+                    $result['gamedraws'][$i]['contestant_b'] = $gamedraw->GetPlayerContestantB();
+                }
+                $gamedraw->SetGameModeID($gamedraws[$i]['gamemode_id']);
+                $result['gamedraws'][$i]['gamemode'] = $gamedraw->GetGameMode();
+                $gamedraw->SetGameStatusID($gamedraws[$i]['gamestatus_id']);
+                $result['gamedraws'][$i]['gamestatus'] = $gamedraw->GetGameStatus();
+            }
+            $result['status'] = true && $result['status'];
+        }else{
+            $result['message'][] = "ERROR: Load Player.";
+        }
+
+        $gameset = new GameSet($db);
+        $resGameSets = $gameset->GetGameSets();
+
+        if($resGameSets['status']){
+            $gamesets = $resGameSets['gamesets'];
+            $result['gamesets'] = $gamesets;
+            for( $i=0; $i<sizeof($gamesets); $i++){
+                $gameset->SetID($gamesets[$i]['id']);
+                $gameset->SetGameDrawID($gamesets[$i]['gamedraw_id']);
+                $result['gamesets'][$i]['gamedraw'] = $gameset->GetGameDraw();
+                $gamedraw = new GameDraw($db);
+                $gamedraw->SetID($result['gamesets'][$i]['gamedraw']['id']);
+                $gamedraw->SetContestantAID($result['gamesets'][$i]['gamedraw']['contestant_a_id']);
+                $gamedraw->SetContestantBID($result['gamesets'][$i]['gamedraw']['contestant_b_id']);
+                /**
+                 * TO-DO: Game Mode
+                 */
+                if($result['gamesets'][$i]['gamedraw']['gamemode_id'] == 1){
+                    $result['gamesets'][$i]['gamedraw']['contestant_a'] = $gamedraw->GetTeamContestantA();
+                    $result['gamesets'][$i]['gamedraw']['contestant_b'] = $gamedraw->GetTeamContestantB();
+                }else if($result['gamesets'][$i]['gamedraw']['gamemode_id'] == 2){
+                    $result['gamesets'][$i]['gamedraw']['contestant_a'] = $gamedraw->GetPlayerContestantA();
+                    $result['gamesets'][$i]['gamedraw']['contestant_b'] = $gamedraw->GetPlayerContestantB();
+                }
+                $gameset->SetStatus($result['gamesets'][$i]['gameset_status']);
+                $result['gamesets'][$i]['gamestatus'] = $gameset->GetGameStatus();
+            }
+            $result['status'] = true && $result['status'];
+        }else{
+            $result['message'][] = "ERROR: Load Player.";
+        }
+
+        $database->conn->close();
+
+    }
+    echo json_encode($result);
+}
+
 // R Teams
 if (isset( $_GET['GetTeam']) && $_GET['GetTeam'] != '') {
     $result = array(

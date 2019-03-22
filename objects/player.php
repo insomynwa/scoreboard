@@ -9,7 +9,7 @@ class Player{
     private $name;   //_[string]
     private $team_id;   //_id[int]
     private $arr_gamedraws = array();
-    private $team;
+    private $arr_team = array();
 
     public function __construct( $db ){
         $this->conn = $db;
@@ -82,6 +82,16 @@ class Player{
             $this->arr_gamedraws = $res['gamedraws'];
         }
         return $this->arr_gamedraws;
+    }
+
+    public function GetTeam(){
+        $team = new Team($this->conn);
+        $team->SetID( $this->team_id);
+        $res = $team->GetTeamByID();
+        if( $res['status'] ){
+            $this->arr_team = $res['team'];
+        }
+        return $this->arr_team;
     }
 
     public function GetPlayer(){

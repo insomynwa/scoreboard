@@ -13,6 +13,10 @@ class GameDraw{
     private $contestant_a_id;   //_id_[int]
     private $contestant_b_id;   //_id_[int]
     private $arr_gamesets = array();
+    private $arr_gamemode = array();
+    private $arr_contestant_a = array();
+    private $arr_contestant_b = array();
+    private $arr_gamestatus = array();
 
     public function __construct( $db ){
         $this->conn = $db;
@@ -40,6 +44,70 @@ class GameDraw{
 
     public function SetContestantBID( $contestant_b_id ){
         $this->contestant_b_id = $contestant_b_id;
+    }
+
+    public function SetGameStatusID( $gamestatus_id ){
+        $this->gamestatus_id = $gamestatus_id;
+    }
+
+    public function GetGameMode(){
+        $gamemode = new GameMode($this->conn);
+        $gamemode->SetID( $this->gamemode_id );
+        $tempRes = $gamemode->GetGameModeByID();
+        if( $tempRes['status'] ){
+            $this->arr_gamemode = $tempRes['gamemode'];
+        }
+        return $this->arr_gamemode;
+    }
+
+    public function GetPlayerContestantA(){
+        $player = new Player($this->conn);
+        $player->SetID( $this->contestant_a_id );
+        $tempRes = $player->GetPlayerByID();
+        if( $tempRes['status'] ){
+            $this->arr_contestant_a = $tempRes['player'];
+        }
+        return $this->arr_contestant_a;
+    }
+
+    public function GetPlayerContestantB(){
+        $player = new Player($this->conn);
+        $player->SetID( $this->contestant_b_id );
+        $tempRes = $player->GetPlayerByID();
+        if( $tempRes['status'] ){
+            $this->arr_contestant_b = $tempRes['player'];
+        }
+        return $this->arr_contestant_b;
+    }
+
+    public function GetTeamContestantA(){
+        $team = new Team($this->conn);
+        $team->SetID( $this->contestant_a_id );
+        $tempRes = $team->GetTeamByID();
+        if( $tempRes['status'] ){
+            $this->arr_contestant_a = $tempRes['team'];
+        }
+        return $this->arr_contestant_a;
+    }
+
+    public function GetTeamContestantB(){
+        $team = new Team($this->conn);
+        $team->SetID( $this->contestant_b_id );
+        $tempRes = $team->GetTeamByID();
+        if( $tempRes['status'] ){
+            $this->arr_contestant_b = $tempRes['team'];
+        }
+        return $this->arr_contestant_b;
+    }
+
+    public function GetGameStatus(){
+        $gamestatus = new GameStatus($this->conn);
+        $gamestatus->SetID( $this->gamestatus_id );
+        $tempRes = $gamestatus->GetGameStatusByID();
+        if( $tempRes['status'] ){
+            $this->arr_gamestatus = $tempRes['gamestatus'];
+        }
+        return $this->arr_gamestatus;
     }
 
     public function GetGameSets(){

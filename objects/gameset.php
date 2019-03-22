@@ -12,6 +12,8 @@ class GameSet{
     private $desc;
     private $status;
     private $arr_scores = array();
+    private $arr_gamedraw = array();
+    private $arr_gameset_status = array();
 
     public function __construct( $db ){
         $this->conn = $db;
@@ -39,6 +41,26 @@ class GameSet{
 
     public function SetStatus($status){
         $this->status = $status;
+    }
+
+    public function GetGameStatus(){
+        $gamestatus = new GameStatus($this->conn);
+        $gamestatus->SetID( $this->status );
+        $tempRes = $gamestatus->GetGameStatusByID();
+        if( $tempRes['status'] ){
+            $this->arr_gameset_status = $tempRes['gamestatus'];
+        }
+        return $this->arr_gameset_status;
+    }
+
+    public function GetGameDraw(){
+        $gamedraw = new GameDraw($this->conn);
+        $gamedraw->SetID($this->gamedraw_id);
+        $res = $gamedraw->GetGameDrawByID();
+        if( $res['status'] ){
+            $this->arr_gamedraw = $res['gamedraw'];
+        }
+        return $this->arr_gamedraw;
     }
 
     public function GetScores(){

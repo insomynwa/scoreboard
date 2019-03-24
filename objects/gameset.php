@@ -154,31 +154,34 @@ class GameSet{
 
     public function GetGameSets(){
         $res = array( 'status' => false );
-        $query = "SELECT * FROM " . $this->table_name;
+
+        $query = "SELECT * FROM {$this->table_name}";
 
         if( $result = $this->conn->query( $query ) ){
-            $i = 0;
-            $gamesets = array();
-            while($row = $result->fetch_assoc()) {
-                $gamesets[$i]['id'] = $row['gameset_id'];
-                $gamesets[$i]['num'] = $row['gameset_num'];
-                $gamesets[$i]['desc'] = $row['gameset_desc'];
-                $gamesets[$i]['gamedraw_id'] = $row['gamedraw_id'];
-                $gamesets[$i]['gameset_status'] = $row['gameset_status'];
+            $res['status'] = true;
+            $res['has_value'] = $result->num_rows>0;
+            $res['gamesets'] = array();
+            if($res['has_value']){
+                $i = 0;
+                $gamesets = array();
+                while($row = $result->fetch_assoc()) {
+                    $gamesets[$i]['id'] = $row['gameset_id'];
+                    $gamesets[$i]['num'] = $row['gameset_num'];
+                    $gamesets[$i]['desc'] = $row['gameset_desc'];
+                    $gamesets[$i]['gamedraw_id'] = $row['gamedraw_id'];
+                    $gamesets[$i]['gameset_status'] = $row['gameset_status'];
 
-                $i++;
+                    $i++;
+                }
+
+                $res['gamesets'] = $gamesets;
             }
-
-            $res = array(
-                'gamesets'      => $gamesets,
-                'status'    => true
-            );
         }
 
         return $res;
     }
 
-    public function GetLiveGameSets(){
+    /* public function GetLiveGameSets(){
         $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE gameset_status=2";
 
@@ -186,39 +189,44 @@ class GameSet{
 
             $gameset = array();
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-            $gameset['id'] = $row['gameset_id'];
-            $gameset['num'] = $row['gameset_num'];
-            $gameset['desc'] = $row['gameset_desc'];
-            $gameset['gamedraw_id'] = $row['gamedraw_id'];
-            $gameset['gameset_status'] = $row['gameset_status'];
+            if(is_numeric($row['gameset_id']) && $row['gameset_id'] > 0){
+                $gameset['id'] = $row['gameset_id'];
+                $gameset['num'] = $row['gameset_num'];
+                $gameset['desc'] = $row['gameset_desc'];
+                $gameset['gamedraw_id'] = $row['gamedraw_id'];
+                $gameset['gameset_status'] = $row['gameset_status'];
 
-            $res = array(
-                'gameset'      => $gameset,
-                'status'    => true
-            );
+                $res = array(
+                    'gameset'      => $gameset,
+                    'status'    => true
+                );
+            }else{
+                $res['status'] = false;
+            }
         }
 
         return $res;
-    }
+    } */
 
     public function GetGameSetByID(){
         $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE gameset_id={$this->id}";
 
         if( $result = $this->conn->query( $query ) ){
-
+            $res['status'] = true;
+            $res['has_value'] = false;
             $gameset = array();
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-            $gameset['id'] = $row['gameset_id'];
-            $gameset['num'] = $row['gameset_num'];
-            $gameset['desc'] = $row['gameset_desc'];
-            $gameset['gamedraw_id'] = $row['gamedraw_id'];
-            $gameset['gameset_status'] = $row['gameset_status'];
+            if($row['gameset_id'] > 0){
+                $res['has_value'] = true;
+                $gameset['id'] = $row['gameset_id'];
+                $gameset['num'] = $row['gameset_num'];
+                $gameset['desc'] = $row['gameset_desc'];
+                $gameset['gamedraw_id'] = $row['gamedraw_id'];
+                $gameset['gameset_status'] = $row['gameset_status'];
 
-            $res = array(
-                'gameset'      => $gameset,
-                'status'    => true
-            );
+                $res['gameset'] = $gameset;
+            }
         }
 
         return $res;

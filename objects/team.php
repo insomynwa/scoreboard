@@ -46,21 +46,24 @@ class Team{
         $query = "SELECT * FROM " . $this->table_name;
 
         if( $result = $this->conn->query( $query ) ){
-            $teams = array();
-            $i = 0;
-            while($row = $result->fetch_assoc()) {
-                $teams[$i]['id'] = $row['team_id'];
-                $teams[$i]['logo'] = $row['team_logo'];
-                $teams[$i]['name'] = $row['team_name'];
-                $teams[$i]['initial'] = $row['team_initial'];
-                $teams[$i]['desc'] = $row['team_desc'];
-                $i++;
-            }
+            $res['status'] = true;
+            $res['has_value'] = false;
+            // var_dump($result->num_rows);
+            if($result->num_rows > 0){
+                $teams = array();
+                $i = 0;
+                while($row = $result->fetch_assoc()) {
+                    $teams[$i]['id'] = $row['team_id'];
+                    $teams[$i]['logo'] = $row['team_logo'];
+                    $teams[$i]['name'] = $row['team_name'];
+                    $teams[$i]['initial'] = $row['team_initial'];
+                    $teams[$i]['desc'] = $row['team_desc'];
+                    $i++;
+                }
 
-            $res = array(
-                'teams'      => $teams,
-                'status'    => true
-            );
+                $res['teams'] = $teams;
+                $res['has_value'] = true;
+            }
         }
 
         return $res;

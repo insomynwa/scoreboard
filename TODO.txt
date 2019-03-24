@@ -1,5 +1,5 @@
 [*] Dinamic Game Mode
-[*] Set LIVE Game status
-[*] Set Game status
-[*] Lock Game when finish
-[*] Lock Render when timer on
+[+] Lock Game when finish
+[+] Final Game Result
+[+] Live Game Info
+[+] Set Game status

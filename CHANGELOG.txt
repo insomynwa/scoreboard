@@ -1,8 +1,9 @@
-[+] TODO, CHANGELOG
-[+] VMIX FUNCTION MODE 1
-[+] NO Team default image
+[+] Set LIVE Game status
+[+] VMIX LIVE
+[+] Auto Create Initial VMIX Live Game
+[+] Set Default Scoreboard >> Live Game
 
-[*] Update Score >> Update Score Point & Update Score Point
-[*] Play Timer update score timer
+[*] Change Score Table size
+[*] Read only total point
 
-[-] contestant.php, game.php, tim.php, uploader.php, score.js
+[-] Disable Render

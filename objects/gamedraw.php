@@ -139,20 +139,24 @@ class GameDraw{
         $query = "SELECT * FROM {$this->table_name} ORDER BY gamedraw_num ASC";
 
         if( $result = $this->conn->query( $query ) ){
-            $i = 0;
-            $gamedraws = array();
-            while($row = $result->fetch_assoc()) {
-                $gamedraws[$i]['id'] = $row['gamedraw_id'];
-                $gamedraws[$i]['num'] = $row['gamedraw_num'];
-                $gamedraws[$i]['gamemode_id'] = $row['gamemode_id'];
-                $gamedraws[$i]['gamestatus_id'] = $row['gamestatus_id'];
-                $gamedraws[$i]['contestant_a_id'] = $row['contestant_a_id'];
-                $gamedraws[$i]['contestant_b_id'] = $row['contestant_b_id'];
-
-                $i++;
-            }
-            $res['gamedraws'] = $gamedraws;
             $res['status'] = true;
+            $res['has_value'] = false;
+            if($result->num_rows>0){
+                $res['has_value'] = true;
+                $i = 0;
+                $gamedraws = array();
+                while($row = $result->fetch_assoc()) {
+                    $gamedraws[$i]['id'] = $row['gamedraw_id'];
+                    $gamedraws[$i]['num'] = $row['gamedraw_num'];
+                    $gamedraws[$i]['gamemode_id'] = $row['gamemode_id'];
+                    $gamedraws[$i]['gamestatus_id'] = $row['gamestatus_id'];
+                    $gamedraws[$i]['contestant_a_id'] = $row['contestant_a_id'];
+                    $gamedraws[$i]['contestant_b_id'] = $row['contestant_b_id'];
+
+                    $i++;
+                }
+                $res['gamedraws'] = $gamedraws;
+            }
         }
 
         return $res;
@@ -163,17 +167,20 @@ class GameDraw{
         $query = "SELECT * FROM {$this->table_name} WHERE gamedraw_id={$this->id}";
 
         if( $result = $this->conn->query( $query ) ){
-
-            $gamedraw = array();
-            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-            $gamedraw['id'] = $row['gamedraw_id'];
-            $gamedraw['num'] = $row['gamedraw_num'];
-            $gamedraw['gamemode_id'] = $row['gamemode_id'];
-            $gamedraw['gamestatus_id'] = $row['gamestatus_id'];
-            $gamedraw['contestant_a_id'] = $row['contestant_a_id'];
-            $gamedraw['contestant_b_id'] = $row['contestant_b_id'];
-            $res['gamedraw'] = $gamedraw;
             $res['status'] = true;
+            $res['has_value'] = false;
+            if($result->num_rows > 0){
+                $res['has_value'] = true;
+                $gamedraw = array();
+                $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+                $gamedraw['id'] = $row['gamedraw_id'];
+                $gamedraw['num'] = $row['gamedraw_num'];
+                $gamedraw['gamemode_id'] = $row['gamemode_id'];
+                $gamedraw['gamestatus_id'] = $row['gamestatus_id'];
+                $gamedraw['contestant_a_id'] = $row['contestant_a_id'];
+                $gamedraw['contestant_b_id'] = $row['contestant_b_id'];
+                $res['gamedraw'] = $gamedraw;
+            }
         }
 
         return $res;

@@ -99,17 +99,21 @@ class Player{
         $query = "SELECT * FROM {$this->table_name}";
 
         if($result = $this->conn->query( $query )){
-            $players = array();
-            $i = 0;
-            while($row = $result->fetch_assoc()) {
-                $players[$i]['id'] = $row['player_id'];
-                $players[$i]['name'] = $row['player_name'];
-                $players[$i]['team_id'] = $row['team_id'];
-
-                $i++;
-            }
             $res['status'] = true;
-            $res['players'] = $players;
+            $res['has_value'] = false;
+            if($result->num_rows > 0){
+                $res['has_value'] = true;
+                $players = array();
+                $i = 0;
+                while($row = $result->fetch_assoc()) {
+                    $players[$i]['id'] = $row['player_id'];
+                    $players[$i]['name'] = $row['player_name'];
+                    $players[$i]['team_id'] = $row['team_id'];
+
+                    $i++;
+                }
+                $res['players'] = $players;
+            }
         }
 
         return $res;

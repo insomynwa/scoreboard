@@ -1,9 +1,24 @@
-[+] Set LIVE Game status
-[+] VMIX LIVE
-[+] Auto Create Initial VMIX Live Game
-[+] Set Default Scoreboard >> Live Game
+3.7.0 25-Mar-2019
+    [+] Update Game status
+    [+] Edit Game Status
+    [+] Style.css
+    [+] Unlink Team Previous Logo
+    [+] Lock Game Set when status is finished
+    [+] Lock Game Set Update & Delete when status is LIVE
+    [+] Modal Game Draw Info
 
-[*] Change Score Table size
-[*] Read only total point
+    [*] Default Homepage: scoreboard_2.php to index.php
 
-[-] Disable Render
+    [-] Comment unused function
+    [-] Delete unused file (scoreboard.php, scoreboard_2.php, setup.php)
+
+3.6.0 24-Mar-2019
+    [+] Set LIVE Game status
+    [+] VMIX LIVE
+    [+] Auto Create Initial VMIX Live Game
+    [+] Set Default Scoreboard >> Live Game
+
+    [*] Change Score Table size
+    [*] Read only total point
+
+    [-] Disable Render

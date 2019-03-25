@@ -8,6 +8,7 @@ $(document).ready(function () {
     GetLiveScore();
     LoadData();
     GetGameModes();
+    // GetGameStatus();
     // TestLoadGames();
     /* GetTeam();
     GetPlayer();
@@ -15,7 +16,7 @@ $(document).ready(function () {
     GetGameModes();
     GetGameSet(); */
 
-    function TestLoadGames(){
+    /* function TestLoadGames(){
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -51,9 +52,9 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
-    function InitScoreboard(){
+    /* function InitScoreboard(){
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -63,7 +64,7 @@ $(document).ready(function () {
                 if (data.status) {
                     if(data.has_live_game){
                         GetScore(data.gamedraw_id, data.gameset_id);
-                        $("#scoreboard-gamedraw").val(data.gamedraw_id);
+                        // $("#scoreboard-gamedraw").val(data.gamedraw_id);
                         // $("#scoreboard-gameset").val(data.gameset_id);
                         EnableScoreboard();
                         $("#score-a-timer-play").removeClass("btn-outline-dark").addClass("btn-success").removeAttr("disabled");
@@ -75,7 +76,7 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
     function GetLiveScore() {
 
@@ -86,10 +87,10 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.status) {
                     livegame = data.live_game;
-                    if(data.has_value){
+                    if (data.has_value) {
                         Form_Load_Score(data.score);
                         EnableScoreboard();
-                    }else{
+                    } else {
                         Form_Reset_Score();
                         DisableScoreboard();
                     }
@@ -98,7 +99,7 @@ $(document).ready(function () {
         });
     }
 
-    function LoadData(){
+    function LoadData() {
         GetTeam();
         GetPlayer();
         GetGameDraw();
@@ -138,12 +139,12 @@ $(document).ready(function () {
             success: function (data) {
                 var msg = "";
                 if (data.status) {
-                    if(data.has_value){
+                    if (data.has_value) {
                         Table_Load_Team($("#tbl-team"), data.teams);
                         Option_Load_Team($("#player-team"), data.teams);
                         Option_Load_Team($("#gamedraw-team-a"), data.teams);
                         Option_Load_Team($("#gamedraw-team-b"), data.teams);
-                    }else{
+                    } else {
                         $("#tbl-team").html("<tr><td>0 team. buat dulu!</td></tr>");
                     }
                 } else {
@@ -160,11 +161,11 @@ $(document).ready(function () {
             success: function (data) {
                 var msg = "";
                 if (data.status) {
-                    if(data.has_value){
+                    if (data.has_value) {
                         Table_Load_Player($("#tbl-player"), data.players);
                         Option_Load_Player($("#gamedraw-player-a"), data.players);
                         Option_Load_Player($("#gamedraw-player-b"), data.players);
-                    }else{
+                    } else {
                         $("#tbl-player").html("<tr><td>0 player. buat dulu!</td></tr>");
                     }
                 } else {
@@ -181,11 +182,11 @@ $(document).ready(function () {
             success: function (data) {
                 var msg = "";
                 if (data.status) {
-                    if(data.has_value){
+                    if (data.has_value) {
                         Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraws);
-                        Option_Load_GameDraw($("#scoreboard-gamedraw"), data.gamedraws);
+                        // Option_Load_GameDraw($("#scoreboard-gamedraw"), data.gamedraws);
                         Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
-                    }else{
+                    } else {
                         $("#tbl-gamedraw").html("<tr><td>0 game draw. buat dulu!</td></tr>");
                     }
                 } else {
@@ -202,9 +203,9 @@ $(document).ready(function () {
             success: function (data) {
                 // var msg = "";
                 if (data.status) {
-                    if(data.has_value){
+                    if (data.has_value) {
                         Table_Load_GameSet($("#gameset-table"), data.gamesets);
-                    }else{
+                    } else {
                         $("#gameset-table").html("<tr><td>0 game set. buat dulu!</td></tr>");
                     }
                 } else {
@@ -213,7 +214,7 @@ $(document).ready(function () {
         });
     }
 
-    function GetScore(gamedraw, gameset) {
+    /* function GetScore(gamedraw, gameset) {
 
         $.ajax({
             type: 'GET',
@@ -230,7 +231,7 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
     function GetGameModes() {
         $.ajax({
@@ -241,6 +242,22 @@ $(document).ready(function () {
                 // var msg = "";
                 if (data.status) {
                     Radio_Load_GameMode($("#gamedraw-radio-area"), data.gamemodes);
+                } else {
+                }
+            }
+        });
+    }
+
+    function GetGameStatus() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/scoreboard/controller.php?GetGameStatus=all',
+            success: function (data) {
+                if (data.status) {
+                    if(data.has_value){
+                        Option_Load_GameStatus($("#gameset-status"), data.gamestatuses);
+                    }
                 } else {
                 }
             }
@@ -261,7 +278,7 @@ $(document).ready(function () {
         });
     } */
 
-    function GetGameSetsByGameDraw(gameSetOptionObject, gamedrawid) {
+    /* function GetGameSetsByGameDraw(gameSetOptionObject, gamedrawid) {
 
         $.ajax({
             type: 'GET',
@@ -273,7 +290,7 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
     function GetTeamByID(teamid, modeget) {
         $.ajax({
@@ -395,22 +412,28 @@ $(document).ready(function () {
         var modalTitle = "";
         if (modeget == 'update') {
             modalTitle += "Update";
+            $("#gameset-status-area").removeClass("hide");
             $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).removeAttr("disabled");
             $("#gameset-setnum").val(gamesetdata.num).removeAttr("disabled");
+            $("#gameset-status").val(gamesetdata.gamestatus['id']).removeAttr("disabled");
             $("#gameset-id").val(gamesetdata.id);
             $("#gameset-action").val("update");
             $("#gameset-submit").val("Save");
         } else if (modeget == 'create') {
             modalTitle += "New";
+            $("#gameset-status-area").addClass("hide");
             $("#gameset-gamedraw").val(0).removeAttr("disabled");
             $("#gameset-setnum").val(1).removeAttr("disabled");
+            $("#gameset-status").val(0);
             $("#gameset-id").val(0);
             $("#gameset-action").val("create");
             $("#gameset-submit").val("Create");
         } else if (modeget == 'delete') {
             modalTitle += "Delete";
+            $("#gameset-status-area").removeClass("hide");
             $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).attr("disabled", "disabled");
             $("#gameset-setnum").val(gamesetdata.num).attr("disabled", "disabled");
+            $("#gameset-status").val(gamesetdata.gamestatus['id']).attr("disabled", "disabled");
             $("#gameset-id").val(gamesetdata.id);
             $("#gameset-action").val("delete");
             $("#gameset-submit").val("Delete");
@@ -501,7 +524,7 @@ $(document).ready(function () {
         $("#score-team-a-title").html(contestant_a['name']);
         $("#score-a-timer").val(score_a['timer'] + "s");
         $("#score-a-gamedraw-id").val(scoredata.gamedraw['id']);
-        $("#score-a-gameset-id").val(scoredata.id);
+        $("#score-a-gameset-id").val(scoredata.gameset_id);
         $("#score-a-id").val(score_a['id']);
         $("#score-a-pt1").val(score_a['score_1']);
         $("#score-a-pt2").val(score_a['score_2']);
@@ -519,7 +542,7 @@ $(document).ready(function () {
         $("#score-team-b-title").html(contestant_b['name']);
         $("#score-b-timer").val(score_b['timer'] + "s");
         $("#score-b-gamedraw-id").val(scoredata.gamedraw['id']);
-        $("#score-b-set-id").val(scoredata.id);
+        $("#score-b-gameset-id").val(scoredata.gameset_id);
         $("#score-b-id").val(score_b['id']);
         $("#score-b-pt1").val(score_b['score_1']);
         $("#score-b-pt2").val(score_b['score_2']);
@@ -534,7 +557,7 @@ $(document).ready(function () {
         $("#score-b-desc").val(score_b['desc']);
     }
 
-    function Form_Reset_Score(){
+    function Form_Reset_Score() {
 
         $("#score-team-a-title").html("Team A");
         $("#score-a-timer").val("0s");
@@ -556,7 +579,7 @@ $(document).ready(function () {
         $("#score-team-b-title").html("Team B");
         $("#score-b-timer").val("0s");
         $("#score-b-gamedraw-id").val(0);
-        $("#score-b-set-id").val(0);
+        $("#score-b-gameset-id").val(0);
         $("#score-b-id").val(0);
         $("#score-b-pt1").val(0);
         $("#score-b-pt2").val(0);
@@ -585,20 +608,20 @@ $(document).ready(function () {
     }
 
     function Table_Load_Team(elemTarget, teamsdata) {
-        var tdText = "<thead class='thead-dark'><tr><th class='w-25'></th><th class='w-50'>Team</th><th class='w-25'></th></tr></thead>";
+        var tdText = "<thead class='bg-secondary text-white'><tr><th class='w-25'></th><th class='w-50'>Team</th><th class='w-25'><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
-        for ( var i = 0; i < teamsdata.length; i++) {
+        for (var i = 0; i < teamsdata.length; i++) {
             tdText += "<tr><td><img src='uploads/" + teamsdata[i].logo + "'></td>";
             tdText += "<td><span>" + teamsdata[i].name + "</span></td>";
             tdText += "<td><button data-teamid='" + teamsdata[i].id + "' class='btn btn-sm btn-outline-warning mr-2 team-update-btn-cls'><i class='fas fa-edit'></i></button>";
             tdText += "<button data-teamid='" + teamsdata[i].id + "' class='btn btn-sm btn-outline-danger team-delete-btn-cls'><i class='fas fa-trash-alt'></i></button></td></tr>";
         }
         tdText += "</tbody>";
-        elemTarget.html( tdText );
+        elemTarget.html(tdText);
     }
 
     function Table_Load_Player(elemTarget, playersdata) {
-        var tdText = "<thead class='thead-dark'><tr><th class='w-50'>Player</th><th class='w-25'>Team</th><th class='w-25'></th></tr></thead>";
+        var tdText = "<thead class='bg-secondary text-white'><tr><th class='w-50'>Name</th><th class='w-25'>Team</th><th class='w-25'><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < playersdata.length; i++) {
             tdText += "<tr><td><span>" + playersdata[i].name + "</span></td>";
@@ -611,13 +634,13 @@ $(document).ready(function () {
     }
 
     function Table_Load_GameDraw(elemTarget, gamesdraws_data) {
-        var tdText = "<thead class='thead-dark'><tr><th>Game</th><th></th><th>Draw</th><th>Status</th><th></th></tr></thead>";
+        var tdText = "<thead class='bg-secondary text-white'><tr><th>Game</th><th></th><th>Draw</th><th></th><th><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < gamesdraws_data.length; i++) {
             tdText += "<tr><td><span>" + gamesdraws_data[i].num + "</span></td>";
             tdText += "<td><span>" + gamesdraws_data[i].gamemode['name'] + "</span></td>";
             tdText += "<td><span>" + gamesdraws_data[i].contestant_a['name'] + " vs " + gamesdraws_data[i].contestant_b['name'] + "</span></td>";
-            tdText += "<td><span>" + gamesdraws_data[i].gamestatus['name'] + "</span></td>";
+            tdText += "<td><button data-gamedrawid='" + gamesdraws_data[i].id + "' class='btn btn-sm btn-primary gamedraw-view-btn-cls mr-3'><i class='fas fa-eye'></i></button></td>";
             tdText += "<td><button data-gamedrawid='" + gamesdraws_data[i].id + "' class='btn btn-sm btn-outline-warning mr-2 gamedraw-update-btn-cls'><i class='fas fa-edit'></i></button>";
             tdText += "<button data-gamedrawid='" + gamesdraws_data[i].id + "' class='btn btn-sm btn-outline-danger gamedraw-delete-btn-cls'><i class='fas fa-trash-alt'></i></button></td></tr>";
         }
@@ -625,21 +648,53 @@ $(document).ready(function () {
         elemTarget.html(tdText);
     }
 
+    function Table_Load_GameDrawInfo(elemTarget, gamedraw) {
+        var tdText = "<thead class='bg-dark text-white'><tr><th>Set</th><th>" + gamedraw.contestant_a['name'] + "</th><th>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
+        tdText += "<tbody>";
+        for (i = 0; i < (gamedraw.gamesets).length; i++) {
+            tdText += "<tr><td><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
+            var winnerACSS = "";
+            var winnerBCSS = winnerACSS;
+            var setpoint_a = gamedraw.gamesets[i]['score_a']['point'];
+            var setpoint_b = gamedraw.gamesets[i]['score_b']['point'];
+            if( setpoint_a > setpoint_b){
+                winnerACSS = "class='bg-success text-white'";
+            }else if( setpoint_a < setpoint_b ){
+                winnerBCSS = "class='bg-success text-white'";
+            }
+            tdText += "<td " + winnerACSS + "><span>" + setpoint_a + "</span></td>";
+            tdText += "<td " + winnerBCSS + "><span>" + setpoint_b + "</span></td>";
+            tdText += "</tr>";
+        }
+        tdText += "</tbody>";
+        elemTarget.html(tdText);
+    }
+
     function Table_Load_GameSet(elemTarget, gamesetsdata) {
-        var tdText = "<thead class='thead-dark'><tr><th>Game</th><th>Draw</th><th>Set</th><th>Status</th><th></th><th></th></tr></thead>";
+        var tdText = "<thead class='bg-secondary text-white'><tr><th>Game</th><th>Draw</th><th>Set</th><th>Status</th><th><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < gamesetsdata.length; i++) {
             tdText += "<tr><td><span>" + gamesetsdata[i].gamedraw['num'] + "</span></td>";
             tdText += "<td><span>" + gamesetsdata[i].gamedraw['contestant_a']['name'] + " vs " + gamesetsdata[i].gamedraw['contestant_b']['name'] + "</span></td>";
             tdText += "<td><span>" + gamesetsdata[i].num + "</span></td>";
-            if(gamesetsdata[i].id==livegame){
-                // tdText += "<td><span>" + gamesetsdata[i].gamestatus['name'] + "</span></td>";
-                tdText += "<td><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-danger gameset-stoplive-btn-cls'><i class='fas fa-stop-circle'></i></button></td>";
+            if(gamesetsdata[i].gamestatus['id']<3){
+                if (gamesetsdata[i].id == livegame) {
+                    // tdText += "<td><span>" + gamesetsdata[i].gamestatus['name'] + "</span></td>";
+                    tdText += "<td><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-danger gameset-stoplive-btn-cls mr-3'><i class='fas fa-stop-circle'></i></button>";
+                } else {
+                    tdText += "<td><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-success gameset-live-btn-cls mr-3'><i class='fas fa-play-circle'></i></button>";
+                }
             }else{
-                tdText += "<td><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-success gameset-live-btn-cls'><i class='fas fa-play-circle'></i></button>";
+                tdText += "<td><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-primary gameset-view-btn-cls mr-3'><i class='fas fa-eye'></i></button>";
             }
-            tdText += "<td><button data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-outline-warning mr-2 gameset-update-btn-cls'><i class='fas fa-edit'></i></button>";
-            tdText += "<button data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-outline-danger gameset-delete-btn-cls'><i class='fas fa-trash-alt'></i></button></td></tr>";
+            tdText += "<span>" + gamesetsdata[i].gamestatus['name'] + "</span>";
+            tdText += "</td>";
+            var statusTxt = "";
+            if(gamesetsdata[i].gameset_status == 2){
+                statusTxt += "disabled='disabled'";
+            }
+            tdText += "<td><button data-gamesetid='" + gamesetsdata[i].id + "' " + statusTxt + " class='btn btn-sm btn-outline-warning mr-2 gameset-update-btn-cls'><i class='fas fa-edit'></i></button>";
+            tdText += "<button data-gamesetid='" + gamesetsdata[i].id + "' " + statusTxt + " class='btn btn-sm btn-outline-danger gameset-delete-btn-cls'><i class='fas fa-trash-alt'></i></button></td></tr>";
         }
         tdText += "</tbody>";
         elemTarget.html(tdText);
@@ -669,7 +724,15 @@ $(document).ready(function () {
         $(elemTarget).html(opText);
     }
 
-    function Option_Load_GameSet(gameSetOptionObject, gamesets) {
+    function Option_Load_GameStatus(elemTarget, gamestatuses) {
+        var opText = "<option value='0'>Select a status</option>";
+        for (i = 0; i < gamestatuses.length; i++) {
+            opText += "<option value='" + gamestatuses[i].id + "'>" + gamestatuses[i].name + "</option>";
+        }
+        elemTarget.html(opText);
+    }
+
+    /* function Option_Load_GameSet(gameSetOptionObject, gamesets) {
         var opText = "<option value='0'>Select a game set</option>";
         if (gamesets.length > 0) {
             for (i = 0; i < gamesets.length; i++) {
@@ -679,57 +742,57 @@ $(document).ready(function () {
             opText += "";
         }
         gameSetOptionObject.html(opText);
-    }
+    } */
 
-    function DisableScoreboard(){
+    function DisableScoreboard() {
         DisableScoreA();
         DisableScoreB();
     }
 
-    function EnableScoreboard(){
+    function EnableScoreboard() {
         EnableScoreA();
         EnableScoreB();
     }
 
-    function EnableScoreA(){
+    function EnableScoreA() {
         $("#form-score-a :input").prop("disabled", false);
         $("#score-a-timer-pause").removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
         $("#score-a-timer-play").removeClass("btn-outline-dark").addClass("btn-success").removeAttr("disabled").removeClass("play-on-cls");
     }
 
-    function EnableScoreB(){
+    function EnableScoreB() {
         $("#form-score-b :input").prop("disabled", false);
         $("#score-b-timer-pause").removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
         $("#score-b-timer-play").removeClass("btn-outline-dark").addClass("btn-success").removeAttr("disabled").removeClass("play-on-cls");
     }
 
-    function DisableScoreA(){
+    function DisableScoreA() {
         $("#form-score-a :input").prop("disabled", true);
         $("#score-a-timer-play").removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
         $("#score-a-timer-pause").removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
     }
 
-    function DisableScoreB(){
+    function DisableScoreB() {
         $("#form-score-b :input").prop("disabled", true);
         $("#score-b-timer-play").removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
         $("#score-b-timer-pause").removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
     }
 
-    function LockScoreboardFilter() {
+    /* function LockScoreboardFilter() {
         $("#scoreboard-gamedraw").attr("disabled", "disabled");
         $("#scoreboard-gameset").attr("disabled", "disabled");
         $("#scoreboard-render-btn").attr("disabled", "disabled");
-    }
+    } */
 
-    function UnlockScoreboardFilter() {
+    /* function UnlockScoreboardFilter() {
         $("#scoreboard-gamedraw").removeAttr("disabled");
         $("#scoreboard-gameset").removeAttr("disabled");
         $("#scoreboard-render-btn").removeAttr("disabled");
-    }
+    } */
 
-    function ErrorMessage(elemTarget, message) {
+    /* function ErrorMessage(elemTarget, message) {
         elemTarget.html(message);
-    }
+    } */
 
     $(document).on('click', '.team-update-btn-cls', function (e) {
         e.preventDefault();
@@ -753,6 +816,25 @@ $(document).ready(function () {
         e.preventDefault();
         var playerid = $(this).attr("data-playerid");
         GetPlayerByID(playerid, 'delete');
+    });
+
+    $(document).on('click', '.gamedraw-view-btn-cls', function (e) {
+        e.preventDefault();
+        var gamedrawid = $(this).attr("data-gamedrawid");
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/scoreboard/controller.php?GetGameDrawInfo=' + gamedrawid,
+            success: function (data) {
+                if (data.status) {
+                    if(data.has_value){
+                        Table_Load_GameDrawInfo($("#gamedraw-info-modal-table"),data.gamedraw);
+                        $("#gamedraw-info-modal").modal();
+                    }
+                    // Form_Load_GameDraw(data.gamedraw, modeget);
+                }
+            }
+        });
     });
 
     $(document).on('click', '.gamedraw-update-btn-cls', function (e) {
@@ -786,30 +868,33 @@ $(document).ready(function () {
     $(document).on('click', '.gameset-update-btn-cls', function (e) {
         e.preventDefault();
         var gamesetid = $(this).attr("data-gamesetid");
+        GetGameStatus();
         GetGameSetByID(gamesetid, 'update');
     });
 
     $(document).on('click', '.gameset-delete-btn-cls', function (e) {
         e.preventDefault();
         var gamesetid = $(this).attr("data-gamesetid");
+        GetGameStatus();
         GetGameSetByID(gamesetid, 'delete');
     });
 
     $(document).on('click', '.gameset-stoplive-btn-cls', function (e) {
         e.preventDefault();
-        /* var gamedrawid = $(this).attr("data-gamedrawid");
-        var gamesetid = $(this).attr("data-gamesetid");
-        GetGameSetByID(gamesetid, 'delete'); */
+        // var gamedrawid = $(this).attr("data-gamedrawid");
+        // var gamesetid = $(this).attr("data-gamesetid");
+        // GetGameSetByID(gamesetid, 'delete');
         if ($("#score-a-timer-play").hasClass("play-on-cls") || $("#score-b-timer-play").hasClass("play-on-cls")) {
             alert("Please pause/stop timer");
         } else {
-            $.post("controller.php",{
-                    vmix_action: 'stop-live-game',
-                    gamesetid: 0
-                },
-                function(data, status){
+            var gameset = $(this).attr("data-gamesetid");
+            $.post("controller.php", {
+                vmix_action: 'stop-live-game',
+                gamesetid: gameset
+            },
+                function (data, status) {
                     var result = $.parseJSON(data);
-                    if(result.status){
+                    if (result.status) {
                         Form_Reset_Score();
                         DisableScoreboard();
                         GetLiveScore();
@@ -827,13 +912,13 @@ $(document).ready(function () {
         } else {
             // var gamedraw = $(this).attr("data-gamedrawid");
             var gameset = $(this).attr("data-gamesetid");
-            $.post("controller.php",{
-                    vmix_action: 'set-live-game',
-                    gamesetid: gameset
-                },
-                function(data, status){
+            $.post("controller.php", {
+                vmix_action: 'set-live-game',
+                gamesetid: gameset
+            },
+                function (data, status) {
                     var result = $.parseJSON(data);
-                    if(result.status){
+                    if (result.status) {
                         GetLiveScore();
                         GetGameSet();
                     }
@@ -858,7 +943,7 @@ $(document).ready(function () {
         Form_Load_GameSet(false, 'create');
     });
 
-    $("#scoreboard-render-btn").click(function (e) {
+    /* $("#scoreboard-render-btn").click(function (e) {
         e.preventDefault();
         if ($("#score-a-timer-play").hasClass("play-on-cls") || $("#score-b-timer-play").hasClass("play-on-cls")) {
             alert("Please pause/stop timer");
@@ -871,7 +956,7 @@ $(document).ready(function () {
                 alert("Please select Game Draw & Set");
             }
         }
-    });
+    }); */
 
     $("#scoreboard-filter-lock").click(function (e) {
         e.preventDefault();
@@ -920,7 +1005,7 @@ $(document).ready(function () {
         }
     }); */
 
-    $("#scoreboard-gamedraw").on("change", function () {
+    /* $("#scoreboard-gamedraw").on("change", function () {
         var gameDrawID = "", gameSetOptionObject = null;
         gameDrawID = $("#scoreboard-gamedraw").val();
         gameSetOptionObject = $("#scoreboard-gameset");
@@ -931,7 +1016,7 @@ $(document).ready(function () {
         } else {
             GetGameSetsByGameDraw(gameSetOptionObject, gameDrawID);
         }
-    });
+    }); */
 
     $("#form-team").on('submit', function (e) {
         e.preventDefault();
@@ -961,6 +1046,11 @@ $(document).ready(function () {
                     GetPlayer();
                     GetGameDraw();
                     GetGameSet(); */
+                    if (result.action == 'update') {
+                        if (result.new_logo != '') {
+                            $("#team-modal-image").attr("src", "uploads/" + result.new_logo).removeClass("hide");
+                        }
+                    }
                     if (result.action == 'delete') {
                         $("#form-team-modal").modal("hide");
                         GetLiveScore();
@@ -1117,6 +1207,13 @@ $(document).ready(function () {
         });
 
         request.done(function (response, textStatus, jqXHR) {
+            var data = $.parseJSON(response);
+            if(data.status){
+                if(data.lock_gameset){
+                    GetLiveScore();
+                    GetGameSet();
+                }
+            }
         });
     });
 
@@ -1140,6 +1237,13 @@ $(document).ready(function () {
         });
 
         request.done(function (response, textStatus, jqXHR) {
+            var data = $.parseJSON(response);
+            if(data.status){
+                if(data.lock_gameset){
+                    GetLiveScore();
+                    GetGameSet();
+                }
+            }
         });
     });
 })
@@ -1151,43 +1255,43 @@ var timer = null,
     interval = 1000,
     counterA = 0,
     counterB = 0;
-function pauseA() {
+function PauseTimerA() {
     clearInterval(timer);
     timer = null;
     isPlayA = false;
 }
-function pauseB() {
+function PauseTimerB() {
     clearInterval(timerB);
     timerB = null;
     isPlayB = false;
 }
-function playA() {
+function PlayTimerA() {
     if (timer !== null) return;
     timer = setInterval(function () {
-        if(counterA<0) counterA = 0;
+        if (counterA < 0) counterA = 0;
         $("#score-a-timer").val(counterA + "s");
-        $.post("controller.php",{
+        $.post("controller.php", {
             score_timer_action: 'update-timer-a',
             score_a_id: $("#score-a-id").val(),
             timer_a: counterA
         },
-        function(data, status){
-            // console.log(data);
-        });
+            function (data, status) {
+                // console.log(data);
+            });
         counterA--;
     }, interval);
 }
-function playB() {
+function PlayTimerB() {
     if (timerB !== null) return;
     timerB = setInterval(function () {
-        if(counterB<0) counterB = 0;
+        if (counterB < 0) counterB = 0;
         $("#score-b-timer").val(counterB + "s");
-        $.post("controller.php",{
-                score_timer_action: 'update-timer-b',
-                score_b_id: $("#score-b-id").val(),
-                timer_b: counterB
-            },
-            function(data, status){
+        $.post("controller.php", {
+            score_timer_action: 'update-timer-b',
+            score_b_id: $("#score-b-id").val(),
+            timer_b: counterB
+        },
+            function (data, status) {
                 // console.log(data);
             }
         );
@@ -1199,28 +1303,28 @@ $("#score-a-timer-pause").click(function (e) {
     $("#score-a-submit").removeAttr("disabled");
     $(this).removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
     $("#score-a-timer-play").removeClass("btn-outline-dark").addClass("btn-success").removeAttr("disabled").removeClass("play-on-cls");
-    pauseA();
+    PauseTimerA();
 });
 $("#score-a-timer-play").click(function (e) {
     e.preventDefault();
-    $("#score-a-submit").attr("disabled","disabled");
+    $("#score-a-submit").attr("disabled", "disabled");
     counterA = parseInt(($("#score-a-timer").val()).replace("s", ""));
     $(this).removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled").addClass("play-on-cls");
     $("#score-a-timer-pause").removeClass("btn-outline-dark").addClass("btn-success").removeAttr("disabled");
-    playA();
+    PlayTimerA();
 });
 $("#score-b-timer-pause").click(function (e) {
     e.preventDefault();
     $("#score-b-submit").removeAttr("disabled");
     $(this).removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled");
     $("#score-b-timer-play").removeClass("btn-outline-dark").addClass("btn-success").removeAttr("disabled").removeClass("play-on-cls");
-    pauseB();
+    PauseTimerB();
 });
 $("#score-b-timer-play").click(function (e) {
     e.preventDefault();
-    $("#score-b-submit").attr("disabled","disabled");
+    $("#score-b-submit").attr("disabled", "disabled");
     $(this).removeClass("btn-success").addClass("btn-outline-dark").attr("disabled", "disabled").addClass("play-on-cls");
     $("#score-b-timer-pause").removeClass("btn-outline-dark").addClass("btn-success").removeAttr("disabled");
     counterB = parseInt(($("#score-b-timer").val()).replace("s", ""));
-    playB();
+    PlayTimerB();
 });

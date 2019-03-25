@@ -168,9 +168,8 @@ class GameDraw{
 
         if( $result = $this->conn->query( $query ) ){
             $res['status'] = true;
-            $res['has_value'] = false;
-            if($result->num_rows > 0){
-                $res['has_value'] = true;
+            $res['has_value'] = $result->num_rows > 0;
+            if($res['has_value']){
                 $gamedraw = array();
                 $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
                 $gamedraw['id'] = $row['gamedraw_id'];
@@ -214,7 +213,7 @@ class GameDraw{
         return $res;
     }
 
-    public function DeleteGameDrawsByPlayer(){
+    /* public function DeleteGameDrawsByPlayer(){
         $res = array( 'status' => false );
         if( $this->countGameDrawByPlayer() > 0){
             $sql = "DELETE FROM {$this->table_name} WHERE gamemode_id=2 AND ( contestant_a_id={$this->contestant_id} OR contestant_b_id={$this->contestant_id} )";
@@ -229,16 +228,16 @@ class GameDraw{
         }
 
         return $res;
-    }
+    } */
 
-    private function countGameDrawByPlayer(){
+    /* private function countGameDrawByPlayer(){
         $sql = "SELECT COUNT(*) as nGameDraw FROM {$this->table_name} WHERE gamemode_id={$this->gamemode_id} AND ( contestant_a_id={$this->contestant_id} OR contestant_b_id={$this->contestant_id} )";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
         return $row['nGameDraw'];
-    }
+    } */
 
     public function GetGameDrawsByPlayerID(){
 

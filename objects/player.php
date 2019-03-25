@@ -33,9 +33,7 @@ class Player{
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
 
-            $res = array(
-                'status'    => true
-            );
+            $res['status'] = true;
         }
 
         return $res;

@@ -20,32 +20,28 @@ class GameStatus{
         $this->id = $id;
     }
 
-    /* public function GetGameStatuses(){
-        $query = "SELECT * FROM " . $this->table_name;
+    public function GetGameStatuses(){
+        $res['status'] = false;
+        $query = "SELECT * FROM {$this->table_name}";
 
-        $result = $this->conn->query( $query );
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = true;
+            $res['has_value'] = $result->num_rows > 0;
+            if($res['has_value']){
+                $i = 0;
+                $gamestatuses = array();
+                while($row = $result->fetch_assoc()) {
+                    $gamestatuses[$i]['id'] = $row['gamestatus_id'];
+                    $gamestatuses[$i]['name'] = $row['gamestatus_name'];
 
-        $res = array( 'gamestatuses' => array(), 'status' => $result->num_rows > 0 );
-
-        if( $res['status'] ){
-            $i = 0;
-            $gamestatuss = null;
-            while($row = $result->fetch_assoc()) {
-                $gamestatuss[$i]['id'] = $row['gamestatus_id'];
-                $gamestatuss[$i]['name'] = $row['gamestatus_name'];
-                $gamestatuss[$i]['desc'] = $row['gamestatus_desc'];
-
-                $i++;
+                    $i++;
+                }
+                $res['gamestatuses'] = $gamestatuses;
             }
-
-            $res = array(
-                'gamestatuss'      => $gamestatuss,
-                'status'    => true
-            );
         }
 
         return $res;
-    } */
+    }
 
     public function GetGameStatusByID(){
         $res = array ( 'status' => false );

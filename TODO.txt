@@ -1,5 +1,5 @@
 [*] Dinamic Game Mode
-[+] Lock Game when finish
-[+] Final Game Result
-[+] Live Game Info
-[+] Set Game status
+[*] Dinamic Game Set Status
+[+] Modal Game Set Info
+[+] Error Message
+[+] VMIX Game Draw Result Info

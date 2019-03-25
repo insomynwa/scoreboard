@@ -90,13 +90,13 @@ class VMIX_LIVE{
         return $res;
     }
 
-    public function CountLiveGame(){
+    /* public function CountLiveGame(){
         $sql = "SELECT COUNT(*) as nLiveGame FROM {$this->table_name}";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
         return $row['nLiveGame'];
-    }
+    } */
 }
 ?>

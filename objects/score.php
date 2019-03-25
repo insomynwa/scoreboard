@@ -141,7 +141,7 @@ class Score{
         return $res;
     }
 
-    public function DeleteScoreByGameSetID(){
+    /* public function DeleteScoreByGameSetID(){
         $sql = "DELETE FROM {$this->table_name} WHERE gameset_id={$this->gameset_id}";
 
         $res = array( 'status' => false );
@@ -153,7 +153,7 @@ class Score{
         }
 
         return $res;
-    }
+    } */
 
     public function GetScoreByGameSetAndContestant(){
         $res = array( 'status' => false );

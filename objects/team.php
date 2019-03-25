@@ -21,6 +21,23 @@ class Team{
         $this->id = $teamid;
     }
 
+    public function GetLogo(){
+        $res = array( 'status' => false );
+        $query = "SELECT team_logo FROM {$this->table_name} WHERE team_id={$this->id} LIMIT 1";
+
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = true;
+            $res['has_value'] = $result->num_rows > 0;
+            if($res['has_value']){
+                $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+                $res['logo'] = $row['team_logo'];
+            }
+        }
+
+        return $res;
+    }
+
     public function GetGameDraws(){
         $gamedraws = new GameDraw($this->conn);
         $gamedraws->SetContestantID($this->id);

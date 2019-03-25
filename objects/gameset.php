@@ -91,7 +91,21 @@ class GameSet{
     }
 
     public function UpdateGameSet(){
-        $sql = "UPDATE " . $this->table_name . " SET gameset_num={$this->num} WHERE gameset_id={$this->id}";
+        $sql = "UPDATE " . $this->table_name . " SET gameset_num={$this->num}, gameset_status={$this->status} WHERE gameset_id={$this->id}";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    public function UpdateStatusGameSet(){
+        $sql = "UPDATE {$this->table_name} SET gameset_status={$this->status} WHERE gameset_id={$this->id}";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
@@ -143,14 +157,14 @@ class GameSet{
         return $res;
     }
 
-    public function CountGameSetsByGameDraw(){
+    /* public function CountGameSetsByGameDraw(){
         $sql = "SELECT COUNT(*) as nGameSet FROM {$this->table_name} WHERE gamedraw_id={$this->gamedraw_id}";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
         return $row['nGameSet'];
-    }
+    } */
 
     public function GetGameSets(){
         $res = array( 'status' => false );

@@ -13,12 +13,16 @@ class GameMode{
         $this->conn = $db;
     }
 
+    public function SetID( $id ){
+        $this->id = $id;
+    }
+
     public function SetName( $name ){
         $this->name = $name;
     }
 
-    public function SetID( $id ){
-        $this->id = $id;
+    public function SetDesc( $desc ){
+        $this->desc = $desc;
     }
 
     public function GetGameModes(){
@@ -65,6 +69,29 @@ class GameMode{
         }
 
         return $res;
+    }
+
+    public function CreateDefaultGameMode(){
+        $sql = "INSERT INTO {$this->table_name} (gamemode_id,gamemode_name,gamemode_desc) VALUES ({$this->id}, '{$this->name}', '{$this->desc}')";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    public function CountGameMode(){
+        $sql = "SELECT COUNT(*) as nGameMode FROM {$this->table_name}";
+
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        return $row['nGameMode'];
     }
 }
 ?>

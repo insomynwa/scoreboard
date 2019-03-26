@@ -33,17 +33,14 @@ class VMIX_LIVE{
 
     public function GetLiveGameID(){
         $res = array( 'status' => false );
-        $query = "SELECT * FROM {$this->table_name} LIMIT 1";
+        $query = "SELECT * FROM {$this->table_name} WHERE vmix_live_id=1 LIMIT 1";
 
         if( $result = $this->conn->query( $query ) ){
-
+            $res['status'] = true;
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
             if(is_numeric($row['vmix_live_id']) && $row['vmix_live_id'] > 0){
 
-                $res = array(
-                    'live_game'      => $row['gameset_id'],
-                    'status'    => true
-                );
+                $res['live_game'] = $row['gameset_id'];
             }
         }
 
@@ -51,7 +48,7 @@ class VMIX_LIVE{
     }
 
     public function UpdateLiveGame(){
-        $query = "UPDATE {$this->table_name} SET gameset_id={$this->gameset_id}";
+        $query = "UPDATE {$this->table_name} SET gameset_id={$this->gameset_id} WHERE vmix_live_id=1";
 
         $result = $this->conn->query( $query );
 
@@ -77,7 +74,7 @@ class VMIX_LIVE{
     }
 
     public function CreateDefaultLiveGame(){
-        $sql = "INSERT INTO {$this->table_name} (gameset_id) VALUES (0)";
+        $sql = "INSERT INTO {$this->table_name} (vmix_live_id,gameset_id) VALUES (1,0)";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
@@ -90,13 +87,13 @@ class VMIX_LIVE{
         return $res;
     }
 
-    /* public function CountLiveGame(){
+    public function CountLiveGame(){
         $sql = "SELECT COUNT(*) as nLiveGame FROM {$this->table_name}";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
         return $row['nLiveGame'];
-    } */
+    }
 }
 ?>

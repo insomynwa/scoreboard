@@ -5,9 +5,10 @@ $(document).ready(function () {
 
     // InitScoreboard();
     // DisableScoreboard();
-    GetLiveScore();
+    InitSetup();
+    /* GetLiveScore();
     LoadData();
-    GetGameModes();
+    GetGameModes(); */
     // GetGameStatus();
     // TestLoadGames();
     /* GetTeam();
@@ -77,6 +78,22 @@ $(document).ready(function () {
             }
         });
     } */
+
+    function InitSetup() {
+
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/scoreboard/controller.php?InitSetup=1',
+            success: function (data) {
+                if (data.status) {
+                    GetLiveScore();
+                    LoadData();
+                    GetGameModes();
+                }
+            }
+        });
+    }
 
     function GetLiveScore() {
 
@@ -416,6 +433,7 @@ $(document).ready(function () {
             $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).removeAttr("disabled");
             $("#gameset-setnum").val(gamesetdata.num).removeAttr("disabled");
             $("#gameset-status").val(gamesetdata.gamestatus['id']).removeAttr("disabled");
+            $("#gameset-prev-status").val(gamesetdata.gamestatus['id']);
             $("#gameset-id").val(gamesetdata.id);
             $("#gameset-action").val("update");
             $("#gameset-submit").val("Save");
@@ -425,6 +443,7 @@ $(document).ready(function () {
             $("#gameset-gamedraw").val(0).removeAttr("disabled");
             $("#gameset-setnum").val(1).removeAttr("disabled");
             $("#gameset-status").val(0);
+            $("#gameset-prev-status").val(0);
             $("#gameset-id").val(0);
             $("#gameset-action").val("create");
             $("#gameset-submit").val("Create");
@@ -434,6 +453,7 @@ $(document).ready(function () {
             $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).attr("disabled", "disabled");
             $("#gameset-setnum").val(gamesetdata.num).attr("disabled", "disabled");
             $("#gameset-status").val(gamesetdata.gamestatus['id']).attr("disabled", "disabled");
+            $("#gameset-prev-status").val(gamesetdata.gamestatus['id']);
             $("#gameset-id").val(gamesetdata.id);
             $("#gameset-action").val("delete");
             $("#gameset-submit").val("Delete");
@@ -649,6 +669,10 @@ $(document).ready(function () {
     }
 
     function Table_Load_GameDrawInfo(elemTarget, gamedraw) {
+        var total_setpoint_a = 0;
+        var total_setpoint_b = 0;
+        var gameWinnerAClass = "";
+        var gameWinnerBClass = "";
         var tdText = "<thead class='bg-dark text-white'><tr><th>Set</th><th>" + gamedraw.contestant_a['name'] + "</th><th>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < (gamedraw.gamesets).length; i++) {
@@ -657,15 +681,26 @@ $(document).ready(function () {
             var winnerBCSS = winnerACSS;
             var setpoint_a = gamedraw.gamesets[i]['score_a']['point'];
             var setpoint_b = gamedraw.gamesets[i]['score_b']['point'];
+            total_setpoint_a += parseInt(setpoint_a);
+            total_setpoint_b += parseInt(setpoint_b);
             if( setpoint_a > setpoint_b){
-                winnerACSS = "class='bg-success text-white'";
+                winnerACSS = "class='text-success font-weight-bold'";
             }else if( setpoint_a < setpoint_b ){
-                winnerBCSS = "class='bg-success text-white'";
+                winnerBCSS = "class='text-success font-weight-bold'";
             }
             tdText += "<td " + winnerACSS + "><span>" + setpoint_a + "</span></td>";
             tdText += "<td " + winnerBCSS + "><span>" + setpoint_b + "</span></td>";
             tdText += "</tr>";
         }
+        if( total_setpoint_a > total_setpoint_b){
+            gameWinnerAClass = "bg-success text-white";
+        }else if( total_setpoint_a < total_setpoint_b ){
+            gameWinnerBClass = "bg-success text-white";
+        }
+        tdText += "<tr><td class='font-weight-bold'>Total</td>";
+        tdText += "<td class='font-weight-bold " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
+        tdText += "<td class='font-weight-bold " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
+        tdText += "</tr>";
         tdText += "</tbody>";
         elemTarget.html(tdText);
     }
@@ -696,6 +731,37 @@ $(document).ready(function () {
             tdText += "<td><button data-gamesetid='" + gamesetsdata[i].id + "' " + statusTxt + " class='btn btn-sm btn-outline-warning mr-2 gameset-update-btn-cls'><i class='fas fa-edit'></i></button>";
             tdText += "<button data-gamesetid='" + gamesetsdata[i].id + "' " + statusTxt + " class='btn btn-sm btn-outline-danger gameset-delete-btn-cls'><i class='fas fa-trash-alt'></i></button></td></tr>";
         }
+        tdText += "</tbody>";
+        elemTarget.html(tdText);
+    }
+
+    function Table_Load_GameSetInfo(elemTarget, gameset) {
+        var tdText = "<thead class='bg-dark text-white'><tr><th>Point</th><th>" + gameset.contestant_a['name'] + "</th><th>" + gameset.contestant_a['name'] + "</th></tr></thead>";
+        tdText += "<tbody>";
+        tdText += "<tr><td>1</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['score_1'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['score_1'] + "</td></tr>";
+        tdText += "<tr><td>2</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['score_2'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['score_2'] + "</td></tr>";
+        tdText += "<tr><td>3</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['score_3'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['score_3'] + "</td></tr>";
+        tdText += "<tr><td>4</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['score_4'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['score_4'] + "</td></tr>";
+        tdText += "<tr><td>5</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['score_5'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['score_5'] + "</td></tr>";
+        tdText += "<tr><td>6</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['score_6'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['score_6'] + "</td></tr>";
+        tdText += "<tr><td>Total</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['total'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['total'] + "</td></tr>";
+        tdText += "<tr><td>Set Points</td>";
+        tdText += "<td>" + gameset.contestant_a['score']['point'] + "</td>";
+        tdText += "<td>" + gameset.contestant_b['score']['point'] + "</td></tr>";
         tdText += "</tbody>";
         elemTarget.html(tdText);
     }
@@ -832,6 +898,25 @@ $(document).ready(function () {
                         $("#gamedraw-info-modal").modal();
                     }
                     // Form_Load_GameDraw(data.gamedraw, modeget);
+                }
+            }
+        });
+    });
+
+    $(document).on('click', '.gameset-view-btn-cls', function (e) {
+        e.preventDefault();
+        var gamesetid = $(this).attr("data-gamesetid");
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/scoreboard/controller.php?GetGameSetInfo=' + gamesetid,
+            success: function (data) {
+                if (data.status) {
+                    if(data.has_value){
+                        Table_Load_GameSetInfo($("#gameset-info-modal-table"),data.gameset);
+                        $("#gameset-info-modal").modal();
+                    }
+                    // Form_Load_GameDraw(data.gameset, modeget);
                 }
             }
         });
@@ -1210,8 +1295,8 @@ $(document).ready(function () {
             var data = $.parseJSON(response);
             if(data.status){
                 if(data.lock_gameset){
-                    GetLiveScore();
-                    GetGameSet();
+                    // GetLiveScore();
+                    // GetGameSet();
                 }
             }
         });
@@ -1240,8 +1325,8 @@ $(document).ready(function () {
             var data = $.parseJSON(response);
             if(data.status){
                 if(data.lock_gameset){
-                    GetLiveScore();
-                    GetGameSet();
+                    // GetLiveScore();
+                    // GetGameSet();
                 }
             }
         });

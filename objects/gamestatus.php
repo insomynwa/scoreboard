@@ -61,5 +61,28 @@ class GameStatus{
         return $res;
     }
 
+    public function CreateDefaultGameStatus(){
+        $sql = "INSERT INTO {$this->table_name} (gamestatus_id,gamestatus_name) VALUES ({$this->id}, '{$this->name}')";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    public function CountGameStatus(){
+        $sql = "SELECT COUNT(*) as nGameStatus FROM {$this->table_name}";
+
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        return $row['nGameStatus'];
+    }
+
 }
 ?>

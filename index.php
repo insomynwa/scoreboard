@@ -56,7 +56,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" size="10" class="form-control" name="score_a_timer" id="score-a-timer"></td>
+                            <td><input type="text" readonly size="10" class="form-control" name="score_a_timer" id="score-a-timer"></td>
                             <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt1" id="score-a-pt1" value=""></td>
                             <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt2" id="score-a-pt2" value=""></td>
                             <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt3" id="score-a-pt3" value=""></td>
@@ -108,7 +108,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" size="10" class="form-control" name="score_b_timer" id="score-b-timer"></td>
+                            <td><input type="text" readonly size="10" class="form-control" name="score_b_timer" id="score-b-timer"></td>
                             <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt1" id="score-b-pt1" value=""></td>
                             <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt2" id="score-b-pt2" value=""></td>
                             <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt3" id="score-b-pt3" value=""></td>
@@ -208,6 +208,7 @@
                         <option value='0'>-</option>
                     </select>
                 </div>
+                <input type="hidden" id="gameset-prev-status" name="gameset_prev_status" value="1">
                 <input type="hidden" id="gameset-id" name="gameset_id" value="0">
                 <input type="hidden" id="gameset-action" name="gameset_action" value="create">
                 <input type="submit" value="Save" class="btn btn-primary" id="gameset-submit">
@@ -369,6 +370,32 @@
         <!-- Modal body -->
         <div class="modal-body">
             <table class="table table-sm" id="gamedraw-info-modal-table">
+                <tr><td>Nothing</td></tr>
+            </table>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+
+        </div>
+    </div>
+</div>
+<!-- The Modal Game Set Info -->
+<div class="modal" id="gameset-info-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h4 id="gameset-info-modal-title" class="modal-title">Game Info</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+            <table class="table table-sm" id="gameset-info-modal-table">
                 <tr><td>Nothing</td></tr>
             </table>
         </div>

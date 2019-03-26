@@ -1,5 +1,4 @@
 [*] Dinamic Game Mode
 [*] Dinamic Game Set Status
-[+] Modal Game Set Info
 [+] Error Message
 [+] VMIX Game Draw Result Info

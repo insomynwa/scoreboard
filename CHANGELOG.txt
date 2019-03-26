@@ -1,3 +1,11 @@
+3.8.0 26-Mar-2019
+    [+] Init Setup: Game Mode, Game Status, VMIX Live Game
+    [+] Modal Game Set Info
+    [+] Function Live Game
+
+    [*] Total Setpoint on Game Draw Info Modal
+    [*] Bug Fixed : Update Game Set Status
+
 3.7.0 25-Mar-2019
     [+] Update Game status
     [+] Edit Game Status
@@ -15,7 +23,6 @@
 3.6.0 24-Mar-2019
     [+] Set LIVE Game status
     [+] VMIX LIVE
-    [+] Auto Create Initial VMIX Live Game
     [+] Set Default Scoreboard >> Live Game
 
     [*] Change Score Table size

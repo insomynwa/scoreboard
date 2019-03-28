@@ -1,3 +1,9 @@
+4.2.2 28-Mar-2019
+    [+] Scoreboard Function File
+    [+] Scoreboard Background Image
+
+    [*] Team & Player Title
+    [*] VMIX Data Source Mode
 3.9.0 28-Mar-2019
     [+] Add Dashboard as secondary design
     [+] Dashboard Script

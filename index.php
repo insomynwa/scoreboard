@@ -161,12 +161,12 @@
 <div class="container mb-3">
     <div class="row">
         <div class="col-lg-4">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-flag text-secondary"></i> Team</h4>
+            <h4 class="text-warning font-weight-light"><i class="fas fa-flag text-secondary"></i> TEAM</h4>
             <button type="button" id="team-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Team</button>
             <table id="tbl-team" class="table table-sm table-hover"><tr><td>0 team. buat dulu!</td></tr></table>
         </div>
         <div class="col-lg-4">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-users text-secondary"></i> Player</h4>
+            <h4 class="text-warning font-weight-light"><i class="fas fa-users text-secondary"></i> PLAYER</h4>
             <button type="button" id="player-create-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Player</button>
             <table id="tbl-player" class="table table-sm table-hover"><tr><td>0 player. buat dulu!</td></tr></table>
         </div>
@@ -175,8 +175,12 @@
 <div class="container my-5 py-3 bg-secondary">
     <div class="row">
         <div class="col-lg-12">
-            <span class="mr-5 text-white">Get Live Score:</span>
-            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live'; ?>" readonly />
+            <span class="mr-5 text-white">Get Live Score 1:</span>
+            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=1'; ?>" readonly />
+            <br><span class="mr-5 text-white">Get Live Score 2:</span>
+            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=2'; ?>" readonly />
+            <br><span class="mr-5 text-white">Get Live Score 3:</span>
+            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=3'; ?>" readonly />
         </div>
     </div>
 </div>

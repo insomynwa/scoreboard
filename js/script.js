@@ -870,21 +870,75 @@ $(document).ready(function () {
         return parseInt(str);
     }
 
-    /* function LockScoreboardFilter() {
-        $("#scoreboard-gamedraw").attr("disabled", "disabled");
-        $("#scoreboard-gameset").attr("disabled", "disabled");
-        $("#scoreboard-render-btn").attr("disabled", "disabled");
-    } */
+    function ajaxGetReq(urls,actNames){
+        if( urls.length > 0 && actNames.length > 0){
+            var act = actNames.pop();
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: urls.pop(),
+                success: function (data) {
+                    if (data.status) {
+                        if( act == 'GetGameModes'){
+                            Radio_Load_GameMode($("#gamedraw-radio-area"), data.gamemodes);
+                        }
+                        else if( act == 'GetLiveScore'){
+                            livegame = data.live_game;
+                        }
+                        if (data.has_value) {
+                            if( act == 'GetGameModes'){
 
-    /* function UnlockScoreboardFilter() {
-        $("#scoreboard-gamedraw").removeAttr("disabled");
-        $("#scoreboard-gameset").removeAttr("disabled");
-        $("#scoreboard-render-btn").removeAttr("disabled");
-    } */
+                            }
+                            else if( act == 'GetTeam' ){
+                                Table_Load_Team($("#tbl-team"), data.teams);
+                                Option_Load_Team($("#player-team"), data.teams);
+                                Option_Load_Team($("#gamedraw-team-a"), data.teams);
+                                Option_Load_Team($("#gamedraw-team-b"), data.teams);
+                            }
+                            else if ( act == 'GetPlayer' ){
+                                Table_Load_Player($("#tbl-player"), data.players);
+                                Option_Load_Player($("#gamedraw-player-a"), data.players);
+                                Option_Load_Player($("#gamedraw-player-b"), data.players);
+                            }
+                            else if ( act == 'GetGameDraw'){
+                                Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraws);
+                                // Option_Load_GameDraw($("#scoreboard-gamedraw"), data.gamedraws);
+                                Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
+                            }
+                            else if(act == 'GetGameSet'){
+                                Table_Load_GameSet($("#gameset-table"), data.gamesets);
+                            }else if( act == 'GetLiveScore'){
+                                Form_Load_Score(data.score);
+                                EnableScoreboard();
+                            }
+                        } else {
+                            if( act == 'GetGameModes'){
 
-    /* function ErrorMessage(elemTarget, message) {
-        elemTarget.html(message);
-    } */
+                            }
+                            else if( act == 'GetTeam'){
+                                $("#tbl-team").html("<tr><td>0 team. buat dulu!</td></tr>");
+                            }
+                            else if ( act == 'GetPlayer' ){
+                                $("#tbl-player").html("<tr><td>0 player. buat dulu!</td></tr>");
+                            }
+                            else if ( act == 'GetGameDraw'){
+                                $("#tbl-gamedraw").html("<tr><td>0 game draw. buat dulu!</td></tr>");
+                            }
+                            else if(act == 'GetGameSet'){
+                                $("#gameset-table").html("<tr><td>0 game set. buat dulu!</td></tr>");
+                            }
+                            else if( act == 'GetLiveScore'){
+                                Form_Reset_Score();
+                                DisableScoreboard();
+                            }
+                        }
+                    } else {
+                    }
+                    ajaxGetReq(urls,actNames);
+                }
+            });
+        }
+    }
 
     $(document).on('click', '.team-update-btn-cls', function (e) {
         e.preventDefault();
@@ -1055,76 +1109,6 @@ $(document).ready(function () {
             );
         }
     });
-
-    function ajaxGetReq(urls,actNames){
-        if( urls.length > 0 && actNames.length > 0){
-            var act = actNames.pop();
-            $.ajax({
-                type: 'GET',
-                dataType: 'json',
-                url: urls.pop(),
-                success: function (data) {
-                    if (data.status) {
-                        if( act == 'GetGameModes'){
-                            Radio_Load_GameMode($("#gamedraw-radio-area"), data.gamemodes);
-                        }
-                        else if( act == 'GetLiveScore'){
-                            livegame = data.live_game;
-                        }
-                        if (data.has_value) {
-                            if( act == 'GetGameModes'){
-
-                            }
-                            else if( act == 'GetTeam' ){
-                                Table_Load_Team($("#tbl-team"), data.teams);
-                                Option_Load_Team($("#player-team"), data.teams);
-                                Option_Load_Team($("#gamedraw-team-a"), data.teams);
-                                Option_Load_Team($("#gamedraw-team-b"), data.teams);
-                            }
-                            else if ( act == 'GetPlayer' ){
-                                Table_Load_Player($("#tbl-player"), data.players);
-                                Option_Load_Player($("#gamedraw-player-a"), data.players);
-                                Option_Load_Player($("#gamedraw-player-b"), data.players);
-                            }
-                            else if ( act == 'GetGameDraw'){
-                                Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraws);
-                                // Option_Load_GameDraw($("#scoreboard-gamedraw"), data.gamedraws);
-                                Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
-                            }
-                            else if(act == 'GetGameSet'){
-                                Table_Load_GameSet($("#gameset-table"), data.gamesets);
-                            }else if( act == 'GetLiveScore'){
-                                Form_Load_Score(data.score);
-                                EnableScoreboard();
-                            }
-                        } else {
-                            if( act == 'GetGameModes'){
-
-                            }
-                            else if( act == 'GetTeam'){
-                                $("#tbl-team").html("<tr><td>0 team. buat dulu!</td></tr>");
-                            }
-                            else if ( act == 'GetPlayer' ){
-                                $("#tbl-player").html("<tr><td>0 player. buat dulu!</td></tr>");
-                            }
-                            else if ( act == 'GetGameDraw'){
-                                $("#tbl-gamedraw").html("<tr><td>0 game draw. buat dulu!</td></tr>");
-                            }
-                            else if(act == 'GetGameSet'){
-                                $("#gameset-table").html("<tr><td>0 game set. buat dulu!</td></tr>");
-                            }
-                            else if( act == 'GetLiveScore'){
-                                Form_Reset_Score();
-                                DisableScoreboard();
-                            }
-                        }
-                    } else {
-                    }
-                    ajaxGetReq(urls,actNames);
-                }
-            });
-        }
-    }
 
     $("#team-create-btn").click(function (e) {
         Form_Load_Team(false, 'create');
@@ -1473,52 +1457,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    /* $("#scoreboard-render-btn").click(function (e) {
-        e.preventDefault();
-        if ($("#score-a-timer-play").hasClass("play-on-cls") || $("#score-b-timer-play").hasClass("play-on-cls")) {
-            alert("Please pause/stop timer");
-        } else {
-            var gamedraw = $("#scoreboard-gamedraw").val();
-            var gameset = $("#scoreboard-gameset").val();
-            if (gamedraw != 0 && gameset != 0) {
-                GetScore(gamedraw, gameset);
-            } else {
-                alert("Please select Game Draw & Set");
-            }
-        }
-    }); */
-
-    /* $("select.gamedraw-team-cls").on("change", function () {
-        var teamid = "", playerOptionObject = null;
-        if (this.id == "gamedraw-team-a") {
-            teamcat = "A";
-            teamid = $("#form-gamedraw #gamedraw-team-a").val();
-            playerOptionObject = $("#gamedraw-player-a");
-        }
-        else if (this.id == "gamedraw-team-b") {
-            teamcat = "B";
-            teamid = $("#form-gamedraw #gamedraw-team-b").val();
-            playerOptionObject = $("#gamedraw-player-b");
-        }
-
-        if ($("#gamedraw-gamemode-single").is(":checked")) {//console.log(teamid);
-            GetPlayersByTeam(playerOptionObject, teamid);
-        }
-    }); */
-
-    /* $("#scoreboard-gamedraw").on("change", function () {
-        var gameDrawID = "", gameSetOptionObject = null;
-        gameDrawID = $("#scoreboard-gamedraw").val();
-        gameSetOptionObject = $("#scoreboard-gameset");
-
-        if (gameDrawID == 0) {
-            var opText = "<option value='0'>Select a game set</option>";
-            $("#scoreboard-gameset").html(opText);
-        } else {
-            GetGameSetsByGameDraw(gameSetOptionObject, gameDrawID);
-        }
-    }); */
 })
 
 var timer = null,

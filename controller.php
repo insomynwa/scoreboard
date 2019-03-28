@@ -9,6 +9,7 @@ include_once 'objects/gamestatus.php';
 include_once 'objects/gameset.php';
 include_once 'objects/score.php';
 include_once 'objects/vmixlive.php';
+include_once 'objects/scoreboard.php';
 
 
 // Get Init Setup
@@ -2267,12 +2268,13 @@ function GetLiveGameID ($db){
  */
 
 // Get Scoreboard
-if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '') {
+if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '' && isset( $_GET['mode']) && $_GET['mode'] != '') {
     $result = array(
         'status'    => false,
         'message'   => ''
     );
     $scoreboard = $_GET['GetScoreboard'];
+    $mode = is_numeric($_GET['mode']) ? $_GET['mode'] : 0;
     if ( $scoreboard == 'live' ) {
         $database = new Database();
         $db = $database->getConnection();
@@ -2280,7 +2282,9 @@ if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '') {
         $vmixlive = new VMIX_LIVE($db);
         $resVMIXLIVE = $vmixlive->GetLiveGameID();
 
-        $result['scoreboard']['set'] = "Set 0";
+        /* $result['scoreboard']['set'] = "Set 0";
+        $result['scoreboard']['backgroud'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/images/panahan1_default.png";
+
         $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
         $result['scoreboard']['contestant_a'] = "Player A";
         $result['scoreboard']['timer_a'] = "0s";
@@ -2292,6 +2296,7 @@ if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '') {
         $result['scoreboard']['point_6a'] = 0;
         $result['scoreboard']['total_a'] = 0;
         $result['scoreboard']['setpoints_a'] = 0;
+        $result['scoreboard']['desc_a'] = "";
 
         $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
         $result['scoreboard']['contestant_b'] = "Player A";
@@ -2304,8 +2309,14 @@ if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '') {
         $result['scoreboard']['point_6b'] = 0;
         $result['scoreboard']['total_b'] = 0;
         $result['scoreboard']['setpoints_b'] = 0;
+        $result['scoreboard']['desc_b'] = ""; */
 
         if($resVMIXLIVE['status']){
+            $result['scoreboard'] = array();
+            $scoreboard = new ScoreBoard();
+
+            $result['scoreboard'] = $scoreboard->GetDefaultDataMode( $mode);
+
             $gameset_id = $resVMIXLIVE['live_game'];
             if($gameset_id > 0){
 
@@ -2363,18 +2374,34 @@ if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '') {
                     $score->SetContestantID($resGameDraw['contestant_a_id']);
                     $resScore = $score->GetScoreByGameSetAndContestant();
 
+                    $timeout_a = false;
+                    $hasDesc_a = false;
+                    $timeout_b = false;
+                    $hasDesc_b = false;
+
                     if($resScore['status']){
                         $result['status'] = true && $result['status'];
                         $score_a = $resScore['score'];
+                        if($score_a['timer'] < 10){
+                            $timeout_a = true;
+                        }
+                        if($score_a['desc'] != ''){
+                            $hasDesc_a = true;
+                        }
                         $result['scoreboard']['timer_a'] = $score_a['timer'] . "s";
-                        $result['scoreboard']['point_1a'] = $score_a['score_1'];
-                        $result['scoreboard']['point_2a'] = $score_a['score_2'];
-                        $result['scoreboard']['point_3a'] = $score_a['score_3'];
-                        $result['scoreboard']['point_4a'] = $score_a['score_4'];
-                        $result['scoreboard']['point_5a'] = $score_a['score_5'];
-                        $result['scoreboard']['point_6a'] = $score_a['score_6'];
+                        if( $mode == 2){
+                            $result['scoreboard']['point_1a'] = $score_a['score_1'];
+                            $result['scoreboard']['point_2a'] = $score_a['score_2'];
+                            $result['scoreboard']['point_3a'] = $score_a['score_3'];
+                            $result['scoreboard']['point_4a'] = $score_a['score_4'];
+                            $result['scoreboard']['point_5a'] = $score_a['score_5'];
+                            $result['scoreboard']['point_6a'] = $score_a['score_6'];
+                        }
+                        $result['scoreboard']['desc_a'] = $score_a['desc'];
                         $total_a = $score_a['score_1'] + $score_a['score_2'] + $score_a['score_3'] + $score_a['score_4'] + $score_a['score_5'] + $score_a['score_6'];
-                        $result['scoreboard']['total_a'] = $total_a;
+                        if( $mode == 1 || $mode == 2){
+                            $result['scoreboard']['total_a'] = $total_a;
+                        }
                         $result['scoreboard']['timer_a'] = $score_a['timer'] . "s";
                         $result['scoreboard']['setpoints_a'] = $score_a['point'];
                     }else{
@@ -2387,18 +2414,68 @@ if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '') {
                     if($resScore['status']){
                         $result['status'] = true && $result['status'];
                         $score_b = $resScore['score'];
+                        if($score_b['timer'] < 10){
+                            $timeout_b = true;
+                        }
+                        if($score_b['desc'] != ''){
+                            $hasDesc_b = true;
+                        }
                         $result['scoreboard']['timer_b'] = $score_b['timer'] . "s";
-                        $result['scoreboard']['point_1b'] = $score_b['score_1'];
-                        $result['scoreboard']['point_2b'] = $score_b['score_2'];
-                        $result['scoreboard']['point_3b'] = $score_b['score_3'];
-                        $result['scoreboard']['point_4b'] = $score_b['score_4'];
-                        $result['scoreboard']['point_5b'] = $score_b['score_5'];
-                        $result['scoreboard']['point_6b'] = $score_b['score_6'];
+                        if( $mode == 2){
+                            $result['scoreboard']['point_1b'] = $score_b['score_1'];
+                            $result['scoreboard']['point_2b'] = $score_b['score_2'];
+                            $result['scoreboard']['point_3b'] = $score_b['score_3'];
+                            $result['scoreboard']['point_4b'] = $score_b['score_4'];
+                            $result['scoreboard']['point_5b'] = $score_b['score_5'];
+                            $result['scoreboard']['point_6b'] = $score_b['score_6'];
+                        }
+                        $result['scoreboard']['desc_b'] = $score_b['desc'];
                         $total_b = $score_b['score_1'] + $score_b['score_2'] + $score_b['score_3'] + $score_b['score_4'] + $score_b['score_5'] + $score_b['score_6'];
-                        $result['scoreboard']['total_b'] = $total_b;
+                        if( $mode == 1 || $mode == 2){
+                            $result['scoreboard']['total_b'] = $total_b;
+                        }
                         $result['scoreboard']['setpoints_b'] = $score_b['point'];
                     }else{
                         $result['message'] = "ERROR: Load Score B";
+                    }
+                    if($mode == 1){
+                        if(!$timeout_a && $hasDesc_a && !$timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 1);
+                        }else if($timeout_a && !$hasDesc_a && !$timeout_b && $hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 2);
+                        }else if($timeout_a && $hasDesc_a && !$timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 3);
+                        }else if($timeout_a && !$hasDesc_a && !$timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 4);
+                        }else if($timeout_a && $hasDesc_a && $timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 5);
+                        }else if($timeout_a && !$hasDesc_a && $timeout_b && $hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 6);
+                        }else if($timeout_a && $hasDesc_a && $timeout_b && $hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 7);
+                        }else if($timeout_a && !$hasDesc_a && $timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 8);
+                        }else if(!$timeout_a && !$hasDesc_a && !$timeout_b && $hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 9);
+                        }else if(!$timeout_a && $hasDesc_a && $timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 10);
+                        }else if(!$timeout_a && !$hasDesc_a && $timeout_b && $hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 11);
+                        }else if(!$timeout_a && !$hasDesc_a && $timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 12);
+                        }else if(!$timeout_a && !$hasDesc_a && !$timeout_b && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 13);
+                        }
+                    }else if($mode == 2 || $mode == 3){
+                        if($hasDesc_a && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 1);
+                        }else if($hasDesc_a && $hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 2);
+                        }else if(!$hasDesc_a && $hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 3);
+                        }else if(!$hasDesc_a && !$hasDesc_b){
+                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 4);
+                        }
                     }
                 }else{
                     $result['message'] = "ERROR: LOAD Live Game Set";

@@ -1,3 +1,12 @@
+3.9.0 28-Mar-2019
+    [+] Add Dashboard as secondary design
+    [+] Dashboard Script
+    [+] Automate Game Set
+    [+] Index Design
+
+    [*] Parse string Point to number
+    [*] Sequentially Load Ajax Game Set Status
+
 3.8.0 26-Mar-2019
     [+] Init Setup: Game Mode, Game Status, VMIX Live Game
     [+] Modal Game Set Info

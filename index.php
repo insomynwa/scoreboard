@@ -11,13 +11,15 @@
 <link href="font-awesome/css/all.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
 <!-- <script src="js/jquery-3.3.1.min.map"></script> -->
-
+<style>
+    .no-boradius { border-radius: 0 }
+</style>
 </head>
-<body>
+<body class="bg-dark">
 <div id="score-title" class="score-area mb-3 container">
     <div class="row">
-        <div class="col-lg-12 bg-dark py-3">
-            <h4 class="text-white"><i class="fab fa-readme text-warning"></i> Scoreboard</h4>
+        <div class="col-lg-12 bg-dark py-3 border-bottom border-secondary">
+            <h4 class="text-warning font-weight-light"><i class="fab fa-readme text-secondary"></i> SCOREBOARD</h4>
             <!-- <form id="form-scoreboard" action="controller.php" method="get" class="form-inline">
                 <label for="scoreboard-gamedraw">Game</label>
                 <select name="scoreboard_gamedraw" id="scoreboard-gamedraw" class="form-control-sm mx-2">
@@ -36,42 +38,42 @@
 <div id="score-a-area" class="container score-area mb-3">
     <div class="row">
         <div class="col-lg-12">
-            <h5 id="score-team-a-title">Team A</h5>
-            <form id="form-score-a" action="controller.php" method="post" class="row">
-                <table class="table table-sm table-borderless">
-                    <thead>
-                        <tr class="bg-primary text-white">
-                            <th scope="col" class="pl-3"><i class="far fa-clock"></i></th>
-                            <th scope="col" class="pl-3">1</th>
-                            <th scope="col" class="pl-3">2</th>
-                            <th scope="col" class="pl-3">3</th>
-                            <th scope="col" class="pl-3">4</th>
-                            <th scope="col" class="pl-3">5</th>
-                            <th scope="col" class="pl-3">6</th>
-                            <th scope="col" class="pl-3">Total</th>
-                            <th scope="col" class="pl-3">Set Pts</th>
-                            <th scope="col" class="pl-3">Desc</th>
-                            <th scope="col" class="pl-3"></th>
+            <h5 id="score-team-a-title" class="text-primary">Team A</h5>
+            <form id="form-score-a" action="controller.php" method="post" class="form">
+                <table class="table table-sm">
+                    <thead class="">
+                        <tr class="">
+                            <th class="pl-3 border-primary font-weight-normal text-primary"><i class="far fa-clock"></i></th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">1</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">2</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">3</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">4</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">5</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">6</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">Total</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">Set Pts</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary">Desc</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" readonly size="10" class="form-control" name="score_a_timer" id="score-a-timer"></td>
-                            <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt1" id="score-a-pt1" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt2" id="score-a-pt2" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt3" id="score-a-pt3" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt4" id="score-a-pt4" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt5" id="score-a-pt5" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-a-input-cls" name="score_a_pt6" id="score-a-pt6" value=""></td>
-                            <td><input type="text" size="8" class="form-control" readonly name="score_a_total" id="score-a-total" value=""></td>
-                            <td><input type="text" size="8" class="form-control" name="score_a_setpoints" id="score-a-setpoints" value=""></td>
-                            <td><input type="text" size="30" class="form-control" name="score_a_desc" id="score-a-desc" value=""></td>
-                            <td>
+                            <td class="pt-0 pl-0"><input type="text" readonly size="10" class="form-control font-italic border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_timer" id="score-a-timer"></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt1" id="score-a-pt1" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt2" id="score-a-pt2" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt3" id="score-a-pt3" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt4" id="score-a-pt4" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt5" id="score-a-pt5" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt6" id="score-a-pt6" value=""></td>
+                            <td class="pt-0"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" readonly name="score_a_total" id="score-a-total" value=""></td>
+                            <td class="pt-0"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_setpoints" id="score-a-setpoints" value=""></td>
+                            <td class="pt-0"><input type="text" size="30" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_desc" id="score-a-desc" value=""></td>
+                            <td class="pr-0 pt-0">
                                 <input type="hidden" name="score_a_gamedraw_id" id="score-a-gamedraw-id" value="">
                                 <input type="hidden" name="score_a_gameset_id" id="score-a-gameset-id" value="">
                                 <input type="hidden" name="score_a_id" id="score-a-id" value="">
                                 <input type="hidden" name="score_action" value="update-a">
-                                <input type="submit" value="Update" id="score-a-submit" class="btn btn-primary">
+                                <input type="submit" value="Update" id="score-a-submit" class="btn btn-primary no-boradius">
                             </td>
                         </tr>
                     </tbody>
@@ -80,50 +82,50 @@
         </div>
     </div>
     <div id="score-a-control" class="btn-group btn-group-sm">
-        <button class="btn btn-outline-dark" disabled><i class="far fa-clock"></i></button>
-        <button class="btn btn-outline-dark" id="score-a-timer-play" disabled="disabled">Play</button>
-        <button class="btn btn-outline-dark" id="score-a-timer-pause" disabled="disabled">Pause</button>
+        <button class="btn btn-outline-primary" disabled><i class="far fa-clock"></i></button>
+        <button class="btn btn-outline-primary" id="score-a-timer-play" disabled="disabled">Play</button>
+        <button class="btn btn-outline-primary" id="score-a-timer-pause" disabled="disabled">Pause</button>
     </div>
 </div>
 <div id="score-b-area" class="score-area mb-5 container">
     <div id="score-b-area" class="row">
         <div class="col-lg-12">
-            <h5 id="score-team-b-title">Team B</h5>
-            <form id="form-score-b" action="controller.php" method="post" class="row">
-                <table class="table table-sm table-borderless">
+            <h5 id="score-team-b-title" class="text-success">Team B</h5>
+            <form id="form-score-b" action="controller.php" method="post" class="form">
+                <table class="table table-sm">
                     <thead>
-                        <tr class="bg-warning">
-                            <th scope="col" class="pl-3"><i class="far fa-clock"></i></th>
-                            <th scope="col" class="pl-3">1</th>
-                            <th scope="col" class="pl-3">2</th>
-                            <th scope="col" class="pl-3">3</th>
-                            <th scope="col" class="pl-3">4</th>
-                            <th scope="col" class="pl-3">5</th>
-                            <th scope="col" class="pl-3">6</th>
-                            <th scope="col" class="pl-3">Total</th>
-                            <th scope="col" class="pl-3">Set Pts</th>
-                            <th scope="col" class="pl-3">Desc</th>
-                            <th scope="col"></th>
+                        <tr class="">
+                            <th class="pl-3 border-success font-weight-normal text-success"><i class="far fa-clock"></i></th>
+                            <th class="pl-3 border-success font-weight-normal text-success">1</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">2</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">3</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">4</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">5</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">6</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">Total</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">Set Pts</th>
+                            <th class="pl-3 border-success font-weight-normal text-success">Desc</th>
+                            <th class="pl-3 border-success font-weight-normal text-success"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" readonly size="10" class="form-control" name="score_b_timer" id="score-b-timer"></td>
-                            <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt1" id="score-b-pt1" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt2" id="score-b-pt2" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt3" id="score-b-pt3" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt4" id="score-b-pt4" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt5" id="score-b-pt5" value=""></td>
-                            <td><input type="text" size="5" class="form-control score-b-input-cls" name="score_b_pt6" id="score-b-pt6" value=""></td>
-                            <td><input type="text" size="8" class="form-control" readonly name="score_b_total" id="score-b-total" value=""></td>
-                            <td><input type="text" size="8" class="form-control" name="score_b_setpoints" id="score-b-setpoints" value=""></td>
-                            <td><input type="text" size="30" class="form-control" name="score_b_desc" id="score-b-desc" value=""></td>
-                            <td>
+                            <td class="pt-0 pl-0"><input type="text" readonly size="10" class="form-control font-italic border-success border-top-0 text-white no-boradius bg-dark" name="score_b_timer" id="score-b-timer"></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt1" id="score-b-pt1" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt2" id="score-b-pt2" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt3" id="score-b-pt3" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt4" id="score-b-pt4" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt5" id="score-b-pt5" value=""></td>
+                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt6" id="score-b-pt6" value=""></td>
+                            <td class="pt-0"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" readonly name="score_b_total" id="score-b-total" value=""></td>
+                            <td class="pt-0"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" name="score_b_setpoints" id="score-b-setpoints" value=""></td>
+                            <td class="pt-0"><input type="text" size="30" class="form-control border-success border-top-0 text-white no-boradius bg-dark" name="score_b_desc" id="score-b-desc" value=""></td>
+                            <td class="pt-0 pr-0">
                                 <input type="hidden" name="score_b_gamedraw_id" id="score-b-gamedraw-id" value="">
                                 <input type="hidden" name="score_b_gameset_id" id="score-b-gameset-id" value="">
                                 <input type="hidden" name="score_b_id" id="score-b-id" value="">
                                 <input type="hidden" name="score_action" value="update-b">
-                                <input type="submit" value="Update" id="score-b-submit" class="btn btn-primary">
+                                <input type="submit" value="Update" id="score-b-submit" class="btn btn-success no-boradius">
                             </td>
                         </tr>
                     </tbody>
@@ -132,20 +134,20 @@
         </div>
     </div>
     <div id="score-b-control" class="btn-group btn-group-sm">
-        <button class="btn btn-outline-dark" disabled><i class="far fa-clock"></i></button>
-        <button class="btn btn-outline-dark" id="score-b-timer-play" disabled="disabled">Play</button>
-        <button class="btn btn-outline-dark" id="score-b-timer-pause" disabled="disabled">Pause</button>
+        <button class="btn btn-outline-success" disabled><i class="far fa-clock"></i></button>
+        <button class="btn btn-outline-success" id="score-b-timer-play" disabled="disabled">Play</button>
+        <button class="btn btn-outline-success" id="score-b-timer-pause" disabled="disabled">Pause</button>
     </div>
 </div>
 <div class="container mb-3">
     <div class="row">
         <div class="col-lg-6">
-            <h4><i class="fas fa-trophy"></i> Game Draw</h4>
+            <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> GAME DRAW</h4>
             <button type="button" id="gamedraw-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Draw</button>
             <table id="tbl-gamedraw" class="table table-sm table-hover"><tr><td>0 game draw. buat dulu!</td></tr></table>
         </div>
         <div class="col-lg-6">
-            <h4><i class="fas fa-ellipsis-v"></i> Game Set</h4>
+            <h4 class="text-warning font-weight-light"><i class="fas fa-ellipsis-v text-secondary"></i> GAME SET</h4>
             <button type="button" id="gameset-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Set</button>
             <table id="gameset-table" class="table table-sm table-hover"><tr><td>0 game set. buat dulu!</td></tr></table>
         </div>
@@ -159,67 +161,22 @@
 <div class="container mb-3">
     <div class="row">
         <div class="col-lg-4">
-            <h4><i class="fas fa-flag"></i> Team</h4>
+            <h4 class="text-warning font-weight-light"><i class="fas fa-flag text-secondary"></i> Team</h4>
             <button type="button" id="team-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Team</button>
             <table id="tbl-team" class="table table-sm table-hover"><tr><td>0 team. buat dulu!</td></tr></table>
         </div>
         <div class="col-lg-4">
-            <h4><i class="fas fa-users"></i> Player</h4>
+            <h4 class="text-warning font-weight-light"><i class="fas fa-users text-secondary"></i> Player</h4>
             <button type="button" id="player-create-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Player</button>
             <table id="tbl-player" class="table table-sm table-hover"><tr><td>0 player. buat dulu!</td></tr></table>
         </div>
     </div>
 </div>
-<div class="container my-5 py-3 bg-dark">
+<div class="container my-5 py-3 bg-secondary">
     <div class="row">
         <div class="col-lg-12">
             <span class="mr-5 text-white">Get Live Score:</span>
             <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live'; ?>" readonly />
-        </div>
-    </div>
-</div>
-<!-- The Modal Game Set -->
-<div class="modal" id="form-gameset-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-        <!-- Modal Header -->
-        <div class="modal-header">
-            <h4 id="gameset-modal-title" class="modal-title">New Game Set</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-
-        <!-- Modal body -->
-        <div class="modal-body">
-            <form id="form-gameset" action="controller.php" method="post">
-                <div class="form-group">
-                    <label for="gameset-gamedraw">Game</label>
-                    <select name="gameset_gamedraw" id="gameset-gamedraw" class="form-control">
-                    <   option value='0'>Select a game draw!</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="gameset-setnum">Set:</label>
-                    <input type="number" name="gameset_setnum" min="1" class="form-control" max="5" id="gameset-setnum" value="1">
-                </div>
-                <div id="gameset-status-area" class="form-group hide">
-                    <label for="gameset-status">Status</label>
-                    <select name="gameset_status" class="form-control" id="gameset-status">
-                        <option value='0'>-</option>
-                    </select>
-                </div>
-                <input type="hidden" id="gameset-prev-status" name="gameset_prev_status" value="1">
-                <input type="hidden" id="gameset-id" name="gameset_id" value="0">
-                <input type="hidden" id="gameset-action" name="gameset_action" value="create">
-                <input type="submit" value="Save" class="btn btn-primary" id="gameset-submit">
-            </form>
-        </div>
-
-        <!-- Modal footer -->
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-
         </div>
     </div>
 </div>
@@ -345,6 +302,51 @@
                 <input type="hidden" id="gamedraw-id" name="gamedraw_id" value="create">
                 <input type="hidden" id="gamedraw-action" name="gamedraw_action" value="create">
                 <input type="submit" value="Create" id="gamedraw-submit" class="btn btn-primary">
+            </form>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+
+        </div>
+    </div>
+</div>
+<!-- The Modal Game Set -->
+<div class="modal" id="form-gameset-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h4 id="gameset-modal-title" class="modal-title">New Game Set</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+            <form id="form-gameset" action="controller.php" method="post">
+                <div class="form-group">
+                    <label for="gameset-gamedraw">Game</label>
+                    <select name="gameset_gamedraw" id="gameset-gamedraw" class="form-control">
+                        <option value='0'>Select a game draw!</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gameset-setnum">Set:</label>
+                    <input type="number" name="gameset_setnum" min="1" class="form-control" max="5" id="gameset-setnum" value="1">
+                </div>
+                <div id="gameset-status-area" class="form-group hide">
+                    <label for="gameset-status">Status</label>
+                    <select name="gameset_status" class="form-control" id="gameset-status">
+                        <option value='0'>-</option>
+                    </select>
+                </div>
+                <input type="hidden" id="gameset-prev-status" name="gameset_prev_status" value="1">
+                <input type="hidden" id="gameset-id" name="gameset_id" value="0">
+                <input type="hidden" id="gameset-action" name="gameset_action" value="create">
+                <input type="submit" value="Save" class="btn btn-primary" id="gameset-submit">
             </form>
         </div>
 

@@ -2,3 +2,4 @@
 [*] Dinamic Game Set Status
 [+] Error Message
 [+] VMIX Game Draw Result Info
+[+] Automate Game Draw

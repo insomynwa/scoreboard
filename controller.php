@@ -11,9 +11,6 @@ include_once 'objects/score.php';
 include_once 'objects/vmixlive.php';
 
 
-$valid_extensions = array('jpeg', 'jpg', 'png', 'gif', 'bmp' , 'pdf' , 'doc' , 'ppt'); // valid extensions
-$path = 'uploads/'; // upload directory
-
 // Get Init Setup
 if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
     $result = array(
@@ -77,6 +74,10 @@ if(isset( $_POST['team_action'])){
     );
     $team_action = $_POST['team_action'];
     if( $team_action=='create' || $team_action=='update'){
+
+        $valid_extensions = array('jpeg', 'jpg', 'png', 'gif', 'bmp' , 'pdf' , 'doc' , 'ppt'); // valid extensions
+        $path = 'uploads/'; // upload directory
+
         $upload_status = false;
 
         $name = $_POST['team_name'];
@@ -1001,6 +1002,33 @@ if (isset( $_GET['GetGameStatus']) && $_GET['GetGameStatus'] != '') {
             }
         }
     }
+    echo json_encode($result);
+}
+
+// Get Game Set Last Num
+if (isset( $_GET['GetGameSetLastNum']) && $_GET['GetGameSetLastNum'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+    $gamedraw_id = is_numeric($_GET['GetGameSetLastNum']) ? $_GET['GetGameSetLastNum'] : 0;
+
+    $database = new Database();
+    $db = $database->getConnection();
+
+    $gameset = new GameSet($db);
+    $gameset->SetGameDrawID($gamedraw_id);
+    $res = $gameset->GetLastNum();
+    if($res['status']){
+        $result['status'] = true;
+        $result['has_value'] = $res['has_value'];
+        if($res['has_value']){
+            $result['next_num'] = $res['last_num'] + 1;
+        }
+    }
+
+    $database->conn->close();
+
     echo json_encode($result);
 }
 
@@ -2214,6 +2242,8 @@ if ( isset( $_POST['vmix_action']) ) {
 /**
  * Function
  */
+
+// VMIX_LIVE
 function SetLiveGame( $db, $livegameid ){
     $vmix = new VMIX_LIVE($db);
     $vmix->SetGameSetID($livegameid);

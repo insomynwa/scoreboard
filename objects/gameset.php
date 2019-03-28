@@ -245,5 +245,24 @@ class GameSet{
 
         return $res;
     }
+
+    public function GetLastNum(){
+        $res = array( 'status' => false);
+        $query = "SELECT gameset_num FROM {$this->table_name} WHERE gamedraw_id={$this->gamedraw_id} ORDER BY gameset_num DESC LIMIT 1";
+
+        $res['last_num'] = 0;
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = true;
+            $res['has_value'] = $result->num_rows > 0;
+            if($res['has_value']){
+                $gameset = array();
+                $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+                $res['last_num'] = $row['gameset_num'];
+            }
+        }
+
+        return $res;
+    }
 }
 ?>

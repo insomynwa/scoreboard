@@ -88,6 +88,7 @@ $(document).ready(function () {
             '/scoreboard/controller.php?GetLiveScore=1',
             '/scoreboard/controller.php?GetGameModes=all',
             '/scoreboard/controller.php?InitSetup=1',
+            '/scoreboard/controller.php?GetConfig=all',
         ];
         var actNames = [
             'GetGameSet',
@@ -97,6 +98,7 @@ $(document).ready(function () {
             'GetLiveScore',
             'GetGameModes',
             'InitSetup',
+            'GetConfig'
         ];
         ajaxGetReq(urls,actNames);
 
@@ -632,6 +634,13 @@ $(document).ready(function () {
         $("#score-b-desc").val("");
     }
 
+    function Form_Load_Config(configdata){
+        $("#config-id").val(configdata.id);
+        $("#config-time-interval").val(configdata.time_interval);
+        $("#config-active-mode").val(configdata.active_mode);
+        $("#config-img").attr( "src", "images/mode_" + configdata.active_mode + ".png");
+    }
+
     function Radio_Load_GameMode(elemTarget, gamemodesdata) {
         var radioTxt = "";
         for (i = 0; i < gamemodesdata.length; i++) {
@@ -885,6 +894,9 @@ $(document).ready(function () {
                         else if( act == 'GetLiveScore'){
                             livegame = data.live_game;
                         }
+                        else if( act == 'GetConfig'){
+                            Form_Load_Config(data.config);
+                        }
                         if (data.has_value) {
                             if( act == 'GetGameModes'){
 
@@ -1054,7 +1066,7 @@ $(document).ready(function () {
         } else {
             var gameset = $(this).attr("data-gamesetid");
             $.post("controller.php", {
-                vmix_action: 'stop-live-game',
+                livegame_action: 'stop-live-game',
                 gamesetid: gameset
             },
                 function (data, status) {
@@ -1087,7 +1099,7 @@ $(document).ready(function () {
             // var gamedraw = $(this).attr("data-gamedrawid");
             var gameset = $(this).attr("data-gamesetid");
             $.post("controller.php", {
-                vmix_action: 'set-live-game',
+                livegame_action: 'set-live-game',
                 gamesetid: gameset
                 },
                 function (data, status) {
@@ -1177,6 +1189,11 @@ $(document).ready(function () {
                 }
             });
         }
+    });
+
+    $("#config-active-mode").on("change", function () {
+        var mode = $(this).val();
+        $("#config-img").attr( "src", "images/mode_" + mode + ".png");
     });
 
     $("#form-team").on('submit', function (e) {
@@ -1287,6 +1304,32 @@ $(document).ready(function () {
                 if (data.action == 'delete') {
                     $("#form-player-modal").modal("hide");
                 }
+            }
+        });
+    });
+
+    $("#form-config").on('submit', function (e) {
+        e.preventDefault();
+
+        if (request) {
+            request.abort();
+        }
+
+        var $form = $(this);
+        // var $input = $form.find("input, select, button, textarea");
+        var serializedData = $form.serialize();
+
+        // $input.prop("disabled", true);
+
+        request = $.ajax({
+            url: "/scoreboard/controller.php",
+            type: "POST",
+            data: serializedData,
+        });
+
+        request.done(function (response, textStatus, jqXHR) {
+            var data = $.parseJSON(response);
+            if (data.status) {
             }
         });
     });

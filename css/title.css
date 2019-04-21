@@ -1,0 +1,94 @@
+@font-face{
+    font-family: "Roboto Bold";
+    src: url('../fonts/Roboto-Bold.ttf') format("truetype");
+}
+@font-face{
+    font-family: "Roboto Italic";
+    src: url('../fonts/Roboto-Italic.ttf') format("truetype");
+}
+
+body{
+    background:transparent;
+    width:1920px;
+    height:1080px;
+}
+
+#wrapper{
+    font-family: "Roboto Bold" , sans-serif;
+    font-size: 1.2em;
+    color:#ffffff;
+    background:transparent;
+    width:1920px;
+    height:1080px;
+}
+
+#scoreboard{
+    padding-left:105px;
+    padding-top:908px;
+}
+
+#scoreboard table td{
+    text-align:center;
+    width:65px;
+    height:1px;
+    padding:2px;
+}
+
+#scoreboard table thead tr td{
+    padding:0;
+}
+
+#scoreboard table .td-w{
+    width:300px;
+}
+
+#scoreboard td.score-timer{
+    width:96px;
+}
+
+#scoreboard div{
+    background:#2B6986;
+    padding-top:0px;
+    height:100%;
+}
+
+#scoreboard td.score-logo div{
+    padding:0 !important;
+    margin:0 !important;
+    width:58px;
+    background:none;
+}
+
+#scoreboard tbody span{
+    display:block;
+    height:100%;
+    padding:10px;
+}
+
+.score-team div{
+    text-align:left;
+    padding-left:15px;
+    letter-spacing:1px;
+}
+
+#scoreboard table thead td:nth-child(2) {
+    text-align:left;
+    padding-left:20px;
+}
+
+.score-timer div{
+    font-family: "Roboto Italic", sans-serif;
+}
+
+.score-total div{
+    background: #006C9C !important;
+}
+
+td.score-desc div{
+    background:#278F7A !important;
+    letter-spacing:1px;
+}
+
+.time-warning{
+    background:#EC5F0E !important;
+}

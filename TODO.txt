@@ -1,3 +1,5 @@
+[*] Dynamic Title Time Interval
+
 [*] Dinamic Game Mode
 [*] Dinamic Game Set Status
 [+] Error Message

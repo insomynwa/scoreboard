@@ -162,15 +162,15 @@ class ScoreBoard{
         $result['scoreboard']['desc_a'] = "";
 
         $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
-        $result['scoreboard']['contestant_b'] = "Player A";
+        $result['scoreboard']['contestant_b'] = "Player B";
         $result['scoreboard']['setpoints_b'] = 0;
         $result['scoreboard']['desc_b'] = "";
         if( $mode == 1){
 
-            $result['scoreboard']['timer_a'] = "0s";
+            $result['scoreboard']['timer_a'] = "0";
             $result['scoreboard']['total_a'] = 0;
 
-            $result['scoreboard']['timer_b'] = "0s";
+            $result['scoreboard']['timer_b'] = "0";
             $result['scoreboard']['total_b'] = 0;
         }else if ($mode == 2){
             $result['scoreboard']['point_1a'] = 0;

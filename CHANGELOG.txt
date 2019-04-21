@@ -1,3 +1,14 @@
+4.3.1 21-April-2019
+    [+] Font Roboto
+    [+] Mode Image
+    [+] Title Page (VMIX Web Browser Mode)
+    [+] Title Web Config
+    [+] Live Game Function
+
+    [*] Replace VMIX LIVE > Live Game
+    [*] Disable VMIX LIVE
+    [*] Scoreboard Default Contestant B Name
+
 4.2.2 28-Mar-2019
     [+] Scoreboard Function File
     [+] Scoreboard Background Image

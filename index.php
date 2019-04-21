@@ -172,15 +172,51 @@
         </div>
     </div>
 </div>
+<div class="container mb-3">
+    <div class="row">
+        <div class="col-lg-3 py-3">
+            <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> WEB SETTING</h4>
+            <form action="controller.php" method="post" id="form-config">
+                <div class="form-group">
+                    <label for="config-time-interval" class="text-info">Time Interval:</label>
+                    <input readonly type="number" name="config_time_interval" id="config-time-interval" class="form-control border-primary bg-dark text-secondary" min="100" max="60000" value="100">
+                </div>
+                <div class="form-group">
+                    <label for="config-active-mode" class="text-info">Active Mode:</label>
+                    <select name="config_active_mode" id="config-active-mode" class="form-control border-primary bg-dark text-light">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <input type="hidden" id="config-id" name="config_id" value="0">
+                <input type="hidden" id="config-action" name="config_action" value="update">
+                <input type="submit" value="Save" class="btn btn-primary" id="config-submit">
+            </form>
+        </div>
+        <div class="col-lg-9">
+            <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> PREVIEW</h4>
+            <img id="config-img" class="img-fluid" src="images/mode_2.png">
+        </div>
+    </div>
+</div>
 <div class="container my-5 py-3 bg-secondary">
     <div class="row">
         <div class="col-lg-12">
+            <h4>XAML</h4>
             <span class="mr-5 text-white">Get Live Score 1:</span>
             <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=1'; ?>" readonly />
             <br><span class="mr-5 text-white">Get Live Score 2:</span>
             <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=2'; ?>" readonly />
             <br><span class="mr-5 text-white">Get Live Score 3:</span>
             <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=3'; ?>" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h4>WEB</h4>
+            <span class="mr-5 text-white">Get Live Score 1:</span>
+            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?>" readonly />
         </div>
     </div>
 </div>

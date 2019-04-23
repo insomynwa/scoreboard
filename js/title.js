@@ -96,10 +96,15 @@ $(document).ready(function () {
         $("#point-a-6").text(contestant.point_6a);
         $("#total-a").text(contestant.total_a);
         $("#setpoints-a").text(contestant.setpoints_a);
-        if ((contestant.desc_a).trim() == "") {
+
+        if (contestant.desc_a == "" || contestant.desc_a == null) {
             $("#desc-a").parent().hide();
         } else {
-            $("#desc-a").parent().show();
+            if ((contestant.desc_a).trim() == "") {
+                $("#desc-a").parent().hide();
+            } else {
+                $("#desc-a").parent().show();
+            }
         }
         $("#desc-a").text(contestant.desc_a);
     }
@@ -125,10 +130,15 @@ $(document).ready(function () {
         $("#point-b-6").text(contestant.point_6b);
         $("#total-b").text(contestant.total_b);
         $("#setpoints-b").text(contestant.setpoints_b);
-        if ((contestant.desc_b).trim() == "") {
+
+        if (contestant.desc_b == "" || contestant.desc_b == null ) {
             $("#desc-b").parent().hide();
         } else {
-            $("#desc-b").parent().show();
+            if ((contestant.desc_b).trim() == "") {
+                $("#desc-b").parent().hide();
+            } else {
+                $("#desc-b").parent().show();
+            }
         }
         $("#desc-b").text(contestant.desc_b);
     }

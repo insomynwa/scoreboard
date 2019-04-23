@@ -1,4 +1,6 @@
 [*] Dynamic Title Time Interval
+[+] Individual Photo
+[+] Total Game Draw
 
 [*] Dinamic Game Mode
 [*] Dinamic Game Set Status

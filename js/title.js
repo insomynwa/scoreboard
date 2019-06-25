@@ -145,18 +145,21 @@ $(document).ready(function () {
 
     function SetBoard(mode) {
         if (mode == 1) {
-            $(".score-point").hide();
+            // $(".score-point").hide();
+            $(".point-group-3").hide();
             $(".score-timer").show();
             $(".score-total").show();
         }
         else if (mode == 2) {
             $(".score-timer").hide();
-            $(".score-point").show();
+            // $(".score-point").show();
+            $(".point-group-3").show();
             $(".score-total").show();
         }
         else if (mode == 3) {
             $(".score-total").hide();
-            $(".score-point").hide();
+            // $(".score-point").hide();
+            $(".point-group-3").hide();
             $(".score-timer").hide();
         }
     }

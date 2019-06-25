@@ -47,9 +47,9 @@
                             <th class="pl-3 border-primary font-weight-normal text-primary">1</th>
                             <th class="pl-3 border-primary font-weight-normal text-primary">2</th>
                             <th class="pl-3 border-primary font-weight-normal text-primary">3</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary">4</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary">5</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary">6</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary d-none">4</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary d-none">5</th>
+                            <th class="pl-3 border-primary font-weight-normal text-primary d-none">6</th>
                             <th class="pl-3 border-primary font-weight-normal text-primary">Total</th>
                             <th class="pl-3 border-primary font-weight-normal text-primary">Set Pts</th>
                             <th class="pl-3 border-primary font-weight-normal text-primary">Desc</th>
@@ -62,9 +62,9 @@
                             <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt1" id="score-a-pt1" value=""></td>
                             <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt2" id="score-a-pt2" value=""></td>
                             <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt3" id="score-a-pt3" value=""></td>
-                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt4" id="score-a-pt4" value=""></td>
-                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt5" id="score-a-pt5" value=""></td>
-                            <td class="pt-0"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt6" id="score-a-pt6" value=""></td>
+                            <td class="pt-0 d-none"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt4" id="score-a-pt4" value=""></td>
+                            <td class="pt-0 d-none"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt5" id="score-a-pt5" value=""></td>
+                            <td class="pt-0 d-none"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt6" id="score-a-pt6" value=""></td>
                             <td class="pt-0"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" readonly name="score_a_total" id="score-a-total" value=""></td>
                             <td class="pt-0"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_setpoints" id="score-a-setpoints" value=""></td>
                             <td class="pt-0"><input type="text" size="30" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_desc" id="score-a-desc" value=""></td>
@@ -99,9 +99,9 @@
                             <th class="pl-3 border-success font-weight-normal text-success">1</th>
                             <th class="pl-3 border-success font-weight-normal text-success">2</th>
                             <th class="pl-3 border-success font-weight-normal text-success">3</th>
-                            <th class="pl-3 border-success font-weight-normal text-success">4</th>
-                            <th class="pl-3 border-success font-weight-normal text-success">5</th>
-                            <th class="pl-3 border-success font-weight-normal text-success">6</th>
+                            <th class="pl-3 border-success font-weight-normal text-success d-none">4</th>
+                            <th class="pl-3 border-success font-weight-normal text-success d-none">5</th>
+                            <th class="pl-3 border-success font-weight-normal text-success d-none">6</th>
                             <th class="pl-3 border-success font-weight-normal text-success">Total</th>
                             <th class="pl-3 border-success font-weight-normal text-success">Set Pts</th>
                             <th class="pl-3 border-success font-weight-normal text-success">Desc</th>
@@ -114,9 +114,9 @@
                             <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt1" id="score-b-pt1" value=""></td>
                             <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt2" id="score-b-pt2" value=""></td>
                             <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt3" id="score-b-pt3" value=""></td>
-                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt4" id="score-b-pt4" value=""></td>
-                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt5" id="score-b-pt5" value=""></td>
-                            <td class="pt-0"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt6" id="score-b-pt6" value=""></td>
+                            <td class="pt-0 d-none"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt4" id="score-b-pt4" value=""></td>
+                            <td class="pt-0 d-none"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt5" id="score-b-pt5" value=""></td>
+                            <td class="pt-0 d-none"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt6" id="score-b-pt6" value=""></td>
                             <td class="pt-0"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" readonly name="score_b_total" id="score-b-total" value=""></td>
                             <td class="pt-0"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" name="score_b_setpoints" id="score-b-setpoints" value=""></td>
                             <td class="pt-0"><input type="text" size="30" class="form-control border-success border-top-0 text-white no-boradius bg-dark" name="score_b_desc" id="score-b-desc" value=""></td>

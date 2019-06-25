@@ -764,7 +764,7 @@ $(document).ready(function () {
     }
 
     function Table_Load_GameSetInfo(elemTarget, gameset) {
-        var tdText = "<thead class='bg-dark text-white'><tr><th>Point</th><th>" + gameset.contestant_a['name'] + "</th><th>" + gameset.contestant_a['name'] + "</th></tr></thead>";
+        var tdText = "<thead class='bg-dark text-white'><tr><th>Point</th><th>" + gameset.contestant_a['name'] + "</th><th>" + gameset.contestant_b['name'] + "</th></tr></thead>";
         tdText += "<tbody>";
         tdText += "<tr><td>1</td>";
         tdText += "<td>" + gameset.contestant_a['score']['score_1'] + "</td>";
@@ -775,15 +775,15 @@ $(document).ready(function () {
         tdText += "<tr><td>3</td>";
         tdText += "<td>" + gameset.contestant_a['score']['score_3'] + "</td>";
         tdText += "<td>" + gameset.contestant_b['score']['score_3'] + "</td></tr>";
-        tdText += "<tr><td>4</td>";
-        tdText += "<td>" + gameset.contestant_a['score']['score_4'] + "</td>";
-        tdText += "<td>" + gameset.contestant_b['score']['score_4'] + "</td></tr>";
-        tdText += "<tr><td>5</td>";
-        tdText += "<td>" + gameset.contestant_a['score']['score_5'] + "</td>";
-        tdText += "<td>" + gameset.contestant_b['score']['score_5'] + "</td></tr>";
-        tdText += "<tr><td>6</td>";
-        tdText += "<td>" + gameset.contestant_a['score']['score_6'] + "</td>";
-        tdText += "<td>" + gameset.contestant_b['score']['score_6'] + "</td></tr>";
+        tdText += "<tr class='d-none'><td>4</td>";
+        tdText += "<td class='d-none'>" + gameset.contestant_a['score']['score_4'] + "</td>";
+        tdText += "<td class='d-none'>" + gameset.contestant_b['score']['score_4'] + "</td></tr>";
+        tdText += "<tr class='d-none'><td>5</td>";
+        tdText += "<td class='d-none'>" + gameset.contestant_a['score']['score_5'] + "</td>";
+        tdText += "<td class='d-none'>" + gameset.contestant_b['score']['score_5'] + "</td></tr>";
+        tdText += "<tr class='d-none'><td>6</td>";
+        tdText += "<td class='d-none'>" + gameset.contestant_a['score']['score_6'] + "</td>";
+        tdText += "<td class='d-none'>" + gameset.contestant_b['score']['score_6'] + "</td></tr>";
         tdText += "<tr><td>Total</td>";
         tdText += "<td>" + gameset.contestant_a['score']['total'] + "</td>";
         tdText += "<td>" + gameset.contestant_b['score']['total'] + "</td></tr>";

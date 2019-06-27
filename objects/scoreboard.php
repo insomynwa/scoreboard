@@ -154,41 +154,39 @@ class ScoreBoard{
     public function GetDefaultDataMode( $mode){
         $result = array();
         $result['scoreboard']['set'] = "Set 0";
-        $result['scoreboard']['backgroud'] = $this->GetBackgroundMode( $mode, 13);
+        // $result['scoreboard']['backgroud'] = $this->GetBackgroundMode( $mode, 13);
 
-        $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
-        $result['scoreboard']['contestant_a'] = "Player A";
+        $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-image.png";
+        $result['scoreboard']['team_a'] = "Team A";
+        $result['scoreboard']['player_a'] = "Player A";
+        $result['scoreboard']['timer_a'] = "0";
+        $result['scoreboard']['point_1a'] = 0;
+        $result['scoreboard']['point_2a'] = 0;
+        $result['scoreboard']['point_3a'] = 0;
+        $result['scoreboard']['point_4a'] = 0;
+        $result['scoreboard']['point_5a'] = 0;
+        $result['scoreboard']['point_6a'] = 0;
+        $result['scoreboard']['total_a'] = 0;
+        $result['scoreboard']['gametotal_a'] = 0;
         $result['scoreboard']['setpoints_a'] = 0;
+        $result['scoreboard']['gamepoints_a'] = 0;
         $result['scoreboard']['desc_a'] = "";
 
-        $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
-        $result['scoreboard']['contestant_b'] = "Player B";
+        $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-image.png";
+        $result['scoreboard']['team_b'] = "Team B";
+        $result['scoreboard']['player_b'] = "Player B";
+        $result['scoreboard']['timer_b'] = "0";
+        $result['scoreboard']['point_1b'] = 0;
+        $result['scoreboard']['point_2b'] = 0;
+        $result['scoreboard']['point_3b'] = 0;
+        $result['scoreboard']['point_4b'] = 0;
+        $result['scoreboard']['point_5b'] = 0;
+        $result['scoreboard']['point_6b'] = 0;
+        $result['scoreboard']['total_b'] = 0;
+        $result['scoreboard']['gametotal_b'] = 0;
         $result['scoreboard']['setpoints_b'] = 0;
+        $result['scoreboard']['gamepoints_b'] = 0;
         $result['scoreboard']['desc_b'] = "";
-        if( $mode == 1){
-
-            $result['scoreboard']['timer_a'] = "0";
-            $result['scoreboard']['total_a'] = 0;
-
-            $result['scoreboard']['timer_b'] = "0";
-            $result['scoreboard']['total_b'] = 0;
-        }else if ($mode == 2){
-            $result['scoreboard']['point_1a'] = 0;
-            $result['scoreboard']['point_2a'] = 0;
-            $result['scoreboard']['point_3a'] = 0;
-            $result['scoreboard']['point_4a'] = 0;
-            $result['scoreboard']['point_5a'] = 0;
-            $result['scoreboard']['point_6a'] = 0;
-            $result['scoreboard']['total_a'] = 0;
-
-            $result['scoreboard']['point_1b'] = 0;
-            $result['scoreboard']['point_2b'] = 0;
-            $result['scoreboard']['point_3b'] = 0;
-            $result['scoreboard']['point_4b'] = 0;
-            $result['scoreboard']['point_5b'] = 0;
-            $result['scoreboard']['point_6b'] = 0;
-            $result['scoreboard']['total_b'] = 0;
-        }
 
         return $result['scoreboard'];
     }

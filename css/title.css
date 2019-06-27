@@ -65,13 +65,13 @@ body{
     padding:10px;
 }
 
-.score-team div{
+.score-team div, .score-player div{
     text-align:left;
     padding-left:15px;
     letter-spacing:1px;
 }
 
-#scoreboard table thead td:nth-child(2) {
+#scoreboard table thead td:nth-child(2), #scoreboard table thead td:nth-child(3) {
     text-align:left;
     padding-left:20px;
 }

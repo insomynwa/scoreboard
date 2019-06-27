@@ -11,3 +11,73 @@
 .hide{
     display:none;
 }
+
+/* #prev-scoreboard{
+    padding-left:105px;
+    padding-top:908px;
+} */
+
+#prev-scoreboard table td{
+    text-align:center;
+    width:65px;
+    height:1px;
+    padding:2px;
+}
+
+#prev-scoreboard table thead tr td{
+    padding:0;
+}
+
+#prev-scoreboard table .td-w{
+    width:300px;
+}
+
+#prev-scoreboard td.prev-score-timer{
+    width:96px;
+}
+
+#prev-scoreboard div{
+    background:#2B6986;
+    padding-top:0px;
+    height:100%;
+}
+
+#prev-scoreboard td.prev-score-logo div{
+    padding:0 !important;
+    margin:0 !important;
+    width:36px;
+    background:none;
+}
+
+#prev-scoreboard tbody span, #prev-scoreboard thead span{
+    display:block;
+    height:100%;
+    padding:10px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: .7em;
+}
+
+.prev-score-team div, .prev-score-player div{
+    text-align:left;
+    padding-left:15px;
+    letter-spacing:1px;
+}
+
+#prev-scoreboard table thead td:nth-child(2), #prev-scoreboard table thead td:nth-child(3) {
+    text-align:left;
+    padding-left:20px;
+}
+
+.prev-score-timer div{
+    font-family: "Roboto Italic", sans-serif;
+}
+
+.prev-score-total div{
+    background: #006C9C !important;
+}
+
+td.prev-score-desc div{
+    background:#278F7A !important;
+    letter-spacing:1px;
+}

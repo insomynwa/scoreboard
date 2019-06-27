@@ -1,3 +1,8 @@
+[*] Bowstyle<==>Mode
+[*] Custom Set Text
+[*] config scoreboard
+[+] Gambar
+
 [*] Dynamic Title Time Interval
 [+] Individual Photo
 [+] Total Game Draw

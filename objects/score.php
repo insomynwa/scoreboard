@@ -71,6 +71,32 @@ class Score{
         $this->desc = $desc;
     }
 
+    public function GetTotalSetPointsByGameDraw($gamedraw_id, $contestant_id){
+        $res = array( 'status' => false );
+        $query = "SELECT SUM(score.score_1 + score.score_2 + score.score_3 + score.score_4 + score.score_5 + score.score_6) as game_total_points, SUM(score.set_points) as game_points ".
+        "FROM gamedraw ".
+        "LEFT JOIN gameset ".
+        "ON gamedraw.gamedraw_id = gameset.gamedraw_id
+        LEFT JOIN score ".
+        "ON gameset.gameset_id = score.gameset_id ".
+        "WHERE gamedraw.gamedraw_id =".$gamedraw_id." AND score.contestant_id=".$contestant_id;
+
+        if( $result = $this->conn->query( $query ) ){
+
+            $point = array();
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $point['game_total_points'] = $row['game_total_points'];
+            $point['game_points'] = $row['game_points'];
+
+            $res = array(
+                'point'      => $point,
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
     public function CreateScore(){
         $sql = "INSERT INTO " . $this->table_name . " (gameset_id, contestant_id) VALUES ('{$this->gameset_id}', '{$this->contestant_id}')";
 

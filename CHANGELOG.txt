@@ -1,3 +1,16 @@
+5.1.0 26-Juni-2019
+    [+] Controller
+    [+] Config
+    [+] Bowstyle
+    [+] Mode Scoreboard 3 Recurve & 3 Compound
+    [+] Gamedraw: bowstyle option
+
+    [*] Scoreboard Preview: Image (.png) >> table
+    [*] Optional Team Logo
+    [*] Table Scoreboard
+    [*] Database: table config, bowstyles
+
+
 5.0.1 26-Juni-2019
     [+] 3 Point
 

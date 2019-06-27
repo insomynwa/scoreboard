@@ -7,16 +7,20 @@ class GameDraw{
 
     private $id;            //_[int]
     private $num;           //_[int]
+    private $bowstyle_id;   //_[int]
     private $gamemode_id;      //_id_[int]
     private $contestant_id;   //_id_[int]
     private $gamestatus_id;    //_id_[int]
     private $contestant_a_id;   //_id_[int]
     private $contestant_b_id;   //_id_[int]
     private $arr_gamesets = array();
+    private $arr_bowstyle = array();
     private $arr_gamemode = array();
     private $arr_contestant_a = array();
     private $arr_contestant_b = array();
     private $arr_gamestatus = array();
+    private $game_total_points;
+    private $game_points;
 
     public function __construct( $db ){
         $this->conn = $db;
@@ -28,6 +32,10 @@ class GameDraw{
 
     public function SetNum( $num ){
         $this->num = $num;
+    }
+
+    public function SetBowstyleID( $bowstyle_id ){
+        $this->bowstyle_id = $bowstyle_id;
     }
 
     public function SetGameModeID( $gamemode_id ){
@@ -48,6 +56,16 @@ class GameDraw{
 
     public function SetGameStatusID( $gamestatus_id ){
         $this->gamestatus_id = $gamestatus_id;
+    }
+
+    public function GetBowstyle(){
+        $bowstyle = new Bowstyle($this->conn);
+        $bowstyle->SetID( $this->bowstyle_id );
+        $tempRes = $bowstyle->GetBowstyleByID();
+        if( $tempRes['status'] ){
+            $this->arr_bowstyle = $tempRes['bowstyle'];
+        }
+        return $this->arr_bowstyle;
     }
 
     public function GetGameMode(){
@@ -120,8 +138,18 @@ class GameDraw{
         return $this->arr_gamesets;
     }
 
+    public function GetTotalSetPoints($contestant_id){
+        $score = new Score($this->conn);
+        $res = $score->GetTotalSetPointsByGameDraw($this->id, $contestant_id);
+        if( $res['status']){
+            $this->game_total_points = $res['point']['game_total_points'];
+            $this->game_points = $res['point']['game_points'];
+        }
+        return array('game_total_points'=>$this->game_total_points, 'game_points' => $this->game_points);
+    }
+
     public function CreateGameDraw(){
-        $sql = "INSERT INTO " . $this->table_name . " (gamedraw_num, gamemode_id, contestant_a_id, contestant_b_id) VALUES ('{$this->num}', '{$this->gamemode_id}', '{$this->contestant_a_id}', '{$this->contestant_b_id}')";
+        $sql = "INSERT INTO " . $this->table_name . " ( bowstyle_id, gamedraw_num, gamemode_id, contestant_a_id, contestant_b_id) VALUES ( '{$this->bowstyle_id}', '{$this->num}', '{$this->gamemode_id}', '{$this->contestant_a_id}', '{$this->contestant_b_id}')";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {
@@ -148,6 +176,7 @@ class GameDraw{
                 while($row = $result->fetch_assoc()) {
                     $gamedraws[$i]['id'] = $row['gamedraw_id'];
                     $gamedraws[$i]['num'] = $row['gamedraw_num'];
+                    $gamedraws[$i]['bowstyle_id'] = $row['bowstyle_id'];
                     $gamedraws[$i]['gamemode_id'] = $row['gamemode_id'];
                     $gamedraws[$i]['gamestatus_id'] = $row['gamestatus_id'];
                     $gamedraws[$i]['contestant_a_id'] = $row['contestant_a_id'];
@@ -174,6 +203,7 @@ class GameDraw{
                 $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
                 $gamedraw['id'] = $row['gamedraw_id'];
                 $gamedraw['num'] = $row['gamedraw_num'];
+                $gamedraw['bowstyle_id'] = $row['bowstyle_id'];
                 $gamedraw['gamemode_id'] = $row['gamemode_id'];
                 $gamedraw['gamestatus_id'] = $row['gamestatus_id'];
                 $gamedraw['contestant_a_id'] = $row['contestant_a_id'];
@@ -253,6 +283,7 @@ class GameDraw{
             while($row = $result->fetch_assoc()) {
                 $gamedraws[$i]['id'] = $row['gamedraw_id'];
                 $gamedraws[$i]['num'] = $row['gamedraw_num'];
+                $gamedraws[$i]['bowstyle_id'] = $row['bowstyle_id'];
                 $gamedraws[$i]['gamemode_id'] = $row['gamemode_id'];
                 $gamedraws[$i]['gamestatus_id'] = $row['gamestatus_id'];
                 $gamedraws[$i]['contestant_a_id'] = $row['contestant_a_id'];
@@ -319,6 +350,7 @@ class GameDraw{
             while($row = $result->fetch_assoc()) {
                 $gamedraws[$i]['id'] = $row['gamedraw_id'];
                 $gamedraws[$i]['num'] = $row['gamedraw_num'];
+                $gamedraws[$i]['bowstyle_id'] = $row['bowstyle_id'];
                 $gamedraws[$i]['gamemode_id'] = $row['gamemode_id'];
                 $gamedraws[$i]['gamestatus_id'] = $row['gamestatus_id'];
                 $gamedraws[$i]['contestant_a_id'] = $row['contestant_a_id'];

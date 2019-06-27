@@ -1,11 +1,12 @@
 $(document).ready(function () {
 
-    var active_mode = 1;
+    var active_mode = 0;
     var timer = null;
     var interval = 1000;
     var firstLoad = true;
 
-    GetWebScoreboard(active_mode);
+    // GetWebScoreboard(active_mode);
+    GetWebScoreboard();
     /* setInterval(function () {
         GetWebScoreboard(active_mode);
     }, 1000); */
@@ -39,7 +40,8 @@ $(document).ready(function () {
     function StartLoadData() {
         if (timer !== null) return;
         timer = setInterval(function () {
-            GetWebScoreboard(active_mode);
+            // GetWebScoreboard(active_mode);
+            GetWebScoreboard();
         }, interval);
     }
 
@@ -49,26 +51,55 @@ $(document).ready(function () {
         timer = null;
     }
 
-    function GetWebScoreboard(mode) {
+    // function GetWebScoreboard(mode) {
+    function GetWebScoreboard() {
         $.ajax({
             type: "get",
-            url: "/scoreboard/controller.php?GetWebScoreboard=live&mode=" + mode,
+            // url: "/scoreboard/controller.php?GetWebScoreboard=live&mode=" + mode,
+            url: "/scoreboard/controller.php?GetWebScoreboard=live",
             dataType: "json",
             success: function (response) {
-                var scoreboard = response;
-                $("#set-num").text(scoreboard.set);
-                SetContestantAScore(scoreboard);
-                SetContestantBScore(scoreboard);
-                if (firstLoad) {
-                    firstLoad = false;
-                    active_mode = scoreboard.active_mode;
-                } else {
-                    if (mode != scoreboard.active_mode) {
-                        active_mode = scoreboard.active_mode;
-                        StopLoadData();
+
+                if (response.status) {
+                    var scoreboard = response.scoreboard;
+                    if (scoreboard.live_game == 0) {
+                        $("#scoreboard").hide();
+                    } else {
+                        $("#scoreboard").show();
+                        if (firstLoad) {
+                            firstLoad = false;
+                            active_mode = response.active_mode;
+                        } else {
+                            if (active_mode != response.active_mode) {
+                                active_mode = response.active_mode;
+                                StopLoadData();
+                            }
+                        }
+
+                        Scoreboard_Config(scoreboard.config);
+
+
+                        // if (scoreboard.gamemode == 1) {
+                        //     $(".score-team").show();
+                        //     $(".score-player").hide();
+                        // } else {
+                        //     if (scoreboard.team_a == "" && scoreboard.team_b == "") {
+                        //         $(".score-team").hide();
+                        //         $("#set-num-player").show();
+                        //     } else {
+                        //         $(".score-team").show();
+                        //         $("#set-num-player").hide();
+                        //     }
+                        //     $(".score-player").show();
+                        // }
+                        SetBoard(scoreboard, active_mode);
+
+                        SetContestantAScore(scoreboard);
+                        SetContestantBScore(scoreboard);
                     }
+                } else {
+                    $("#scoreboard").hide();
                 }
-                SetBoard(active_mode);
                 StartLoadData();
 
             }
@@ -77,7 +108,9 @@ $(document).ready(function () {
 
     function SetContestantAScore(contestant = null) {
         $("#logo-a").attr("src", contestant.logo_a);
-        $("#team-a").text(contestant.contestant_a);
+        $("#team-a").text(contestant.team_a);
+        $("#player-a").text(contestant.player_a);
+
         if (contestant.timer_a < 10) {
             if (!$("#timer-a").hasClass('time-warning')) {
                 $("#timer-a").addClass('time-warning');
@@ -95,7 +128,9 @@ $(document).ready(function () {
         $("#point-a-5").text(contestant.point_5a);
         $("#point-a-6").text(contestant.point_6a);
         $("#total-a").text(contestant.total_a);
+        $("#gametotal-a").text(contestant.game_total_points_a);
         $("#setpoints-a").text(contestant.setpoints_a);
+        $("#gamepoints-a").text(contestant.gamepoints_a);
 
         if (contestant.desc_a == "" || contestant.desc_a == null) {
             $("#desc-a").parent().hide();
@@ -111,7 +146,8 @@ $(document).ready(function () {
 
     function SetContestantBScore(contestant = null) {
         $("#logo-b").attr("src", contestant.logo_b);
-        $("#team-b").text(contestant.contestant_b);
+        $("#team-b").text(contestant.team_b);
+        $("#player-b").text(contestant.player_b);
         if (contestant.timer_b < 10) {
             if (!$("#timer-b").hasClass('time-warning')) {
                 $("#timer-b").addClass('time-warning');
@@ -129,9 +165,11 @@ $(document).ready(function () {
         $("#point-b-5").text(contestant.point_5b);
         $("#point-b-6").text(contestant.point_6b);
         $("#total-b").text(contestant.total_b);
+        $("#gametotal-b").text(contestant.game_total_points_b);
         $("#setpoints-b").text(contestant.setpoints_b);
+        $("#gamepoints-b").text(contestant.gamepoints_b);
 
-        if (contestant.desc_b == "" || contestant.desc_b == null ) {
+        if (contestant.desc_b == "" || contestant.desc_b == null) {
             $("#desc-b").parent().hide();
         } else {
             if ((contestant.desc_b).trim() == "") {
@@ -143,24 +181,329 @@ $(document).ready(function () {
         $("#desc-b").text(contestant.desc_b);
     }
 
-    function SetBoard(mode) {
-        if (mode == 1) {
+    function Scoreboard_Config(config) {
+        // console.log(config['logo']);
+        SetScoreboardVisibility($(".score-logo"), config['logo']['visibility']);
+        SetScoreboardVisibility($(".score-team"), config['team']['visibility']);
+        SetScoreboardVisibility($(".score-player"), config['player']['visibility']);
+        SetScoreboardVisibility($(".score-timer"), config['timer']['visibility']);
+        SetScoreboardVisibility($(".score-point-1"), config['p1']['visibility']);
+        SetScoreboardVisibility($(".score-point-2"), config['p2']['visibility']);
+        SetScoreboardVisibility($(".score-point-3"), config['p3']['visibility']);
+        SetScoreboardVisibility($(".score-point-4"), config['p4']['visibility']);
+        SetScoreboardVisibility($(".score-point-5"), config['p5']['visibility']);
+        SetScoreboardVisibility($(".score-point-6"), config['p6']['visibility']);
+        SetScoreboardVisibility($(".score-total"), config['set_total_points']['visibility']);
+        SetScoreboardVisibility($(".score-gametotal"), config['game_total_points']['visibility']);
+        SetScoreboardVisibility($(".score-setpoint"), config['set_points']['visibility']);
+        SetScoreboardVisibility($(".score-gamepoint"), config['game_points']['visibility']);
+        SetScoreboardVisibility($(".score-desc"), config['description']['visibility']);
+    }
+
+    function SetScoreboardVisibility(elementTarget, visibility) {
+        if (visibility == false) {
+            elementTarget.addClass("d-none");
+        } else {
+            elementTarget.removeClass("d-none");
+        }
+    }
+
+    function SetBoard(scoreboard, mode) {
+        // 1=recurve ~ 2=compound
+        // console.log(bowstyle);
+        var bowstyle_id = scoreboard.bowstyle_id;
+        if (bowstyle_id == 1) {
+            $(".set-num").text( "Set " + scoreboard.set);
+            if (mode == 4) {
+                $(".score-logo").hide();
+                if (scoreboard.gamemode == 1) {
+                    $(".score-team").show();
+                } else {
+                    if (scoreboard.team_a == "" || scoreboard.team_b == "") {
+                        $(".score-team").hide();
+                        $("#set-num-player").show();
+                    } else {
+                        $(".score-team").show();
+                        $("#set-num-player").hide();
+                    }
+                }
+                if (scoreboard.gamemode == 1) {
+                    $(".score-player").hide();
+                } else {
+                    $(".score-player").show();
+                }
+                $(".score-timer").hide();
+                $(".score-point-1").hide();
+                $(".score-point-2").hide();
+                $(".score-point-3").hide();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").show();
+                $(".score-gametotal").hide();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").show();
+                $(".score-desc").hide();
+            } else if (mode == 5) {
+                $(".score-logo").hide();
+                if (scoreboard.gamemode == 1) {
+                    $(".score-team").show();
+                } else {
+                    if (scoreboard.team_a == "" || scoreboard.team_b == "") {
+                        $(".score-team").hide();
+                        $("#set-num-player").show();
+                    } else {
+                        $(".score-team").show();
+                        $("#set-num-player").hide();
+                    }
+                }
+                if (scoreboard.gamemode == 1) {
+                    $(".score-player").hide();
+                } else {
+                    $(".score-player").show();
+                }
+                $(".score-timer").hide();
+                $(".score-point-1").show();
+                $(".score-point-2").show();
+                $(".score-point-3").show();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").show();
+                $(".score-gametotal").hide();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").show();
+                $(".score-desc").hide();
+            } else if (mode == 6) {
+                $(".score-logo").hide();
+                if (scoreboard.gamemode == 1) {
+                    $(".score-team").show();
+                } else {
+                    if (scoreboard.team_a == "" || scoreboard.team_b == "") {
+                        $(".score-team").hide();
+                        $("#set-num-player").show();
+                    } else {
+                        $(".score-team").show();
+                        $("#set-num-player").hide();
+                    }
+                }
+                if (scoreboard.gamemode == 1) {
+                    $(".score-player").hide();
+                } else {
+                    $(".score-player").show();
+                }
+                $(".score-timer").hide();
+                $(".score-point-1").hide();
+                $(".score-point-2").hide();
+                $(".score-point-3").hide();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").hide();
+                $(".score-gametotal").hide();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").show();
+                $(".score-desc").hide();
+            } else {
+                $(".score-logo").hide();
+                $(".score-team").hide();
+                $(".score-player").hide();
+                $(".score-timer").hide();
+                $(".score-point-1").hide();
+                $(".score-point-2").hide();
+                $(".score-point-3").hide();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").hide();
+                $(".score-gametotal").hide();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").hide();
+                $(".score-desc").hide();
+            }
+        }
+        else if (bowstyle_id == 2) {
+            $(".set-num").text( "Set " + scoreboard.set + " of " + scoreboard.num_set);
+            if (mode == 7) {
+                $(".score-logo").hide();
+                if (scoreboard.gamemode == 1) {
+                    $(".score-team").show();
+                } else {
+                    if (scoreboard.team_a == "" || scoreboard.team_b == "") {
+                        $(".score-team").hide();
+                        $("#set-num-player").show();
+                    } else {
+                        $(".score-team").show();
+                        $("#set-num-player").hide();
+                    }
+                }
+                if (scoreboard.gamemode == 1) {
+                    $(".score-player").hide();
+                } else {
+                    $(".score-player").show();
+                }
+                $(".score-timer").hide();
+                $(".score-point-1").hide();
+                $(".score-point-2").hide();
+                $(".score-point-3").hide();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").show();
+                $(".score-gametotal").show();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").hide();
+                $(".score-desc").hide();
+            } else if (mode == 8) {
+                $(".score-logo").hide();
+                if (scoreboard.gamemode == 1) {
+                    $(".score-team").show();
+                } else {
+                    if (scoreboard.team_a == "" || scoreboard.team_b == "") {
+                        $(".score-team").hide();
+                        $("#set-num-player").show();
+                    } else {
+                        $(".score-team").show();
+                        $("#set-num-player").hide();
+                    }
+                }
+                if (scoreboard.gamemode == 1) {
+                    $(".score-player").hide();
+                } else {
+                    $(".score-player").show();
+                }
+                $(".score-timer").hide();
+                $(".score-point-1").show();
+                $(".score-point-2").show();
+                $(".score-point-3").show();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").show();
+                $(".score-gametotal").show();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").hide();
+                $(".score-desc").hide();
+            } else if (mode == 9) {
+                $(".score-logo").hide();
+                if (scoreboard.gamemode == 1) {
+                    $(".score-team").show();
+                } else {
+                    if (scoreboard.team_a == "" || scoreboard.team_b == "") {
+                        $(".score-team").hide();
+                        $("#set-num-player").show();
+                    } else {
+                        $(".score-team").show();
+                        $("#set-num-player").hide();
+                    }
+                }
+                if (scoreboard.gamemode == 1) {
+                    $(".score-player").hide();
+                } else {
+                    $(".score-player").show();
+                }
+                $(".score-timer").hide();
+                $(".score-point-1").hide();
+                $(".score-point-2").hide();
+                $(".score-point-3").hide();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").hide();
+                $(".score-gametotal").show();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").hide();
+                $(".score-desc").hide();
+            } else {
+                $(".score-logo").hide();
+                $(".score-team").hide();
+                $(".score-player").hide();
+                $(".score-timer").hide();
+                $(".score-point-1").hide();
+                $(".score-point-2").hide();
+                $(".score-point-3").hide();
+                $(".score-point-4").hide();
+                $(".score-point-5").hide();
+                $(".score-point-6").hide();
+                $(".score-total").hide();
+                $(".score-gametotal").hide();
+                $(".score-setpoint").hide();
+                $(".score-gamepoint").hide();
+                $(".score-desc").hide();
+            }
+        }
+        /* if (mode == 1) {
             // $(".score-point").hide();
+
             $(".point-group-3").hide();
             $(".score-timer").show();
             $(".score-total").show();
         }
         else if (mode == 2) {
             $(".score-timer").hide();
+
             // $(".score-point").show();
+
             $(".point-group-3").show();
             $(".score-total").show();
         }
         else if (mode == 3) {
             $(".score-total").hide();
+
             // $(".score-point").hide();
+
             $(".point-group-3").hide();
             $(".score-timer").hide();
         }
+        else if (mode == 4) {
+            // 0=default ~ 1=recurve ~ 2=compound
+
+            // $(".score-total").hide();
+
+            // $(".score-point").hide();
+
+            // $(".point-group-3").hide();
+            // $(".score-timer").hide();
+        }
+        else if (mode == 5) {
+            // $(".score-total").hide();
+
+            // $(".score-point").hide();
+
+            // $(".point-group-3").hide();
+            // $(".score-timer").hide();
+        }
+        else if (mode == 6) {
+            // $(".score-total").hide();
+
+            // $(".score-point").hide();
+
+            // $(".point-group-3").hide();
+            // $(".score-timer").hide();
+        }
+        else if (mode == 7) {
+            // $(".score-total").hide();
+
+            // $(".score-point").hide();
+
+            // $(".point-group-3").hide();
+            // $(".score-timer").hide();
+        }
+        else if (mode == 8) {
+            // $(".score-total").hide();
+
+            // $(".score-point").hide();
+
+            // $(".point-group-3").hide();
+            // $(".score-timer").hide();
+        }
+        else if (mode == 9) {
+            // $(".score-total").hide();
+
+            // $(".score-point").hide();
+
+            // $(".point-group-3").hide();
+            // $(".score-timer").hide();
+        } */
     }
 });

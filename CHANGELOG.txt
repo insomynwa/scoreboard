@@ -1,3 +1,10 @@
+5.5.0 30-Juni-2019
+    [+] Collapse Section
+    [+] Filter Team & Player ~ Gamedraw Option
+    [+] Auto GameDraw num
+    [+] Auto Set Points & Game Points
+    [+] Bowstyle info ~ Gameset List
+
 5.1.0 26-Juni-2019
     [+] Controller
     [+] Config

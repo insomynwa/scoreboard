@@ -260,14 +260,18 @@ class GameDraw{
         return $res;
     } */
 
-    /* private function countGameDrawByPlayer(){
-        $sql = "SELECT COUNT(*) as nGameDraw FROM {$this->table_name} WHERE gamemode_id={$this->gamemode_id} AND ( contestant_a_id={$this->contestant_id} OR contestant_b_id={$this->contestant_id} )";
+    public function CountGameDraw(){
+        $sql = "SELECT COUNT(*) as nGameDraw FROM {$this->table_name}";
 
-        $result = $this->conn->query( $sql );
-        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+        $res = array( 'status' => false );
+        if($result = $this->conn->query( $sql )){
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $res['count'] = $row['nGameDraw'];
+            $res['status'] = true;
+        }
 
-        return $row['nGameDraw'];
-    } */
+        return $res;
+    }
 
     public function GetGameDrawsByPlayerID(){
 

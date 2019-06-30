@@ -1,4 +1,16 @@
-
+.btn-menu{
+    border-radius: 0;
+}
+.btn-menu:hover, .btn-menu:focus, .btn-menu:active{
+    background:none;
+    outline: none !important;
+    text-decoration:none !important;
+}
+.card-block .card-body{
+    background:none;
+    border:none;
+    padding:0;
+}
 .show-row{
     display:block;
 }

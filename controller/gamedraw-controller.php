@@ -457,4 +457,24 @@ if (isset( $_GET['GetGameDrawInfo']) && $_GET['GetGameDrawInfo'] != '') {
     echo json_encode($result);
 }
 
+if (isset( $_GET['GetGameDrawNum']) && $_GET['GetGameDrawNum'] != '') {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    $database = new Database();
+    $db = $database->getConnection();
+
+    $gameset = new GameDraw($db);
+    $res = $gameset->CountGameDraw();
+    if($res['status']){
+        $result['status'] = true;
+        $result['nGameDraw'] = $res['count'] + 1;
+    }
+
+    $database->conn->close();
+
+    echo json_encode($result);
+}
 ?>

@@ -551,7 +551,7 @@ $(document).ready(function () {
             $("#gamedraw-submit").val("Update");
         } else if (modeget == 'create') {
             modalTitle += "New";
-            $("#gamedraw-num").val(1).removeAttr("disabled");
+            $("#gamedraw-num").removeAttr("disabled");
             /*
             * TO-DO: radio game mode dinamic
             */
@@ -612,6 +612,7 @@ $(document).ready(function () {
         var score_a = scoredata.score_a;
         var score_b = scoredata.score_b;
 
+        // $("#score-a-logo").attr("src", "uploads/" + contestant_a['logo']);
         $("#score-team-a-title").html(contestant_a['name']);
         $("#score-a-timer").val(score_a['timer'] + "s");
         $("#score-a-gamedraw-id").val(scoredata.gamedraw['id']);
@@ -627,11 +628,11 @@ $(document).ready(function () {
         var total_point = parseNum(score_a['score_1']) + parseNum(score_a['score_2']) + parseNum(score_a['score_3']) + parseNum(score_a['score_4']) + parseNum(score_a['score_5']) + parseNum(score_a['score_6']);
         $("#score-a-total").val(total_point);
         $("#score-a-gametotal").val(score_a['game_total_points']);
-        $("#score-a-setpoints").val(score_a['point']);
-        $("#score-a-gamepoints").val(score_a['game_points']); // setpoint + all
+        $("#score-a-setpoints").val(score_a['point']).attr("data-setpoints", score_a['point']);
+        $("#score-a-gamepoints").val(score_a['game_points']).attr("data-gamepoints", score_a['game_points']); // setpoint + all
         $("#score-a-desc").val(score_a['desc']);
 
-
+        // $("#score-b-logo").attr("src", "uploads/" + contestant_b['logo']);
         $("#score-team-b-title").html(contestant_b['name']);
         $("#score-b-timer").val(score_b['timer'] + "s");
         $("#score-b-gamedraw-id").val(scoredata.gamedraw['id']);
@@ -647,13 +648,14 @@ $(document).ready(function () {
         var total_point = parseNum(score_b['score_1']) + parseNum(score_b['score_2']) + parseNum(score_b['score_3']) + parseNum(score_b['score_4']) + parseNum(score_b['score_5']) + parseNum(score_b['score_6']);
         $("#score-b-total").val(total_point);
         $("#score-b-gametotal").val(score_b['game_total_points']);
-        $("#score-b-setpoints").val(score_b['point']);
-        $("#score-b-gamepoints").val(score_b['game_points']);
+        $("#score-b-setpoints").val(score_b['point']).attr("data-setpoints", score_b['point']);
+        $("#score-b-gamepoints").val(score_b['game_points']).attr("data-gamepoints", score_b['game_points']);
         $("#score-b-desc").val(score_b['desc']);
     }
 
     function Form_Reset_Score() {
 
+        $("#score-a-logo").attr("src", "uploads/no-image.png");
         $("#score-team-a-title").html("Team A");
         $("#score-a-timer").val("0s");
         $("#score-a-gamedraw-id").val(0);
@@ -673,6 +675,7 @@ $(document).ready(function () {
         $("#score-a-desc").val("");
 
 
+        $("#score-b-logo").attr("src", "uploads/no-image.png");
         $("#score-team-b-title").html("Team B");
         $("#score-b-timer").val("0s");
         $("#score-b-gamedraw-id").val(0);
@@ -830,34 +833,65 @@ $(document).ready(function () {
         var total_setpoint_b = 0;
         var gameWinnerAClass = "";
         var gameWinnerBClass = "";
-        var tdText = "<thead class='bg-dark text-white'><tr><th>Set</th><th>" + gamedraw.contestant_a['name'] + "</th><th>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
-        tdText += "<tbody>";
-        for (i = 0; i < (gamedraw.gamesets).length; i++) {
-            tdText += "<tr><td><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
-            var winnerACSS = "";
-            var winnerBCSS = winnerACSS;
-            var setpoint_a = gamedraw.gamesets[i]['score_a']['point'];
-            var setpoint_b = gamedraw.gamesets[i]['score_b']['point'];
-            total_setpoint_a += parseInt(setpoint_a);
-            total_setpoint_b += parseInt(setpoint_b);
-            if (setpoint_a > setpoint_b) {
-                winnerACSS = "class='text-success font-weight-bold'";
-            } else if (setpoint_a < setpoint_b) {
-                winnerBCSS = "class='text-success font-weight-bold'";
+        if(gamedraw.bowstyle_id==1){
+            var tdText = "<thead class='bg-dark text-white'><tr><th>Set</th><th>" + gamedraw.contestant_a['name'] + "</th><th>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
+            tdText += "<tbody>";
+            for (i = 0; i < (gamedraw.gamesets).length; i++) {
+                tdText += "<tr><td><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
+                var winnerACSS = "";
+                var winnerBCSS = winnerACSS;
+                var setpoint_a = gamedraw.gamesets[i]['score_a']['point'];
+                var setpoint_b = gamedraw.gamesets[i]['score_b']['point'];
+                total_setpoint_a += parseInt(setpoint_a);
+                total_setpoint_b += parseInt(setpoint_b);
+                if (setpoint_a > setpoint_b) {
+                    winnerACSS = "class='text-success font-weight-bold'";
+                } else if (setpoint_a < setpoint_b) {
+                    winnerBCSS = "class='text-success font-weight-bold'";
+                }
+                tdText += "<td " + winnerACSS + "><span>" + setpoint_a + "</span></td>";
+                tdText += "<td " + winnerBCSS + "><span>" + setpoint_b + "</span></td>";
+                tdText += "</tr>";
             }
-            tdText += "<td " + winnerACSS + "><span>" + setpoint_a + "</span></td>";
-            tdText += "<td " + winnerBCSS + "><span>" + setpoint_b + "</span></td>";
+            if (total_setpoint_a > total_setpoint_b) {
+                gameWinnerAClass = "bg-success text-white";
+            } else if (total_setpoint_a < total_setpoint_b) {
+                gameWinnerBClass = "bg-success text-white";
+            }
+            tdText += "<tr><td class='font-weight-bold'>Total</td>";
+            tdText += "<td class='font-weight-bold " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
+            tdText += "<td class='font-weight-bold " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
+            tdText += "</tr>";
+        }else if(gamedraw.bowstyle_id==2){
+            var tdText = "<thead class='bg-dark text-white'><tr><th>Set</th><th>" + gamedraw.contestant_a['name'] + "</th><th>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
+            tdText += "<tbody>";
+            for (i = 0; i < (gamedraw.gamesets).length; i++) {
+                tdText += "<tr><td><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
+                var winnerACSS = "";
+                var winnerBCSS = winnerACSS;
+                var setpoint_a = gamedraw.gamesets[i]['score_a']['point'];
+                var setpoint_b = gamedraw.gamesets[i]['score_b']['point'];
+                total_setpoint_a += parseInt(setpoint_a);
+                total_setpoint_b += parseInt(setpoint_b);
+                if (setpoint_a > setpoint_b) {
+                    winnerACSS = "class='text-success font-weight-bold'";
+                } else if (setpoint_a < setpoint_b) {
+                    winnerBCSS = "class='text-success font-weight-bold'";
+                }
+                tdText += "<td " + winnerACSS + "><span>" + setpoint_a + "</span></td>";
+                tdText += "<td " + winnerBCSS + "><span>" + setpoint_b + "</span></td>";
+                tdText += "</tr>";
+            }
+            if (total_setpoint_a > total_setpoint_b) {
+                gameWinnerAClass = "bg-success text-white";
+            } else if (total_setpoint_a < total_setpoint_b) {
+                gameWinnerBClass = "bg-success text-white";
+            }
+            tdText += "<tr><td class='font-weight-bold'>Total</td>";
+            tdText += "<td class='font-weight-bold " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
+            tdText += "<td class='font-weight-bold " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
             tdText += "</tr>";
         }
-        if (total_setpoint_a > total_setpoint_b) {
-            gameWinnerAClass = "bg-success text-white";
-        } else if (total_setpoint_a < total_setpoint_b) {
-            gameWinnerBClass = "bg-success text-white";
-        }
-        tdText += "<tr><td class='font-weight-bold'>Total</td>";
-        tdText += "<td class='font-weight-bold " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
-        tdText += "<td class='font-weight-bold " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
-        tdText += "</tr>";
         tdText += "</tbody>";
         elemTarget.html(tdText);
     }
@@ -866,7 +900,13 @@ $(document).ready(function () {
         var tdText = "<thead><tr><th class='text-info font-weight-normal border-secondary'>Game</th><th class='text-info font-weight-normal border-secondary'>Draw</th><th class='text-info font-weight-normal border-secondary'>Set</th><th class='text-info font-weight-normal border-secondary'>Status</th><th class='text-info font-weight-normal border-secondary'><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < gamesetsdata.length; i++) {
-            tdText += "<tr><td class='text-white font-weight-light border-secondary'><span>" + gamesetsdata[i].gamedraw['num'] + "</span></td>";
+            var bowstyle = "";
+            if(gamesetsdata[i].gamedraw['bowstyle_id']==1){
+                bowstyle = "[Recurve]";
+            }else if(gamesetsdata[i].gamedraw['bowstyle_id']==2){
+                bowstyle = "[Compound]";
+            }
+            tdText += "<tr><td class='text-white font-weight-light border-secondary'><span>" + gamesetsdata[i].gamedraw['num'] + " " + bowstyle + "</span></td>";
             tdText += "<td class='text-white font-weight-light border-secondary'><span>" + gamesetsdata[i].gamedraw['contestant_a']['name'] + " vs " + gamesetsdata[i].gamedraw['contestant_b']['name'] + "</span></td>";
             tdText += "<td class='text-white font-weight-light border-secondary'><span>" + gamesetsdata[i].num + "</span></td>";
             if (gamesetsdata[i].gamestatus['id'] < 3) {
@@ -1175,6 +1215,45 @@ $(document).ready(function () {
             $(".gamedraw-player-opt-area-cls").removeClass("hide").addClass("show");
             // GetPlayersByTeam(  $("#gamedraw-player-a, #gamedraw-player-b"), 0 );
         }
+    });
+
+    $(document).on('change', '.gamedraw-team-cls', function () {
+        var val = $(this).val();
+        if (val != 0) {
+            if (this.id == "gamedraw-team-a") {
+                $("#gamedraw-team-b > option").show();
+                $("#gamedraw-team-b option[value=" + val + "]").hide();
+            } else if (this.id == "gamedraw-team-b") {
+                $("#gamedraw-team-a > option").show();
+                $("#gamedraw-team-a option[value=" + val + "]").hide();
+            }
+        } else {
+            if (this.id == "gamedraw-team-a") {
+                $("#gamedraw-team-b > option").show();
+            } else if (this.id == "gamedraw-team-b") {
+                $("#gamedraw-team-a > option").show();
+            }
+        }
+
+    });
+
+    $(document).on('change', '.gamedraw-player-cls', function () {
+        var val = $(this).val();
+        if (val != 0) {
+            if (this.id == "gamedraw-player-a") {
+                $("#gamedraw-player-b > option").show();
+                $("#gamedraw-player-b option[value=" + val + "]").hide();
+            } else if (this.id == "gamedraw-player-b") {
+                $("#gamedraw-player-a > option").show();
+                $("#gamedraw-player-a option[value=" + val + "]").hide();
+            }
+        } else {
+            if (this.id == "gamedraw-player-a") {
+                $("#gamedraw-player-b > option").show();
+            } else if (this.id == "gamedraw-player-b") {
+                $("#gamedraw-player-a > option").show();
+            }
+        }
 
     });
 
@@ -1267,7 +1346,19 @@ $(document).ready(function () {
     });
 
     $("#gamedraw-create-btn").click(function (e) {
-        Form_Load_GameDraw(false, 'create');
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/scoreboard/controller.php?GetGameDrawNum=count',
+            success: function (data) {
+                if (data.status) {
+                    $("#gamedraw-num").val(data.nGameDraw);
+                } else {
+                    $("#gamedraw-num").val(1);
+                }
+                Form_Load_GameDraw(false, 'create');
+            }
+        });
     });
 
     $("#gameset-create-btn").click(function (e) {
@@ -1315,6 +1406,21 @@ $(document).ready(function () {
         $("#score-b-gametotal").val(game_total_points);
     });
 
+    $('#score-a-setpoints, #score-b-setpoints').on('input', function (e) {
+        if(this.id=="score-a-setpoints"){
+            Set_GamePoints($("#score-a-setpoints"),$("#score-a-gamepoints"));
+        }else if(this.id=="score-b-setpoints"){
+            Set_GamePoints($("#score-b-setpoints"),$("#score-b-gamepoints"));
+        }
+    });
+
+    function Set_GamePoints(sender,elementTarget){
+        var prev_setpoints = parseNum(sender.attr("data-setpoints"));
+        var prev_gamepoints = parseNum(elementTarget.attr("data-gamepoints"));
+        var result = prev_gamepoints - prev_setpoints + parseNum(sender.val());
+        elementTarget.val(result);
+    }
+
     $("#gameset-gamedraw").on("change", function () {
         var gamedraw_id = $(this).val();
         if (gamedraw_id == 0) {
@@ -1343,6 +1449,17 @@ $(document).ready(function () {
         var mode = $(this).val();
         Load_Table_Preview_Scoreboard(mode);
         // $("#config-img").attr("src", "images/mode_" + mode + ".png");
+    });
+
+    $("a.btn-menu").click(function (e) {
+        var coll_id = $(this).attr("aria-controls");
+        if ($("#" + coll_id).hasClass("show")) {
+            $(this).children().children(".caret-cls").removeClass('fa-caret-up');
+            $(this).children().children(".caret-cls").addClass('fa-caret-down');
+        } else {
+            $(this).children().children(".caret-cls").removeClass('fa-caret-down');
+            $(this).children().children(".caret-cls").addClass('fa-caret-up');
+        }
     });
 
     function Load_Table_Preview_Scoreboard(mode) {

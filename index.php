@@ -31,7 +31,7 @@
 <div id="score-a-area" class="container score-area mb-3">
     <div class="row">
         <div class="col-lg-12">
-            <img class="sb-logo-cls" src="uploads/no-image.png">
+            <img id="score-a-logo" class="sb-logo-cls" src="uploads/no-image.png">
             <h5 id="score-team-a-title" class="text-primary">Team A - Player A</h5>
             <form id="form-score-a" action="controller.php" method="post" class="form">
                 <table class="table table-sm">
@@ -63,8 +63,8 @@
                             <td class="pt-0 sb-p6-cls"><input type="text" size="5" class="form-control border-primary border-top-0 text-white score-a-input-cls no-boradius bg-dark" name="score_a_pt6" id="score-a-pt6" value=""></td>
                             <td class="pt-0 sb-set-total-points-cls"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" readonly name="score_a_total" id="score-a-total" value=""></td>
                             <td class="pt-0 sb-game-total-points-cls"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" readonly name="score_a_gametotal" id="score-a-gametotal" value=""></td>
-                            <td class="pt-0 sb-set-points-cls"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_setpoints" id="score-a-setpoints" value=""></td>
-                            <td class="pt-0 sb-game-points-cls"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" readonly name="score_a_gamepoints" id="score-a-gamepoints" value=""></td>
+                            <td class="pt-0 sb-set-points-cls"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_setpoints" id="score-a-setpoints" data-setpoints="0" value=""></td>
+                            <td class="pt-0 sb-game-points-cls"><input type="text" size="8" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" readonly name="score_a_gamepoints" id="score-a-gamepoints" data-gamepoints="0" value=""></td>
                             <td class="pt-0 sb-description-cls"><input type="text" size="30" class="form-control border-primary border-top-0 text-white no-boradius bg-dark" name="score_a_desc" id="score-a-desc" value=""></td>
                             <td class="pr-0 pt-0">
                                 <input type="hidden" name="score_a_gamedraw_id" id="score-a-gamedraw-id" value="">
@@ -91,7 +91,7 @@
 <div id="score-b-area" class="score-area mb-5 container">
     <div id="score-b-area" class="row">
         <div class="col-lg-12">
-            <img class="sb-logo-cls" src="uploads/no-image.png">
+            <img id="score-b-logo" class="sb-logo-cls" src="uploads/no-image.png">
             <h5 id="score-team-b-title" class="text-success">Team B - Player B</h5>
             <form id="form-score-b" action="controller.php" method="post" class="form">
                 <table class="table table-sm">
@@ -123,8 +123,8 @@
                             <td class="pt-0 sb-p6-cls"><input type="text" size="5" class="form-control border-success border-top-0 text-white score-b-input-cls no-boradius bg-dark" name="score_b_pt6" id="score-b-pt6" value=""></td>
                             <td class="pt-0 sb-set-total-points-cls"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" readonly name="score_b_total" id="score-b-total" value=""></td>
                             <td class="pt-0 sb-game-total-points-cls"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" readonly name="score_b_gametotal" id="score-b-gametotal" value=""></td>
-                            <td class="pt-0 sb-set-points-cls"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" name="score_b_setpoints" id="score-b-setpoints" value=""></td>
-                            <td class="pt-0 sb-game-points-cls"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" readonly name="score_b_gamepoints" id="score-b-gamepoints" value=""></td>
+                            <td class="pt-0 sb-set-points-cls"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" name="score_b_setpoints" id="score-b-setpoints" data-setpoints="0" value=""></td>
+                            <td class="pt-0 sb-game-points-cls"><input type="text" size="8" class="form-control border-success border-top-0 text-white no-boradius bg-dark" readonly name="score_b_gamepoints" id="score-b-gamepoints" data-gamepoints="0" value=""></td>
                             <td class="pt-0 sb-description-cls"><input type="text" size="30" class="form-control border-success border-top-0 text-white no-boradius bg-dark" name="score_b_desc" id="score-b-desc" value=""></td>
                             <td class="pt-0 pr-0">
                                 <input type="hidden" name="score_b_gamedraw_id" id="score-b-gamedraw-id" value="">
@@ -146,83 +146,6 @@
     </div>
 </div>
 <!-- End Score B Section -->
-
-<!-- Game Draw & Set Section -->
-<div class="container mb-3">
-    <div class="row">
-        <div class="col-lg-6">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> GAME DRAW</h4>
-            <button type="button" id="gamedraw-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Draw</button>
-            <table id="tbl-gamedraw" class="table table-sm table-hover"><tr><td>0 game draw. buat dulu!</td></tr></table>
-        </div>
-        <div class="col-lg-6">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-ellipsis-v text-secondary"></i> GAME SET</h4>
-            <button type="button" id="gameset-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Set</button>
-            <table id="gameset-table" class="table table-sm table-hover"><tr><td>0 game set. buat dulu!</td></tr></table>
-        </div>
-    </div>
-</div>
-<!-- End Game Draw & Set Section -->
-
-<!-- <div class="container mb-3">
-    <div class="row">
-        <div id="gamedraw-accordion" class="col-lg-6"></div>
-    </div>
-</div> -->
-
-<!-- Team & Player Section -->
-<div class="container mb-3">
-    <div class="row">
-        <div class="col-lg-4">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-flag text-secondary"></i> TEAM</h4>
-            <button type="button" id="team-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Team</button>
-            <table id="tbl-team" class="table table-sm table-hover"><tr><td>0 team. buat dulu!</td></tr></table>
-        </div>
-        <div class="col-lg-4">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-users text-secondary"></i> PLAYER</h4>
-            <button type="button" id="player-create-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Player</button>
-            <table id="tbl-player" class="table table-sm table-hover"><tr><td>0 player. buat dulu!</td></tr></table>
-        </div>
-    </div>
-</div>
-<!-- End Team & Player Section -->
-
-<!-- Scoreboard Config Section -->
-<!-- <div id="scoreboard-config" class="mb-3 container">
-    <div class="row">
-        <div class="col-lg-12 bg-dark py-3 border-bottom border-secondary">
-            <h5 class="text-warning font-weight-light"><i class="fab fa-readme text-secondary"></i> SCOREBOARD</h5>
-            <button type="button" id="scoreboard-ui-config-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> Setup</button> -->
-            <!-- <form id="form-scoreboard-config" action="controller.php" method="get" class="">
-                <div class="form-group">
-                    <label for="scoreboard-settext">Set Text</label>
-                    <input type="text" name="scoreboard_settext" id="scoreboard_settext" class="form-control-sm mx-2">
-                </div>
-                <div class="form-group">
-                    <label for="sb-logo">Show/Hide</label><br>
-                    <input id="sb-logo" class="sb-checkbox-cls" type="checkbox" name="sb_logo" value="1" checked="checked">&nbsp;Logo&nbsp;&nbsp;
-                    <input id="sb-team" class="sb-checkbox-cls" type="checkbox" name="sb_team" value="1" checked="checked">&nbsp;Team&nbsp;&nbsp;
-                    <input id="sb-player" class="sb-checkbox-cls" type="checkbox" name="sb_player" value="1" checked="checked">&nbsp;Player&nbsp;&nbsp;
-                    <input id="sb-timer" class="sb-checkbox-cls" type="checkbox" name="sb_timer" value="1" checked="checked">&nbsp;Timer&nbsp;&nbsp;
-                    <input id="sb-p1" class="sb-checkbox-cls" type="checkbox" name="sb_p1" value="1" checked="checked">&nbsp;Point 1&nbsp;&nbsp;
-                    <input id="sb-p2" class="sb-checkbox-cls" type="checkbox" name="sb_p2" value="1" checked="checked">&nbsp;Point 2&nbsp;&nbsp;
-                    <input id="sb-p3" class="sb-checkbox-cls" type="checkbox" name="sb_p3" value="1" checked="checked">&nbsp;Point 3&nbsp;&nbsp;
-                    <input id="sb-p4" class="sb-checkbox-cls" type="checkbox" name="sb_p4" value="1" checked="checked">&nbsp;Point 4&nbsp;&nbsp;
-                    <input id="sb-p5" class="sb-checkbox-cls" type="checkbox" name="sb_p5" value="1" checked="checked">&nbsp;Point 5&nbsp;&nbsp;
-                    <input id="sb-p6" class="sb-checkbox-cls" type="checkbox" name="sb_p6" value="1" checked="checked">&nbsp;Point 6 <br>
-                    <input id="sb-set-total-points" class="sb-checkbox-cls" type="checkbox" name="sb_set_total_points" value="1" checked="checked">&nbsp;Set Total Points&nbsp;&nbsp;
-                    <input id="sb-game-total-points" class="sb-checkbox-cls" type="checkbox" name="sb_game_total_points" value="1" checked="checked">&nbsp;Game Total Points&nbsp;&nbsp;
-                    <input id="sb-set-points" class="sb-checkbox-cls" type="checkbox" name="sb_set_points" value="1" checked="checked">&nbsp;Set Points&nbsp;&nbsp;
-                    <input id="sb-game-points" class="sb-checkbox-cls" type="checkbox" name="sb_game_points" value="1" checked="checked">&nbsp;Game Points&nbsp;&nbsp;
-                    <input id="sb-description" class="sb-checkbox-cls" type="checkbox" name="sb_description" value="1" checked="checked">&nbsp;Description
-                </div>
-                <input type="hidden" id="scoreboard-config-action" name="scoreboard_config_action" value="update">
-                <button id="scoreboard-config-submit" class="btn btn-sm btn-success">Update</button>
-            </form> -->
-        <!-- </div>
-    </div>
-</div> -->
-<!-- End Scoreboard Config Section -->
 
 <!-- Web Config Section -->
 <div class="container mb-3">
@@ -320,6 +243,107 @@
     </div>
 </div>
 <!-- End Web Config Section -->
+
+<!-- Game Draw & Set Section -->
+<div class="container mb-3">
+    <div class="row">
+        <div class="col-lg-6">
+            <a class="btn btn-outline-warning btn-menu" data-toggle="collapse" href="#gamedraw-collapse" role="button" aria-expanded="false" aria-controls="gamedraw-collapse">
+                <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> GAME DRAW <i class="fas fa-caret-down text-warning caret-cls"></i></h4>
+            </a>
+            <div class="collapse card-block" id="gamedraw-collapse">
+                <div class="card card-body">
+                    <button type="button" id="gamedraw-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Draw</button>
+                    <table id="tbl-gamedraw" class="table table-sm table-hover"><tr><td>0 game draw. buat dulu!</td></tr></table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <a class="btn btn-outline-warning btn-menu" data-toggle="collapse" href="#gameset-collapse" role="button" aria-expanded="false" aria-controls="gameset-collapse">
+                <h4 class="text-warning font-weight-light"><i class="fas fa-ellipsis-v text-secondary"></i> GAME SET <i class="fas fa-caret-down text-warning caret-cls"></i></h4>
+            </a>
+            <div class="collapse card-block" id="gameset-collapse">
+                <div class="card card-body">
+                    <button type="button" id="gameset-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Set</button>
+                    <table id="gameset-table" class="table table-sm table-hover"><tr><td>0 game set. buat dulu!</td></tr></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Game Draw & Set Section -->
+
+<!-- <div class="container mb-3">
+    <div class="row">
+        <div id="gamedraw-accordion" class="col-lg-6"></div>
+    </div>
+</div> -->
+
+<!-- Team & Player Section -->
+<div class="container mb-3">
+    <div class="row">
+        <div class="col-lg-6">
+            <a class="btn btn-outline-warning btn-menu" data-toggle="collapse" href="#team-collapse" role="button" aria-expanded="false" aria-controls="team-collapse">
+                <h4 class="text-warning font-weight-light"><i class="fas fa-flag text-secondary"></i> TEAM <i class="fas fa-caret-down text-warning caret-cls"></i></h4>
+            </a>
+            <div class="collapse card-block" id="team-collapse">
+                <div class="card card-body">
+                    <button type="button" id="team-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Team</button>
+                    <table id="tbl-team" class="table table-sm table-hover"><tr><td>0 team. buat dulu!</td></tr></table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <a class="btn btn-outline-warning btn-menu" data-toggle="collapse" href="#player-collapse" role="button" aria-expanded="false" aria-controls="player-collapse">
+                <h4 class="text-warning font-weight-light"><i class="fas fa-users text-secondary"></i> PLAYER <i class="fas fa-caret-down text-warning caret-cls"></i></h4>
+            </a>
+            <div class="collapse card-block" id="player-collapse">
+                <div class="card card-body">
+                    <button type="button" id="player-create-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Player</button>
+                    <table id="tbl-player" class="table table-sm table-hover"><tr><td>0 player. buat dulu!</td></tr></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Team & Player Section -->
+
+<!-- Scoreboard Config Section -->
+<!-- <div id="scoreboard-config" class="mb-3 container">
+    <div class="row">
+        <div class="col-lg-12 bg-dark py-3 border-bottom border-secondary">
+            <h5 class="text-warning font-weight-light"><i class="fab fa-readme text-secondary"></i> SCOREBOARD</h5>
+            <button type="button" id="scoreboard-ui-config-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> Setup</button> -->
+            <!-- <form id="form-scoreboard-config" action="controller.php" method="get" class="">
+                <div class="form-group">
+                    <label for="scoreboard-settext">Set Text</label>
+                    <input type="text" name="scoreboard_settext" id="scoreboard_settext" class="form-control-sm mx-2">
+                </div>
+                <div class="form-group">
+                    <label for="sb-logo">Show/Hide</label><br>
+                    <input id="sb-logo" class="sb-checkbox-cls" type="checkbox" name="sb_logo" value="1" checked="checked">&nbsp;Logo&nbsp;&nbsp;
+                    <input id="sb-team" class="sb-checkbox-cls" type="checkbox" name="sb_team" value="1" checked="checked">&nbsp;Team&nbsp;&nbsp;
+                    <input id="sb-player" class="sb-checkbox-cls" type="checkbox" name="sb_player" value="1" checked="checked">&nbsp;Player&nbsp;&nbsp;
+                    <input id="sb-timer" class="sb-checkbox-cls" type="checkbox" name="sb_timer" value="1" checked="checked">&nbsp;Timer&nbsp;&nbsp;
+                    <input id="sb-p1" class="sb-checkbox-cls" type="checkbox" name="sb_p1" value="1" checked="checked">&nbsp;Point 1&nbsp;&nbsp;
+                    <input id="sb-p2" class="sb-checkbox-cls" type="checkbox" name="sb_p2" value="1" checked="checked">&nbsp;Point 2&nbsp;&nbsp;
+                    <input id="sb-p3" class="sb-checkbox-cls" type="checkbox" name="sb_p3" value="1" checked="checked">&nbsp;Point 3&nbsp;&nbsp;
+                    <input id="sb-p4" class="sb-checkbox-cls" type="checkbox" name="sb_p4" value="1" checked="checked">&nbsp;Point 4&nbsp;&nbsp;
+                    <input id="sb-p5" class="sb-checkbox-cls" type="checkbox" name="sb_p5" value="1" checked="checked">&nbsp;Point 5&nbsp;&nbsp;
+                    <input id="sb-p6" class="sb-checkbox-cls" type="checkbox" name="sb_p6" value="1" checked="checked">&nbsp;Point 6 <br>
+                    <input id="sb-set-total-points" class="sb-checkbox-cls" type="checkbox" name="sb_set_total_points" value="1" checked="checked">&nbsp;Set Total Points&nbsp;&nbsp;
+                    <input id="sb-game-total-points" class="sb-checkbox-cls" type="checkbox" name="sb_game_total_points" value="1" checked="checked">&nbsp;Game Total Points&nbsp;&nbsp;
+                    <input id="sb-set-points" class="sb-checkbox-cls" type="checkbox" name="sb_set_points" value="1" checked="checked">&nbsp;Set Points&nbsp;&nbsp;
+                    <input id="sb-game-points" class="sb-checkbox-cls" type="checkbox" name="sb_game_points" value="1" checked="checked">&nbsp;Game Points&nbsp;&nbsp;
+                    <input id="sb-description" class="sb-checkbox-cls" type="checkbox" name="sb_description" value="1" checked="checked">&nbsp;Description
+                </div>
+                <input type="hidden" id="scoreboard-config-action" name="scoreboard_config_action" value="update">
+                <button id="scoreboard-config-submit" class="btn btn-sm btn-success">Update</button>
+            </form> -->
+        <!-- </div>
+    </div>
+</div> -->
+<!-- End Scoreboard Config Section -->
 
 <!-- Link Section -->
 <div class="container my-5 py-3 bg-secondary">

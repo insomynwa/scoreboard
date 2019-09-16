@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Setup</title>
+<title>Setup | Scoreboard</title>
 
 <!-- <script src="js/jquery-3.3.1.js"></script> -->
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
@@ -97,18 +97,18 @@
                 <table class="table table-sm">
                     <thead>
                         <tr class="">
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-timer-cls"><i class="far fa-clock"></i></th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-p1-cls">1</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-p2-cls">2</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-p3-cls">3</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-p4-cls">4</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-p5-cls">5</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-p6-cls">6</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-set-total-points-cls">Set Total</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-game-total-points-cls">Game Total</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-set-points-cls">Set Pts</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-game-points-cls">Game Pts</th>
-                            <th class="pl-3 border-primary font-weight-normal text-primary sb-description-cls">Desc</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-timer-cls"><i class="far fa-clock"></i></th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-p1-cls">1</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-p2-cls">2</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-p3-cls">3</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-p4-cls">4</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-p5-cls">5</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-p6-cls">6</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-set-total-points-cls">Set Total</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-game-total-points-cls">Game Total</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-set-points-cls">Set Pts</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-game-points-cls">Game Pts</th>
+                            <th class="pl-3 border-success font-weight-normal text-success sb-description-cls">Desc</th>
                             <th class="pl-3 border-success font-weight-normal text-success"></th>
                         </tr>
                     </thead>
@@ -158,7 +158,7 @@
                     <input readonly type="number" name="config_time_interval" id="config-time-interval" class="form-control border-primary bg-dark text-secondary" min="100" max="60000" value="100">
                 </div>
                 <div class="form-group">
-                    <label for="config-active-mode" class="text-info">Active Mode:</label>
+                    <label for="config-active-mode" class="text-info">Active Mode: <span class="font-weight-bold" id="activated-mode"></span></label>
                     <select name="config_active_mode" id="config-active-mode" class="form-control border-primary bg-dark text-light">
                         <option value="0">Invisible</option>
                         <option value="1">1</option>
@@ -273,12 +273,6 @@
 </div>
 <!-- End Game Draw & Set Section -->
 
-<!-- <div class="container mb-3">
-    <div class="row">
-        <div id="gamedraw-accordion" class="col-lg-6"></div>
-    </div>
-</div> -->
-
 <!-- Team & Player Section -->
 <div class="container mb-3">
     <div class="row">
@@ -308,65 +302,30 @@
 </div>
 <!-- End Team & Player Section -->
 
-<!-- Scoreboard Config Section -->
-<!-- <div id="scoreboard-config" class="mb-3 container">
-    <div class="row">
-        <div class="col-lg-12 bg-dark py-3 border-bottom border-secondary">
-            <h5 class="text-warning font-weight-light"><i class="fab fa-readme text-secondary"></i> SCOREBOARD</h5>
-            <button type="button" id="scoreboard-ui-config-btn"  class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> Setup</button> -->
-            <!-- <form id="form-scoreboard-config" action="controller.php" method="get" class="">
-                <div class="form-group">
-                    <label for="scoreboard-settext">Set Text</label>
-                    <input type="text" name="scoreboard_settext" id="scoreboard_settext" class="form-control-sm mx-2">
-                </div>
-                <div class="form-group">
-                    <label for="sb-logo">Show/Hide</label><br>
-                    <input id="sb-logo" class="sb-checkbox-cls" type="checkbox" name="sb_logo" value="1" checked="checked">&nbsp;Logo&nbsp;&nbsp;
-                    <input id="sb-team" class="sb-checkbox-cls" type="checkbox" name="sb_team" value="1" checked="checked">&nbsp;Team&nbsp;&nbsp;
-                    <input id="sb-player" class="sb-checkbox-cls" type="checkbox" name="sb_player" value="1" checked="checked">&nbsp;Player&nbsp;&nbsp;
-                    <input id="sb-timer" class="sb-checkbox-cls" type="checkbox" name="sb_timer" value="1" checked="checked">&nbsp;Timer&nbsp;&nbsp;
-                    <input id="sb-p1" class="sb-checkbox-cls" type="checkbox" name="sb_p1" value="1" checked="checked">&nbsp;Point 1&nbsp;&nbsp;
-                    <input id="sb-p2" class="sb-checkbox-cls" type="checkbox" name="sb_p2" value="1" checked="checked">&nbsp;Point 2&nbsp;&nbsp;
-                    <input id="sb-p3" class="sb-checkbox-cls" type="checkbox" name="sb_p3" value="1" checked="checked">&nbsp;Point 3&nbsp;&nbsp;
-                    <input id="sb-p4" class="sb-checkbox-cls" type="checkbox" name="sb_p4" value="1" checked="checked">&nbsp;Point 4&nbsp;&nbsp;
-                    <input id="sb-p5" class="sb-checkbox-cls" type="checkbox" name="sb_p5" value="1" checked="checked">&nbsp;Point 5&nbsp;&nbsp;
-                    <input id="sb-p6" class="sb-checkbox-cls" type="checkbox" name="sb_p6" value="1" checked="checked">&nbsp;Point 6 <br>
-                    <input id="sb-set-total-points" class="sb-checkbox-cls" type="checkbox" name="sb_set_total_points" value="1" checked="checked">&nbsp;Set Total Points&nbsp;&nbsp;
-                    <input id="sb-game-total-points" class="sb-checkbox-cls" type="checkbox" name="sb_game_total_points" value="1" checked="checked">&nbsp;Game Total Points&nbsp;&nbsp;
-                    <input id="sb-set-points" class="sb-checkbox-cls" type="checkbox" name="sb_set_points" value="1" checked="checked">&nbsp;Set Points&nbsp;&nbsp;
-                    <input id="sb-game-points" class="sb-checkbox-cls" type="checkbox" name="sb_game_points" value="1" checked="checked">&nbsp;Game Points&nbsp;&nbsp;
-                    <input id="sb-description" class="sb-checkbox-cls" type="checkbox" name="sb_description" value="1" checked="checked">&nbsp;Description
-                </div>
-                <input type="hidden" id="scoreboard-config-action" name="scoreboard_config_action" value="update">
-                <button id="scoreboard-config-submit" class="btn btn-sm btn-success">Update</button>
-            </form> -->
-        <!-- </div>
-    </div>
-</div> -->
-<!-- End Scoreboard Config Section -->
-
 <!-- Link Section -->
-<div class="container my-5 py-3 bg-secondary">
+<div id="link-section" class="container mt-5 py-3 bg-secondary">
     <div class="row">
         <div class="col-lg-12">
-            <h4>XAML</h4>
-            <span class="mr-5 text-white">Get Live Score 1:</span>
-            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=1'; ?>" readonly />
-            <br><span class="mr-5 text-white">Get Live Score 2:</span>
-            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=2'; ?>" readonly />
-            <br><span class="mr-5 text-white">Get Live Score 3:</span>
-            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/controller.php?GetScoreboard=live&mode=3'; ?>" readonly />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <h4>WEB</h4>
-            <span class="mr-5 text-white">Get Live Score 1:</span>
-            <input type="text" size="100" class="pl-5 text-warning bg-dark border-0" disabled="disabled" value="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?>" readonly />
+            <table class="table table-borderless mb-0">
+                <tr>
+                    <td class="align-middle text-right"><h4 class="mb-0">Title Link</h4></td>
+                    <td class="bg-dark"><a class="text-warning" href="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?>" target="_blank" rel="noopener noreferrer"><?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?></a></td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
 <!-- End Link Section -->
+
+<!-- Footer Section -->
+<div id="footer-section" class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <p class="text-center text-light">Copyright&copy;2019 - <span class="text-success">Scoreboard v5.7.3</span> | <a class="text-warning" href="http://cbusmultimedia.com/" target="_blank">CBUS Multimedia</a></p>
+        </div>
+    </div>
+</div>
+<!-- End Footer Section -->
 
 <!-- The Modal Team -->
 <div class="modal" id="form-team-modal">

@@ -93,3 +93,13 @@ td.prev-score-desc div{
     background:#278F7A !important;
     letter-spacing:1px;
 }
+
+#footer-section{
+    padding-top:30px;
+    padding-bottom:30px;
+    background: #333333;
+}
+#footer-section p{
+    margin:0;
+    /* color: #eeeeee; */
+}

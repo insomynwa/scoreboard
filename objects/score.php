@@ -213,7 +213,7 @@ class Score{
 
     public function GetScoresByGameSet(){
         $res = array( 'status' => false );
-        $query = "SELECT * FROM {$this->table_name} WHERE gameset_id={$this->gameset_id}";
+        $query = "SELECT *, (score_1 + score_2 + score_3 + score_4 + score_5 + score_6) as game_total_points FROM {$this->table_name} WHERE gameset_id={$this->gameset_id}";
 
         if( $result = $this->conn->query( $query ) ){
             $i = 0;
@@ -230,6 +230,7 @@ class Score{
                 $scores[$i]['score_5'] = $row['score_5'];
                 $scores[$i]['score_6'] = $row['score_6'];
                 $scores[$i]['point'] = $row['set_points'];
+                $scores[$i]['game_total_points'] = $row['game_total_points'];
                 $scores[$i]['desc'] = $row['score_desc'];
 
                 $i++;

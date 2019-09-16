@@ -231,6 +231,7 @@ if ( isset( $_POST['config_action']) ) {
             if( $tempRes['status'] ){
                 $result['status'] = $tempRes['status'];
                 $result['action'] = 'update';
+                $result['activated_mode'] = $active_mode;
             }
 
             $database->conn->close();

@@ -1,3 +1,13 @@
+5.7.3 16-Sept-2019
+    DB: v5.5.0
+
+    [+] Activated Mode Info
+    [+] Footer Section
+
+    [*] Score Table Color
+    [*] Link Section
+    [*] Bug Fixed: Game Draw Info >> Compound
+
 5.5.0 30-Juni-2019
     [+] Collapse Section
     [+] Filter Team & Player ~ Gamedraw Option

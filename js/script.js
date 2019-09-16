@@ -755,6 +755,7 @@ $(document).ready(function () {
     function Form_Load_Config(configdata) {
         $("#config-id").val(configdata.id);
         $("#config-time-interval").val(configdata.time_interval);
+        $("#activated-mode").text(configdata.active_mode);
         $("#config-active-mode").val(configdata.active_mode);
         $("#config-img").attr("src", "images/mode_" + configdata.active_mode + ".png");
     }
@@ -869,8 +870,8 @@ $(document).ready(function () {
                 tdText += "<tr><td><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
                 var winnerACSS = "";
                 var winnerBCSS = winnerACSS;
-                var setpoint_a = gamedraw.gamesets[i]['score_a']['point'];
-                var setpoint_b = gamedraw.gamesets[i]['score_b']['point'];
+                var setpoint_a = gamedraw.gamesets[i]['score_a']['game_total_points'];
+                var setpoint_b = gamedraw.gamesets[i]['score_b']['game_total_points'];
                 total_setpoint_a += parseInt(setpoint_a);
                 total_setpoint_b += parseInt(setpoint_b);
                 if (setpoint_a > setpoint_b) {
@@ -1741,6 +1742,7 @@ $(document).ready(function () {
         request.done(function (response, textStatus, jqXHR) {
             var data = $.parseJSON(response);
             if (data.status) {
+                $("#activated-mode").text(data.activated_mode);
             }
         });
     });

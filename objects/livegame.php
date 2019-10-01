@@ -33,7 +33,7 @@ class Live_Game{
 
     public function GetLiveGameID(){
         $res = array( 'status' => false );
-        $query = "SELECT * FROM {$this->table_name} WHERE livegame_id=1 LIMIT 1";
+        $query = "SELECT livegame_id, gameset_id FROM {$this->table_name} WHERE livegame_id=1 LIMIT 1";
 
         if( $result = $this->conn->query( $query ) ){
             $res['status'] = true;

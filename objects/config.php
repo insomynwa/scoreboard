@@ -26,7 +26,7 @@ class Config{
     }
 
     public function GetConfigs(){
-        $query = "SELECT * FROM " . $this->table_name;
+        $query = "SELECT config_id, config_name, config_value FROM " . $this->table_name;
 
         $result = $this->conn->query( $query );
 

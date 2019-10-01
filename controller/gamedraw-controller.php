@@ -1,5 +1,86 @@
 <?php
 
+if ( isset( $_GET['gamedraw_get'])){
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    if( $_GET['gamedraw_get'] == 'list') {
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gamedraw = new GameDraw($db);
+        $resGamedraws = $gamedraw->get_gamedraw_list();
+
+        $database->conn->close();
+
+        if( $resGamedraws['status'] ){
+            $result['status'] = true;
+            $result['has_value'] = $resGamedraws['has_value'];
+            if($result['has_value']){
+                $item_template = TEMPLATE_DIR . 'gamedraw/item.php';
+                $renderitem = '';
+                foreach( $resGamedraws['gamedraws'] as $item){
+                    $renderitem .= template( $item_template, $item);
+                }
+                $result['gamedraws'] = $renderitem;
+
+                $item_template = TEMPLATE_DIR . 'gamedraw/option.php';
+                $renderitem = '<option value="0">Select a game draw</option>';
+                foreach( $resGamedraws['gamedraw_option'] as $item){
+                    $renderitem .= template( $item_template, $item);
+                }
+                $result['gamedraw_option'] = $renderitem;
+            }else{
+                $item_template = TEMPLATE_DIR . 'gamedraw/no-item.php';
+                $renderitem = '';
+                $renderitem .= template( $item_template, NULL);
+
+                $render_gamedraw_option = '<option value="0">Select a game draw</option>';
+
+                $result['gamedraw_option'] = $render_gamedraw_option;
+                $result['gamedraws'] = $renderitem;
+                $result['message'] = "has no value";
+            }
+        }else{
+            $result['message'] = "ERROR: status 0";
+        }
+    }
+    else if ( $_GET['gamedraw_get'] == 'new_num'){
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gamedraw = new GameDraw($db);
+        $res = $gamedraw->count_gamedraw();
+
+        $database->conn->close();
+
+        if($res['status']){
+            $result['status'] = true;
+            $result['new_num'] = $res['count'] + 1;
+        }
+
+    }
+    else if ( $_GET['gamedraw_get'] == 'single' && isset( $_GET['id']) && is_numeric( $_GET['id']) && $_GET['id'] > 0) {
+        $gamedraw_id = $_GET['id'];
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gamedraw = new GameDraw($db);
+        $result_array = $gamedraw->id($gamedraw_id)->action('update')->get_this_gamedraw();
+        if($result['status'] = $result_array['status']){
+            if($result_array['has_value']){
+                $result['gamedraw'] = $result_array['gamedraw'];
+            }
+        }
+
+        $database->conn->close();
+    }
+    echo json_encode($result);
+}
+
 // Action Game Draw
 if ( isset( $_POST['gamedraw_action']) ) {
     $result = array(
@@ -457,7 +538,7 @@ if (isset( $_GET['GetGameDrawInfo']) && $_GET['GetGameDrawInfo'] != '') {
     echo json_encode($result);
 }
 
-if (isset( $_GET['GetGameDrawNum']) && $_GET['GetGameDrawNum'] != '') {
+/* if (isset( $_GET['GetGameDrawNum']) && $_GET['GetGameDrawNum'] != '') {
     $result = array(
         'status'    => false,
         'message'   => ''
@@ -467,7 +548,7 @@ if (isset( $_GET['GetGameDrawNum']) && $_GET['GetGameDrawNum'] != '') {
     $db = $database->getConnection();
 
     $gameset = new GameDraw($db);
-    $res = $gameset->CountGameDraw();
+    $res = $gameset->count_gamedraw();
     if($res['status']){
         $result['status'] = true;
         $result['nGameDraw'] = $res['count'] + 1;
@@ -476,5 +557,5 @@ if (isset( $_GET['GetGameDrawNum']) && $_GET['GetGameDrawNum'] != '') {
     $database->conn->close();
 
     echo json_encode($result);
-}
+} */
 ?>

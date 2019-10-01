@@ -26,7 +26,7 @@ class GameMode{
     }
 
     public function GetGameModes(){
-        $query = "SELECT * FROM " . $this->table_name;
+        $query = "SELECT gamemode_id, gamemode_name, gamemode_desc FROM " . $this->table_name;
 
         $result = $this->conn->query( $query );
 

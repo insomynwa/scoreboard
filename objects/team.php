@@ -21,6 +21,63 @@ class Team{
         $this->id = $teamid;
     }
 
+    public function get_team_list(){
+        $res = array( 'status' => false );
+        $query =
+        "SELECT team_id, team_logo, team_name
+        FROM {$this->table_name}
+        ORDER BY team_name ASC";
+
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = true;
+            $res['has_value'] = false;
+            if($result->num_rows>0){
+                $res['has_value'] = true;
+                $i = 0;
+                $teams = array();
+                while($row = $result->fetch_assoc()) {
+                    $teams[$i]['id'] = $row['team_id'];
+                    $teams[$i]['logo'] = $row['team_logo'];
+                    $teams[$i]['name'] = $row['team_name'];
+
+                    $i++;
+                }
+                $res['teams'] = $teams;
+            }
+        }
+
+        return $res;
+
+    }
+
+    /* public function get_team_option(){
+        $res = array( 'status' => false );
+        $query =
+        "SELECT team_id, team_name
+        FROM {$this->table_name}
+        ORDER BY team_id DESC";
+
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = true;
+            $res['has_value'] = false;
+            if($result->num_rows>0){
+                $res['has_value'] = true;
+                $i = 0;
+                $teams = array();
+                while($row = $result->fetch_assoc()) {
+                    $teams[$i]['id'] = $row['team_id'];
+                    $teams[$i]['name'] = $row['team_name'];
+
+                    $i++;
+                }
+                $res['teams'] = $teams;
+            }
+        }
+
+        return $res;
+
+    } */
+
     public function GetLogo(){
         $res = array( 'status' => false );
         $query = "SELECT team_logo FROM {$this->table_name} WHERE team_id={$this->id} LIMIT 1";

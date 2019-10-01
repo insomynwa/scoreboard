@@ -21,7 +21,7 @@ class Bowstyle{
     }
 
     public function GetBowstyles(){
-        $query = "SELECT * FROM " . $this->table_name;
+        $query = "SELECT bowstyle_id, bowstyle_name FROM " . $this->table_name;
 
         $result = $this->conn->query( $query );
 

@@ -1,6 +1,113 @@
 <?php
 
+if ( isset( $_GET['team_get'])){
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
 
+    if( $_GET['team_get'] == 'list') {
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $team = new Team($db);
+        $result_query = $team->get_team_list();
+        if( $result_query['status'] ){
+            $result['status'] = true;
+            $result['has_value'] = $result_query['has_value'];
+            if($result['has_value']){
+                $item_template = TEMPLATE_DIR . 'team/item.php';
+                $team_option_template = TEMPLATE_DIR . 'team/option.php';
+                $render_item = '';
+                $render_option = '<option value="0">Select a team</option>';
+                foreach( $result_query['teams'] as $item){
+                    $render_item .= template( $item_template, $item);
+                    $render_option .= template( $team_option_template, $item);
+                }
+                $result['teams'] = $render_item;
+                $result['team_option'] = $render_option;
+            }else{
+                $item_template = TEMPLATE_DIR . 'team/no-item.php';
+                $render_item = '';
+                $render_option = '<option value="0">Select a team</option>';
+                $render_item .= template( $item_template, null);
+                $result['teams'] = $render_item;
+                $result['team_option'] = $render_option;
+                $result['message'] = "has no value";
+            }
+        }else{
+            $result['message'] = "ERROR: status 0";
+        }
+    }
+    /* else if( $_GET['team_get'] == 'option') {
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $team = new Team($db);
+        $result_query = $team->get_team_option();
+        if( $result_query['status'] ){
+            $result['status'] = true;
+            $result['has_value'] = $result_query['has_value'];
+            if($result['has_value']){
+                $item_template = TEMPLATE_DIR . 'team/option.php';
+                $render_item = '<option value="0">Select a team</option>';
+                foreach( $result_query['teams'] as $item){
+                    $render_item .= template( $item_template, $item);
+                }
+                $result['teams'] = $render_item;
+            }else{
+                $render_item = '<option value="0">Select a team</option>';
+                $result['teams'] = $render_item;
+                $result['message'] = "has no value";
+            }
+        }else{
+            $result['message'] = "ERROR: status 0";
+        }
+    } */
+    echo json_encode($result);
+}
+
+if ( isset( $_GET['player_get'])){
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    if( $_GET['player_get'] == 'list') {
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $player = new Player($db);
+        $result_query = $player->get_player_list();
+        if( $result_query['status'] ){
+            $result['status'] = true;
+            $result['has_value'] = $result_query['has_value'];
+            if($result['has_value']){
+                $item_template = TEMPLATE_DIR . 'player/item.php';
+                $option_template = TEMPLATE_DIR . 'player/option.php';
+                $render_item = '';
+                $render_option = '<option value="0">Select a player</option>';
+                foreach( $result_query['players'] as $item){
+                    $render_item .= template( $item_template, $item);
+                    $render_option .= template( $option_template, $item);
+                }
+                $result['players'] = $render_item;
+                $result['player_option'] = $render_option;
+            }else{
+                $item_template = TEMPLATE_DIR . 'player/no-item.php';
+                $render_item = '';
+                $render_option = '<option value="0">Select a player</option>';
+                $render_item .= template( $item_template, null);
+                $result['players'] = $render_item;
+                $result['player_option'] = $render_option;
+                $result['message'] = "has no value";
+            }
+        }else{
+            $result['message'] = "ERROR: status 0";
+        }
+    }
+    echo json_encode($result);
+}
 // CUD Team
 if(isset( $_POST['team_action'])){
     $result = array(
@@ -267,7 +374,7 @@ if ( isset( $_POST['player_action']) ) {
         $teamid = isset($_POST['player_team']) ? $_POST['player_team'] : 0;
         $playerid = isset($_POST['player_id']) ? $_POST['player_id'] : 0;
 
-        if( $name == '' || $teamid == 0 || $playerid == 0 ){
+        if( $name == '' || $playerid == 0 ){
             $result['message'] = "ERROR: All fields are required!";
         }else{
             $database = new Database();

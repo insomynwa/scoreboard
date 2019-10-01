@@ -39,6 +39,40 @@ class Player{
         return $res;
     }
 
+    public function get_player_list(){
+        $res = array( 'status' => false );
+        $query =
+        "SELECT p.player_id, p.player_name, t.team_name
+        FROM {$this->table_name} p
+        LEFT JOIN team t ON p.team_id = t.team_id
+        ORDER BY t.team_name ASC";
+
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = true;
+            $res['has_value'] = false;
+            if($result->num_rows>0){
+                $res['has_value'] = true;
+                $i = 0;
+                $teams = array();
+                while($row = $result->fetch_assoc()) {
+                    $teams[$i]['id'] = $row['player_id'];
+                    $teams[$i]['name'] = $row['player_name'];
+                    if($row['team_name'] == NULL){
+                        $teams[$i]['team_name'] = 'INDIVIDU';
+                    }else{
+                        $teams[$i]['team_name'] = $row['team_name'];
+                    }
+
+                    $i++;
+                }
+                $res['players'] = $teams;
+            }
+        }
+
+        return $res;
+
+    }
+
     public function GetPlayersByTeamID(){
         $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE team_id={$this->team_id}";

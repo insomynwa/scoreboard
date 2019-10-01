@@ -2,9 +2,12 @@
 
 define ("BASE_DIR", dirname(__FILE__));
 define ("UPLOAD_DIR", dirname(__FILE__) . "/uploads/");
+define("TEMPLATE_DIR", BASE_DIR . '/templates/');
 
 include_once 'config/database.php';
+include 'includes/tools.php';
 include_once 'objects/config.php';
+include_once 'objects/class-query.php';
 include_once 'objects/team.php';
 include_once 'objects/player.php';
 include_once 'objects/gamemode.php';
@@ -24,6 +27,7 @@ include_once 'controller/gamedraw-controller.php';
 include_once 'controller/gamemode-controller.php';
 include_once 'controller/score-controller.php';
 include_once 'controller/gameset-controller.php';
+include_once 'controller/class-bowstyle-controller.php';
 
 
 // Get Init Setup
@@ -205,6 +209,83 @@ if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
     echo json_encode($result);
 }
 
+// Get Game List
+if ( isset( $_GET['game_get'])){
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    if( $_GET['game_get'] == 'list') {
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $class_query = new Class_Query($db);
+        $result_query = $class_query->get_game_table();
+        if( $result_query['status'] ){
+            $result['status'] = true;
+            $result['has_value'] = $result_query['has_value'];
+            if($result['has_value']){
+                /* $gamedraw_list = $resGamedraws['gamedraws'];
+                $result['gamedraws'] = $gamedraw_list; */
+                // Get the gameset
+                /* for( $i=0; $i<sizeof($gamedraw_list); $i++){
+                    $gameset = new GameSet($db);
+                    $resGameSets = $gameset->GetGameSetListByGameDrawID($gamedraw_list[$i]['id']);
+                    if( $resGameSets['status']){
+                        if($resGameSets['has_value']){
+                            $result['gamedraws'][$i]['gamesets'] = $resGameSets['gamesets'];
+                        }else{
+                            $result['gamedraws'][$i]['gamesets'] = array();
+                        }
+                    }else{
+                        $result['gamedraws'][$i]['gamesets'] = array();
+                    }
+                } */
+                $gamedraw_item_template = TEMPLATE_DIR . 'gamedraw/item.php';
+                $render_gamedraw_item = '';
+                foreach( $result_query['gamedraws'] as $item){
+                    $render_gamedraw_item .= template( $gamedraw_item_template, $item);
+                }
+
+                $gamedraw_option_template = TEMPLATE_DIR . 'gamedraw/option.php';
+                $render_gamedraw_option = '<option value="0">Select a game draw</option>';
+                foreach( $result_query['gamedraw_option'] as $item){
+                    $render_gamedraw_option .= template( $gamedraw_option_template, $item);
+                }
+
+                $gameset_item_template = TEMPLATE_DIR . 'gameset/item.php';
+                $render_gameset_item = '';
+                foreach( $result_query['gamesets'] as $item){
+                    $render_gameset_item .= template( $gameset_item_template, $item);
+                }
+
+                $result['gamedraws'] = $render_gamedraw_item;
+                $result['gamedraw_option'] = $render_gamedraw_option;
+                $result['gamesets'] = $render_gameset_item;
+            }else{
+                $gamedraw_item_template = TEMPLATE_DIR . 'gamedraw/no-item.php';
+                $render_gamedraw_item = '';
+                $render_gamedraw_item .= template( $gamedraw_item_template, null);
+                $result['gamedraws'] = $render_gamedraw_item;
+
+                $gamedraw_option_template = TEMPLATE_DIR . 'gamedraw/option.php';
+                $render_gamedraw_option = '<option value="0">Select a game draw</option>';
+                $result['gamedraw_option'] = $render_gamedraw_option;
+
+                $gameset_item_template = TEMPLATE_DIR . 'gameset/no-item.php';
+                $render_gameset_item = '';
+                $render_gameset_item .= template( $gameset_item_template, null);
+                $result['gamesets'] = $render_gameset_item;
+                $result['message'] = "has no value";
+            }
+        }else{
+            $result['message'] = "ERROR: status 0";
+        }
+    }
+    echo json_encode($result);
+}
+
 // CUD Config
 if ( isset( $_POST['config_action']) ) {
     $result = array(
@@ -322,31 +403,6 @@ if (isset( $_GET['GetConfig']) && $_GET['GetConfig'] != '') {
     echo json_encode($result);
 }
 
-// Get Bowstyle
-if (isset( $_GET['GetBowstyles']) && $_GET['GetBowstyles'] != '') {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    if( $_GET['GetBowstyles'] == 'all') {
-
-        $database = new Database();
-        $db = $database->getConnection();
-
-        $bowstyle = new Bowstyle($db);
-        $tempRes = $bowstyle->GetBowstyles();
-
-        $database->conn->close();
-
-        $result['status'] = $tempRes['status'];
-
-        if( $result['status'] ){
-            $result['bowstyles'] = $tempRes['bowstyles'];
-        }
-    }
-    echo json_encode($result);
-}
-
 // Get Game Status
 if (isset( $_GET['GetGameStatus']) && $_GET['GetGameStatus'] != '') {
     $result = array(
@@ -371,6 +427,43 @@ if (isset( $_GET['GetGameStatus']) && $_GET['GetGameStatus'] != '') {
             if($result['has_value']){
                 $result['gamestatuses'] = $resGameStatuses['gamestatuses'];
             }
+        }
+    }
+    echo json_encode($result);
+}if ( isset( $_GET['gamestatus_get'])){
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    if( $_GET['gamestatus_get'] == 'list') {
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gamestatus = new GameStatus($db);
+        $result_array = $gamestatus->get_gamestatus_list();
+
+        $database->conn->close();
+
+        if( $result_array['status'] ){
+            $result['status'] = true;
+            $result['has_value'] = $result_array['has_value'];
+            if($result['has_value']){
+                $item_template = TEMPLATE_DIR . 'gamestatus/option.php';
+                $renderitem = '<option value="0">Select a status</option>';
+                foreach( $result_array['gamestatuses'] as $item){
+                    $renderitem .= template( $item_template, $item);
+                }
+                $result['gamestatuses'] = $renderitem;
+            }else{
+                $renderitem = '<option value="0">Select a status</option>';
+                $renderitem .= template( $item_template, NULL);
+
+                $result['gamestatuses'] = $renderitem;
+                $result['message'] = "has no value";
+            }
+        }else{
+            $result['message'] = "ERROR: status 0";
         }
     }
     echo json_encode($result);

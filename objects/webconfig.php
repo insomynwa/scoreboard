@@ -51,7 +51,7 @@ class Web_Config{
 
     public function GetConfig(){
         $res = array( 'status' => false );
-        $query = "SELECT * FROM {$this->table_name}";
+        $query = "SELECT web_config_id, time_interval, active_mode FROM {$this->table_name}";
 
         if( $result = $this->conn->query( $query ) ){
             $res['status'] = true;

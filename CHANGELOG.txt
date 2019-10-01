@@ -1,3 +1,11 @@
+6.0.0 01-Oct-2019
+    [+] PHP template rendering >> tools.php
+    [+] Bowstyle controller
+
+    [*] Dashboard User Interface
+    [*] Optimize PHP function, SQL Query, JavaScript function
+    [*] Bug Fixed: Game Status option on Gameset modal form
+
 5.7.3 16-Sept-2019
     DB: v5.5.0
 

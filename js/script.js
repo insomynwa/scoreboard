@@ -81,24 +81,36 @@ $(document).ready(function () {
 
     function InitSetup() {
         var urls = [
-            '/scoreboard/controller.php?GetGameSet=all',
-            '/scoreboard/controller.php?GetGameDraw=all',
-            '/scoreboard/controller.php?GetPlayer=all',
-            '/scoreboard/controller.php?GetTeam=all',
+            // '/scoreboard/controller.php?GetGameSet=all',
+            // '/scoreboard/controller.php?GetGameDraw=all',
+            '/scoreboard/controller.php?gameset_get=list',
+            '/scoreboard/controller.php?gamedraw_get=list',
+            // '/scoreboard/controller.php?game_get=list',
+            // '/scoreboard/controller.php?GetPlayer=all',
+            '/scoreboard/controller.php?player_get=list',
+            // '/scoreboard/controller.php?GetTeam=all',
+            '/scoreboard/controller.php?team_get=list',
             '/scoreboard/controller.php?GetLiveScore=1',
             '/scoreboard/controller.php?GetBowstyles=all',
             '/scoreboard/controller.php?GetGameModes=all',
+            '/scoreboard/controller.php?gamestatus_get=list',
             '/scoreboard/controller.php?InitSetup=1',
             '/scoreboard/controller.php?GetConfig=all',
         ];
         var actNames = [
-            'GetGameSet',
-            'GetGameDraw',
-            'GetPlayer',
-            'GetTeam',
+            // 'GetGameSet',
+            // 'GetGameDraw',
+            'GAMESET_LIST',
+            'GAMEDRAW_LIST',
+            // 'GAME_LIST',
+            // 'GetPlayer',
+            'PLAYER_LIST',
+            // 'GetTeam',
+            'TEAM_LIST',
             'GetLiveScore',
             'GetBowstyles',
             'GetGameModes',
+            'GAMESTATUS_LIST',
             'InitSetup',
             'GetConfig'
         ];
@@ -118,7 +130,7 @@ $(document).ready(function () {
         }); */
     }
 
-    function GetLiveScore() {
+    /* function GetLiveScore() {
 
         $.ajax({
             type: 'GET',
@@ -137,41 +149,16 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
-    function LoadData() {
+    /* function LoadData() {
         GetTeam();
         GetPlayer();
         GetGameDraw();
         GetGameSet();
-        /* $.ajax({
-            type: 'GET',
-            dataType: 'json',
-            url: '/scoreboard/controller.php?LoadData=all',
-            success: function (data) {
-                var msg = "";
-                if (data.status) {
-                    Table_Load_Team($("#tbl-team"), data.teams);
-                    Option_Load_Team($("#player-team"), data.teams);
-                    Option_Load_Team($("#gamedraw-team-a"), data.teams);
-                    Option_Load_Team($("#gamedraw-team-b"), data.teams);
+    } */
 
-                    Table_Load_Player($("#tbl-player"), data.players);
-                    Option_Load_Player($("#gamedraw-player-a"), data.players);
-                    Option_Load_Player($("#gamedraw-player-b"), data.players);
-
-                    Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraws);
-                    Option_Load_GameDraw($("#scoreboard-gamedraw"), data.gamedraws);
-                    Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
-
-                    Table_Load_GameSet($("#gameset-table"), data.gamesets);
-                } else {
-                }
-            }
-        }); */
-    }
-
-    function GetTeam() {
+    /* function GetTeam() {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -191,9 +178,9 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
-    function GetPlayer() {
+    /* function GetPlayer() {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -212,9 +199,9 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
-    function GetGameDraw() {
+    /* function GetGameDraw() {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -224,8 +211,7 @@ $(document).ready(function () {
                 if (data.status) {
                     if (data.has_value) {
                         Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraws);
-                        // Option_Load_GameDraw($("#scoreboard-gamedraw"), data.gamedraws);
-                        Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
+                        // Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
                     } else {
                         $("#tbl-gamedraw").html("<tr><td>0 game draw. buat dulu!</td></tr>");
                     }
@@ -233,9 +219,9 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
-    function GetGameSet() {
+    /* function GetGameSet() {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -252,7 +238,7 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
     /* function GetScore(gamedraw, gameset) {
 
@@ -273,7 +259,7 @@ $(document).ready(function () {
         });
     } */
 
-    function GetGameModes() {
+    /* function GetGameModes() {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -286,9 +272,9 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
-    function GetGameStatus() {
+    /* function GetGameStatus() {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -302,7 +288,7 @@ $(document).ready(function () {
                 }
             }
         });
-    }
+    } */
 
     /* function GetPlayersByTeam(playerOptionObject, teamid) {
 
@@ -362,7 +348,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: '/scoreboard/controller.php?GetGameSet=' + gamesetid,
+            url: '/scoreboard/controller.php?gameset_get=single&id=' + gamesetid,
             success: function (data) {
                 if (data.status) {
                     Form_Load_GameSet(data.gameset, modeget);
@@ -375,7 +361,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: '/scoreboard/controller.php?GetGameDraw=' + gamedrawid,
+            url: '/scoreboard/controller.php?gamedraw_get=single&id=' + gamedrawid,
             success: function (data) {
                 if (data.status) {
                     Form_Load_GameDraw(data.gamedraw, modeget);
@@ -383,6 +369,52 @@ $(document).ready(function () {
             }
         });
     }
+
+    // function Accor_Load_Gamedraw_List(gamedrawdata) {
+
+    //     var accorText = "";
+    //     for (i = 0; i < gamedrawdata.length; i++) {
+    //         accorText += "<div class='card-header' id='gamedraw-accordion-list-" + gamedrawdata[i].id + "'>";
+    //         accorText += "<h5 class='mb-0'>";
+    //         accorText += "<button class='btn btn-link' data-toggle='collapse' data-target='#gamedraw-accordion-set-list-" + gamedrawdata[i].id + "' aria-expanded='true' aria-controls='gamedraw-accordion-set-list-" + gamedrawdata[i].id + "'>";
+    //         accorText += gamedrawdata[i].num + ". " + gamedrawdata[i].contestant_a_name + " vs " + gamedrawdata[i].contestant_b_name + " --- " + gamedrawdata[i].bowstyle_name + " - " + gamedrawdata[i].gamemode_name;
+    //         accorText += "</button>";
+    //         accorText += "</h5>";
+    //         accorText += "</div>";
+    //         accorText += "<div id='gamedraw-accordion-set-list-" + gamedrawdata[i].id + "' class='collapse' aria-labelledby='gamedraw-accordion-list-" + gamedrawdata[i].id + "' data-parent='#gamedraw-accordion'>";
+    //         accorText += "<div class='card-body'>";
+    //         accorText += "<button class=''><i class='fas fa-trash-alt'></i></button>";
+    //         accorText += "<button class=''><i class='fas fa-edit'></i></button>";
+    //         accorText += "<button class=' ml-3'><i class='fas fa-eye mr-1'></i>Detail</button>";
+    //         accorText += "<table id='' class='table table-sm table-hover'>";
+    //         tableRowText = "";
+    //         if ((gamedrawdata[i].gamesets).length > 0) {
+    //             tableRowText += "<tr>";
+    //             tableRowText += "<td></td>";
+    //             tableRowText += "<td>Set</td>";
+    //             tableRowText += "<td>Status</td>";
+    //             tableRowText += "<td></td>";
+    //             tableRowText += "</tr>";
+    //             for (j = 0; j < (gamedrawdata[i].gamesets).length; j++) {
+    //                 tableRowText += "<tr>";
+    //                 tableRowText += "<td><button class=''><i class='fas fa-trash-alt'></i></button>";
+    //                 tableRowText += "<button class=''><i class='fas fa-edit'></i></button></td>";
+    //                 tableRowText += "<td>" + gamedrawdata[i].gamesets[j].num + "</td>";
+    //                 tableRowText += "<td><button class='mr-3'><i class='fas fa-play-circle'></i></button>" + gamedrawdata[i].gamesets[j].gamestatus + "</td>";
+    //                 tableRowText += "</tr>";
+    //             }
+    //         }else{
+    //             tableRowText += "<tr><td><button type='button' id='' class='btn btn-sm btn-link my-1'><i class='fas fa-plus-square'></i>New Game Set</button></td></tr>";
+    //         }
+
+    //         accorText += tableRowText;
+
+    //         accorText += "</table>";
+    //         accorText += "</div>";
+    //         accorText += "</div>";
+    //     }
+    //     $("#gamedraw-accordion .card").html(accorText);
+    // }
 
     function Form_Load_Team(teamdata, modeget) {
         var modalTitle = "";
@@ -484,10 +516,15 @@ $(document).ready(function () {
         if (modeget == 'update') {
             modalTitle += "Update";
             $("#gameset-status-area").removeClass("hide");
-            $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).removeAttr("disabled");
+            /* $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).removeAttr("disabled");
             $("#gameset-setnum").val(gamesetdata.num).removeAttr("disabled");
             $("#gameset-status").val(gamesetdata.gamestatus['id']).removeAttr("disabled");
             $("#gameset-prev-status").val(gamesetdata.gamestatus['id']);
+            $("#gameset-id").val(gamesetdata.id); */
+            $("#gameset-gamedraw").val(gamesetdata.gamedraw_id).removeAttr("disabled");
+            $("#gameset-setnum").val(gamesetdata.num).removeAttr("disabled");
+            $("#gameset-status").val(gamesetdata.gameset_status).removeAttr("disabled");
+            $("#gameset-prev-status").val(gamesetdata.gameset_status);
             $("#gameset-id").val(gamesetdata.id);
             $("#gameset-action").val("update");
             $("#gameset-submit").val("Save");
@@ -504,10 +541,14 @@ $(document).ready(function () {
         } else if (modeget == 'delete') {
             modalTitle += "Delete";
             $("#gameset-status-area").removeClass("hide");
-            $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).attr("disabled", "disabled");
+            /* $("#gameset-gamedraw").val(gamesetdata.gamedraw['id']).attr("disabled", "disabled");
             $("#gameset-setnum").val(gamesetdata.num).attr("disabled", "disabled");
             $("#gameset-status").val(gamesetdata.gamestatus['id']).attr("disabled", "disabled");
-            $("#gameset-prev-status").val(gamesetdata.gamestatus['id']);
+            $("#gameset-prev-status").val(gamesetdata.gamestatus['id']); */
+            $("#gameset-gamedraw").val(gamesetdata.gamedraw_id).attr("disabled", "disabled");
+            $("#gameset-setnum").val(gamesetdata.num).attr("disabled", "disabled");
+            $("#gameset-status").val(gamesetdata.gameset_status).attr("disabled", "disabled");
+            $("#gameset-prev-status").val(gamesetdata.gameset_status);
             $("#gameset-id").val(gamesetdata.id);
             $("#gameset-action").val("delete");
             $("#gameset-submit").val("Delete");
@@ -523,26 +564,37 @@ $(document).ready(function () {
             modalTitle += "Update";
             $("#gamedraw-num").val(gamedrawdata.num).removeAttr("disabled");
 
-            if (gamedrawdata.bowstyle['id'] == 1) {
+            /* if (gamedrawdata.bowstyle['id'] == 1) {
                 $("#gamedraw-bowstyle-recurve").prop("checked", true);
             } else if (gamedrawdata.bowstyle['id'] == 2) {
+                $("#gamedraw-bowstyle-compound").prop("checked", true);
+            } */
+            if (gamedrawdata.bowstyle_id == 1) {
+                $("#gamedraw-bowstyle-recurve").prop("checked", true);
+            } else if (gamedrawdata.bowstyle_id == 2) {
                 $("#gamedraw-bowstyle-compound").prop("checked", true);
             }
             /*
             * TO-DO: radio game mode dinamic
             */
-            if (gamedrawdata.gamemode['id'] == 1) {
+            // if (gamedrawdata.gamemode['id'] == 1) {
+            if (gamedrawdata.gamemode_id == 1) {
                 $("#gamedraw-gamemode-beregu").prop("checked", true);
                 $(".gamedraw-player-opt-area-cls").addClass("hide");
                 $(".gamedraw-team-opt-area-cls").removeClass("hide");
-                $("#gamedraw-team-a").val(gamedrawdata.contestant_a['id']).removeAttr("disabled");
-                $("#gamedraw-team-b").val(gamedrawdata.contestant_b['id']).removeAttr("disabled");
-            } else if (gamedrawdata.gamemode['id'] == 2) {
+                // $("#gamedraw-team-a").val(gamedrawdata.contestant_a['id']).removeAttr("disabled");
+                // $("#gamedraw-team-b").val(gamedrawdata.contestant_b['id']).removeAttr("disabled");
+                $("#gamedraw-team-a").val(gamedrawdata.contestant_a_id).attr("disabled", "disabled");//.removeAttr("disabled");
+                $("#gamedraw-team-b").val(gamedrawdata.contestant_b_id).attr("disabled", "disabled");//.removeAttr("disabled");
+                // } else if (gamedrawdata.gamemode['id'] == 2) {
+            } else if (gamedrawdata.gamemode_id == 2) {
                 $("#gamedraw-gamemode-individu").prop("checked", true);
                 $(".gamedraw-team-opt-area-cls").addClass("hide");
                 $(".gamedraw-player-opt-area-cls").removeClass("hide");
-                $("#gamedraw-player-a").val(gamedrawdata.contestant_a['id']).removeAttr("disabled");
-                $("#gamedraw-player-b").val(gamedrawdata.contestant_b['id']).removeAttr("disabled");
+                // $("#gamedraw-player-a").val(gamedrawdata.contestant_a['id']).removeAttr("disabled");
+                // $("#gamedraw-player-b").val(gamedrawdata.contestant_b['id']).removeAttr("disabled");
+                $("#gamedraw-player-a").val(gamedrawdata.contestant_a_id).attr("disabled", "disabled");//.removeAttr("disabled");
+                $("#gamedraw-player-b").val(gamedrawdata.contestant_b_id).attr("disabled", "disabled");//.removeAttr("disabled");
             }
             $(".gamedraw-bowstyle-cls").removeAttr("disabled");
             $(".gamedraw-gamemode-cls").removeAttr("disabled");
@@ -574,26 +626,37 @@ $(document).ready(function () {
             modalTitle += "Delete";
             $("#gamedraw-num").val(gamedrawdata.num).attr("disabled", "disabled");
 
-            if (gamedrawdata.bowstyle['id'] == 1) {
+            /* if (gamedrawdata.bowstyle['id'] == 1) {
                 $("#gamedraw-bowstyle-recurve").prop("checked", true);
             } else if (gamedrawdata.gamemode['id'] == 2) {
+                $("#gamedraw-bowstyle-compound").prop("checked", true);
+            } */
+            if (gamedrawdata.bowstyle_id == 1) {
+                $("#gamedraw-bowstyle-recurve").prop("checked", true);
+            } else if (gamedrawdata.bowstyle_id == 2) {
                 $("#gamedraw-bowstyle-compound").prop("checked", true);
             }
             /*
             * TO-DO: radio game mode dinamic
             */
-            if (gamedrawdata.gamemode['id'] == 1) {
+            // if (gamedrawdata.gamemode['id'] == 1) {
+            if (gamedrawdata.gamemode_id == 1) {
                 $("#gamedraw-gamemode-beregu").prop("checked", true);
                 $(".gamedraw-player-opt-area-cls").addClass("hide");
                 $(".gamedraw-team-opt-area-cls").removeClass("hide");
-                $("#gamedraw-team-a").val(gamedrawdata.contestant_a['id']).attr("disabled", "disabled");
-                $("#gamedraw-team-b").val(gamedrawdata.contestant_b['id']).attr("disabled", "disabled");
-            } else if (gamedrawdata.gamemode['id'] == 2) {
+                // $("#gamedraw-team-a").val(gamedrawdata.contestant_a['id']).attr("disabled", "disabled");
+                // $("#gamedraw-team-b").val(gamedrawdata.contestant_b['id']).attr("disabled", "disabled");
+                $("#gamedraw-team-a").val(gamedrawdata.contestant_a_id).attr("disabled", "disabled");
+                $("#gamedraw-team-b").val(gamedrawdata.contestant_b_id).attr("disabled", "disabled");
+                // } else if (gamedrawdata.gamemode['id'] == 2) {
+            } else if (gamedrawdata.gamemode_id == 2) {
                 $("#gamedraw-gamemode-individu").prop("checked", true);
                 $(".gamedraw-team-opt-area-cls").addClass("hide");
                 $(".gamedraw-player-opt-area-cls").removeClass("hide");
-                $("#gamedraw-player-a").val(gamedrawdata.contestant_a['id']).attr("disabled", "disabled");
-                $("#gamedraw-player-b").val(gamedrawdata.contestant_b['id']).attr("disabled", "disabled");
+                // $("#gamedraw-player-a").val(gamedrawdata.contestant_a['id']).attr("disabled", "disabled");
+                // $("#gamedraw-player-b").val(gamedrawdata.contestant_b['id']).attr("disabled", "disabled");
+                $("#gamedraw-player-a").val(gamedrawdata.contestant_a_id).attr("disabled", "disabled");
+                $("#gamedraw-player-b").val(gamedrawdata.contestant_b_id).attr("disabled", "disabled");
             }
             $(".gamedraw-bowstyle-cls").attr("disabled", "disabled");
             $(".gamedraw-gamemode-cls").attr("disabled", "disabled");
@@ -753,11 +816,11 @@ $(document).ready(function () {
     }
 
     function Form_Load_Config(configdata) {
-        $("#config-id").val(configdata.id);
-        $("#config-time-interval").val(configdata.time_interval);
+        $("#form-config #config-id").val(configdata.id);
+        $("#form-config #config-time-interval").val(configdata.time_interval);
         $("#activated-mode").text(configdata.active_mode);
-        $("#config-active-mode").val(configdata.active_mode);
-        $("#config-img").attr("src", "images/mode_" + configdata.active_mode + ".png");
+        $("#form-config #config-active-mode").val(configdata.active_mode);
+        // $("#config-img").attr("src", "images/mode_" + configdata.active_mode + ".png");
     }
 
     function Radio_Load_Bowstyle(elemTarget, bowstylesdata) {
@@ -768,7 +831,7 @@ $(document).ready(function () {
             if (i == 0) {
                 radioTxt += " checked='checked' ";
             }
-            radioTxt += "name='gamedraw_bowstyle' class='gamedraw-bowstyle-cls form-check-input' value='" + bowstylesdata[i].id + "' id='gamedraw-bowstyle-" + (bowstylesdata[i].name).toLowerCase() + "'><label for='gamedraw-bowstyle-" + (bowstylesdata[i].name).toLowerCase() + "' class='form-check-label'>" + bowstylesdata[i].name + "</label>";
+            radioTxt += "name='gamedraw_bowstyle' class='gamedraw-bowstyle-cls form-check-input' value='" + bowstylesdata[i].id + "' id='gamedraw-bowstyle-" + (bowstylesdata[i].name).toLowerCase() + "'><label for='gamedraw-bowstyle-" + (bowstylesdata[i].name).toLowerCase() + "' class='form-check-label text-gray-4'>" + bowstylesdata[i].name + "</label>";
             radioTxt += "</div>";
         }
         elemTarget.html(radioTxt);
@@ -782,13 +845,13 @@ $(document).ready(function () {
             if (i == 0) {
                 radioTxt += " checked='checked' ";
             }
-            radioTxt += "name='gamedraw_gamemode' class='gamedraw-gamemode-cls form-check-input' value='" + gamemodesdata[i].id + "' id='gamedraw-gamemode-" + (gamemodesdata[i].name).toLowerCase() + "'><label for='gamedraw-gamemode-" + (gamemodesdata[i].name).toLowerCase() + "' class='form-check-label'>" + gamemodesdata[i].name + "</label>";
+            radioTxt += "name='gamedraw_gamemode' class='gamedraw-gamemode-cls form-check-input' value='" + gamemodesdata[i].id + "' id='gamedraw-gamemode-" + (gamemodesdata[i].name).toLowerCase() + "'><label for='gamedraw-gamemode-" + (gamemodesdata[i].name).toLowerCase() + "' class='form-check-label text-gray-4'>" + gamemodesdata[i].name + "</label>";
             radioTxt += "</div>";
         }
         elemTarget.html(radioTxt);
     }
 
-    function Table_Load_Team(elemTarget, teamsdata) {
+    /* function Table_Load_Team(elemTarget, teamsdata) {
         var tdText = "<thead><tr><th class='w-25 text-info font-weight-normal border-secondary'></th><th class='w-50 text-info font-weight-normal border-secondary'>Team</th><th class='w-25 text-info font-weight-normal border-secondary'><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (var i = 0; i < teamsdata.length; i++) {
@@ -799,9 +862,13 @@ $(document).ready(function () {
         }
         tdText += "</tbody>";
         elemTarget.html(tdText);
+    } */
+
+    function renderTeamList(teams) {
+        $("#team-table tbody").html(teams);
     }
 
-    function Table_Load_Player(elemTarget, playersdata) {
+    /* function Table_Load_Player(elemTarget, playersdata) {
         var tdText = "<thead><tr><th class='w-50 text-info font-weight-normal border-secondary'>Name</th><th class='w-25 text-info font-weight-normal border-secondary'>Team</th><th class='w-25 text-info font-weight-normal border-secondary'><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < playersdata.length; i++) {
@@ -812,9 +879,13 @@ $(document).ready(function () {
         }
         tdText += "</tbody>";
         elemTarget.html(tdText);
+    } */
+
+    function renderPlayerList(players) {
+        $("#player-table tbody").html(players);
     }
 
-    function Table_Load_GameDraw(elemTarget, gamesdraws_data) {
+    /* function Table_Load_GameDraw(elemTarget, gamesdraws_data) {
         var tdText = "<thead><tr><th class='text-info font-weight-normal border-secondary'>Game</th><th class='text-info font-weight-normal border-secondary'></th><th class='text-info font-weight-normal border-secondary'>Draw</th><th class='text-info font-weight-normal border-secondary'></th><th class='text-info font-weight-normal border-secondary'><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < gamesdraws_data.length; i++) {
@@ -827,84 +898,96 @@ $(document).ready(function () {
         }
         tdText += "</tbody>";
         elemTarget.html(tdText);
+    } */
+
+    /* function renderGamedrawItem(gamedrawItem) {
+        $("#gamedraw-table tbody").html(gamedrawItem);
+    } */
+
+    function renderGamedrawList(gamedrawItem) {
+        $("#gamedraw-table tbody").html(gamedrawItem);
+    }
+
+    function renderGamesetList(gamesetItem) {
+        $("#gameset-table tbody").html(gamesetItem);
     }
 
     function Table_Load_GameDrawInfo(elemTarget, gamedraw) {
         var total_setpoint_a = 0;
         var total_setpoint_b = 0;
-        var gameWinnerAClass = "";
-        var gameWinnerBClass = "";
-        if(gamedraw.bowstyle_id==1){
-            var tdText = "<thead class='bg-dark text-white'><tr><th>Set</th><th>" + gamedraw.contestant_a['name'] + "</th><th>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
+        var gameWinnerAClass = "text-gray-4";
+        var gameWinnerBClass = "text-gray-4";
+        if (gamedraw.bowstyle_id == 1) {
+            var tdText = "<thead><tr class='bg-gray-2'><th class='text-gray-4 font-weight-normal border-0'>Set</th><th class='text-gray-4 font-weight-normal border-0'>" + gamedraw.contestant_a['name'] + "</th><th class='text-gray-4 font-weight-normal border-0'>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
             tdText += "<tbody>";
             for (i = 0; i < (gamedraw.gamesets).length; i++) {
-                tdText += "<tr><td><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
-                var winnerACSS = "";
+                tdText += "<tr><td class='text-gray-4 font-weight-light border-gray-2'><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
+                var winnerACSS = "text-gray-4";
                 var winnerBCSS = winnerACSS;
                 var setpoint_a = gamedraw.gamesets[i]['score_a']['point'];
                 var setpoint_b = gamedraw.gamesets[i]['score_b']['point'];
                 total_setpoint_a += parseInt(setpoint_a);
                 total_setpoint_b += parseInt(setpoint_b);
                 if (setpoint_a > setpoint_b) {
-                    winnerACSS = "class='text-success font-weight-bold'";
+                    winnerACSS = "text-success";
                 } else if (setpoint_a < setpoint_b) {
-                    winnerBCSS = "class='text-success font-weight-bold'";
+                    winnerBCSS = "text-success";
                 }
-                tdText += "<td " + winnerACSS + "><span>" + setpoint_a + "</span></td>";
-                tdText += "<td " + winnerBCSS + "><span>" + setpoint_b + "</span></td>";
+                tdText += "<td class='font-weight-bold border-gray-2 " + winnerACSS + "'><span>" + setpoint_a + "</span></td>";
+                tdText += "<td class='font-weight-bold border-gray-2 " + winnerBCSS + "'><span>" + setpoint_b + "</span></td>";
                 tdText += "</tr>";
             }
             if (total_setpoint_a > total_setpoint_b) {
-                gameWinnerAClass = "bg-success text-white";
+                gameWinnerAClass = "text-success";
             } else if (total_setpoint_a < total_setpoint_b) {
-                gameWinnerBClass = "bg-success text-white";
+                gameWinnerBClass = "text-success";
             }
-            tdText += "<tr><td class='font-weight-bold'>Total</td>";
-            tdText += "<td class='font-weight-bold " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
-            tdText += "<td class='font-weight-bold " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
+            tdText += "<tr class='bg-gray-3'><td class='text-gray-4 font-weight-bold border-gray-2'>Total</td>";
+            tdText += "<td class='font-weight-bold border-gray-2 bg-gray-3 " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
+            tdText += "<td class='font-weight-bold border-gray-2 bg-gray-3 " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
             tdText += "</tr>";
-        }else if(gamedraw.bowstyle_id==2){
-            var tdText = "<thead class='bg-dark text-white'><tr><th>Set</th><th>" + gamedraw.contestant_a['name'] + "</th><th>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
+        } else if (gamedraw.bowstyle_id == 2) {
+            var tdText = "<thead><tr class='bg-gray-2'><th class='text-gray-4 font-weight-normal border-0'>Set</th><th class='text-gray-4 font-weight-normal border-0'>" + gamedraw.contestant_a['name'] + "</th><th class='text-gray-4 font-weight-normal border-0'>" + gamedraw.contestant_b['name'] + "</th></tr></thead>";
             tdText += "<tbody>";
             for (i = 0; i < (gamedraw.gamesets).length; i++) {
-                tdText += "<tr><td><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
-                var winnerACSS = "";
+                tdText += "<tr><td class='text-gray-4 font-weight-light border-gray-2'><span>" + gamedraw.gamesets[i]['num'] + "</span></td>";
+                var winnerACSS = "text-gray-4";
                 var winnerBCSS = winnerACSS;
                 var setpoint_a = gamedraw.gamesets[i]['score_a']['game_total_points'];
                 var setpoint_b = gamedraw.gamesets[i]['score_b']['game_total_points'];
                 total_setpoint_a += parseInt(setpoint_a);
                 total_setpoint_b += parseInt(setpoint_b);
                 if (setpoint_a > setpoint_b) {
-                    winnerACSS = "class='text-success font-weight-bold'";
+                    winnerACSS = "text-success";
                 } else if (setpoint_a < setpoint_b) {
-                    winnerBCSS = "class='text-success font-weight-bold'";
+                    winnerBCSS = "text-success";
                 }
-                tdText += "<td " + winnerACSS + "><span>" + setpoint_a + "</span></td>";
-                tdText += "<td " + winnerBCSS + "><span>" + setpoint_b + "</span></td>";
+                tdText += "<td class='font-weight-bold border-gray-2 " + winnerACSS + "'><span>" + setpoint_a + "</span></td>";
+                tdText += "<td class='font-weight-bold border-gray-2 " + winnerBCSS + "'><span>" + setpoint_b + "</span></td>";
                 tdText += "</tr>";
             }
             if (total_setpoint_a > total_setpoint_b) {
-                gameWinnerAClass = "bg-success text-white";
+                gameWinnerAClass = "text-success";
             } else if (total_setpoint_a < total_setpoint_b) {
-                gameWinnerBClass = "bg-success text-white";
+                gameWinnerBClass = "text-success";
             }
-            tdText += "<tr><td class='font-weight-bold'>Total</td>";
-            tdText += "<td class='font-weight-bold " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
-            tdText += "<td class='font-weight-bold " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
+            tdText += "<tr class='bg-gray-3'><td class='text-gray-4 font-weight-bold border-gray-2'>Total</td>";
+            tdText += "<td class='font-weight-bold border-gray-2 bg-gray-3 " + gameWinnerAClass + "'><span>" + total_setpoint_a + "</span></td>";
+            tdText += "<td class='font-weight-bold border-gray-2 bg-gray-3 " + gameWinnerBClass + "'><span>" + total_setpoint_b + "</span></td>";
             tdText += "</tr>";
         }
         tdText += "</tbody>";
         elemTarget.html(tdText);
     }
 
-    function Table_Load_GameSet(elemTarget, gamesetsdata) {
+    /* function Table_Load_GameSet(elemTarget, gamesetsdata) {
         var tdText = "<thead><tr><th class='text-info font-weight-normal border-secondary'>Game</th><th class='text-info font-weight-normal border-secondary'>Draw</th><th class='text-info font-weight-normal border-secondary'>Set</th><th class='text-info font-weight-normal border-secondary'>Status</th><th class='text-info font-weight-normal border-secondary'><i class='fas fa-tasks'></i></th></tr></thead>";
         tdText += "<tbody>";
         for (i = 0; i < gamesetsdata.length; i++) {
             var bowstyle = "";
-            if(gamesetsdata[i].gamedraw['bowstyle_id']==1){
+            if (gamesetsdata[i].gamedraw['bowstyle_id'] == 1) {
                 bowstyle = "[Recurve]";
-            }else if(gamesetsdata[i].gamedraw['bowstyle_id']==2){
+            } else if (gamesetsdata[i].gamedraw['bowstyle_id'] == 2) {
                 bowstyle = "[Compound]";
             }
             tdText += "<tr><td class='text-white font-weight-light border-secondary'><span>" + gamesetsdata[i].gamedraw['num'] + " " + bowstyle + "</span></td>";
@@ -931,7 +1014,7 @@ $(document).ready(function () {
         }
         tdText += "</tbody>";
         elemTarget.html(tdText);
-    }
+    } */
 
     function Table_Load_GameSetInfo(elemTarget, gameset) {
         var tdText = "<thead class='bg-dark text-white'><tr><th>Point</th><th>" + gameset.contestant_a['name'] + "</th><th>" + gameset.contestant_b['name'] + "</th></tr></thead>";
@@ -965,35 +1048,39 @@ $(document).ready(function () {
     }
 
     function Option_Load_Team(elemTarget, teamsdata) {
-        var opText = "<option value='0'>Select a team</option>";
+        /* var opText = "<option value='0'>Select a team</option>";
         for (i = 0; i < teamsdata.length; i++) {
             opText += "<option value='" + teamsdata[i].id + "'>" + teamsdata[i].name + "</option>";
         }
-        elemTarget.html(opText);
+        elemTarget.html(opText); */
+        elemTarget.html(teamsdata);
     }
 
     function Option_Load_Player(elemTarget, playersdata) {
-        var opText = "<option value='0'>Select a player</option>";
+        /* var opText = "<option value='0'>Select a player</option>";
         for (i = 0; i < playersdata.length; i++) {
             opText += "<option value='" + playersdata[i].id + "'>" + playersdata[i].name + "</option>";
         }
-        elemTarget.html(opText);
+        elemTarget.html(opText); */
+        elemTarget.html(playersdata);
     }
 
     function Option_Load_GameDraw(elemTarget, gamesdraws_data) {
-        var opText = "<option value='0'>Select a game draw</option>";
+        /* var opText = "<option value='0'>Select a game draw</option>";
         for (i = 0; i < gamesdraws_data.length; i++) {
             opText += "<option value='" + gamesdraws_data[i].id + "'>" + gamesdraws_data[i].num + ". " + gamesdraws_data[i].contestant_a['name'] + " vs " + gamesdraws_data[i].contestant_b['name'] + "" + "</option>";
         }
-        $(elemTarget).html(opText);
+        $(elemTarget).html(opText); */
+        $(elemTarget).html(gamesdraws_data);
     }
 
     function Option_Load_GameStatus(elemTarget, gamestatuses) {
-        var opText = "<option value='0'>Select a status</option>";
+        /* var opText = "<option value='0'>Select a status</option>";
         for (i = 0; i < gamestatuses.length; i++) {
             opText += "<option value='" + gamestatuses[i].id + "'>" + gamestatuses[i].name + "</option>";
         }
-        elemTarget.html(opText);
+        elemTarget.html(opText); */
+        elemTarget.html(gamestatuses);
     }
 
     /* function Option_Load_GameSet(gameSetOptionObject, gamesets) {
@@ -1061,6 +1148,9 @@ $(document).ready(function () {
                         if (act == 'GetGameModes') {
                             Radio_Load_GameMode($("#gamedraw-radio-area"), data.gamemodes);
                         }
+                        else if (act == 'GAMESTATUS_LIST') {
+                            Option_Load_GameStatus($("#gameset-status"), data.gamestatuses);
+                        }
                         else if (act == 'GetBowstyles') {
                             Radio_Load_Bowstyle($("#gamedraw-radio-bowstyle-area"), data.bowstyles);
                         }
@@ -1070,51 +1160,82 @@ $(document).ready(function () {
                         else if (act == 'GetConfig') {
                             Load_Config(data.config);
                         }
+                        else if (act == 'TEAM_LIST') {
+                            renderTeamList(data.teams);
+                            Option_Load_Team($("#player-team"), data.team_option);
+                            Option_Load_Team($("#gamedraw-team-a"), data.team_option);
+                            Option_Load_Team($("#gamedraw-team-b"), data.team_option);
+                        }
+                        else if (act == 'PLAYER_LIST') {
+                            renderPlayerList(data.players);
+                            Option_Load_Player($("#gamedraw-player-a"), data.player_option);
+                            Option_Load_Player($("#gamedraw-player-b"), data.player_option);
+                        }
+                        else if (act == 'GAMEDRAW_LIST') {
+                            Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraw_option);
+                            renderGamedrawList(data.gamedraws);
+                        }
+                        else if (act == 'GAMESET_LIST') {
+                            renderGamesetList(data.gamesets);
+                        }
+                        // else if(act == 'GAME_LIST'){
+                        //     Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraw_option);
+                        //     renderGamedrawList(data.gamedraws);
+                        //     renderGamesetList(data.gamesets);
+                        // }
                         if (data.has_value) {
                             if (act == 'GetGameModes') {
 
                             } else if (act == 'GetBowstyles') {
 
-                            } else if (act == 'GetTeam') {
+                            } /* else if (act == 'GetTeam') {
                                 Table_Load_Team($("#tbl-team"), data.teams);
                                 Option_Load_Team($("#player-team"), data.teams);
                                 Option_Load_Team($("#gamedraw-team-a"), data.teams);
                                 Option_Load_Team($("#gamedraw-team-b"), data.teams);
-                            }
-                            else if (act == 'GetPlayer') {
-                                Table_Load_Player($("#tbl-player"), data.players);
-                                Option_Load_Player($("#gamedraw-player-a"), data.players);
-                                Option_Load_Player($("#gamedraw-player-b"), data.players);
-                            }
-                            else if (act == 'GetGameDraw') {
-                                Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraws);
-                                // Option_Load_GameDraw($("#scoreboard-gamedraw"), data.gamedraws);
-                                Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
-                            }
+                            } */
+
+                            // else if (act == 'GetPlayer') {
+                            //     Table_Load_Player($("#tbl-player"), data.players);
+                            //     Option_Load_Player($("#gamedraw-player-a"), data.players);
+                            //     Option_Load_Player($("#gamedraw-player-b"), data.players);
+                            // }
+                            // else if (act == 'GetGameDraw') {
+                            // Option_Load_GameDraw($("#gameset-gamedraw"), data.gamedraws);
+                            // Table_Load_GameDraw($("#tbl-gamedraw"), data.gamedraws);
+                            // }
                             else if (act == 'GetGameSet') {
-                                Table_Load_GameSet($("#gameset-table"), data.gamesets);
+                                // Table_Load_GameSet($("#gameset-table"), data.gamesets);
                             } else if (act == 'GetLiveScore') {
                                 Scoreboard_Config(data.config['scoreboard']);
                                 Form_Load_Score(data.score);
                                 EnableScoreboard();
-                            }
+                            } //else if (act == 'GAMEDRAW_LIST') {
+                            // Accor_Load_Gamedraw_List(data.gamedraws);
+                            // renderGamedrawItem(data.gamedraws);
+                            // }
+
                         } else {
                             if (act == 'GetGameModes') {
 
                             } else if (act == 'GetBowstyles') {
 
-                            } else if (act == 'GetTeam') {
+                            } /* else if (act == 'GetTeam') {
                                 $("#tbl-team").html("<tr><td>0 team. buat dulu!</td></tr>");
-                            }
-                            else if (act == 'GetPlayer') {
-                                $("#tbl-player").html("<tr><td>0 player. buat dulu!</td></tr>");
-                            }
-                            else if (act == 'GetGameDraw') {
-                                $("#tbl-gamedraw").html("<tr><td>0 game draw. buat dulu!</td></tr>");
-                            }
+                            } */
+                            // else if (act == 'GetPlayer') {
+                            //     $("#tbl-player").html("<tr><td>0 player. buat dulu!</td></tr>");
+                            // }
+                            // else if (act == 'GetGameDraw') {
+                            // $("#tbl-gamedraw").html("<tr><td>0 game draw. buat dulu!</td></tr>");
+                            // }
                             else if (act == 'GetGameSet') {
-                                $("#gameset-table").html("<tr><td>0 game set. buat dulu!</td></tr>");
+                                // $("#gameset-table").html("<tr><td>0 game set. buat dulu!</td></tr>");
                             }
+                            // else if (act == 'GAMEDRAW_LIST') {
+                            // Accor_Load_Gamedraw_List("FUCK");
+                            // renderGamedrawItem(data.gamedraws);
+                            // }
                             else if (act == 'GetLiveScore') {
                                 Scoreboard_Config(data.config['scoreboard']);
                                 Form_Reset_Score();
@@ -1261,14 +1382,14 @@ $(document).ready(function () {
     $(document).on('click', '.gameset-update-btn-cls', function (e) {
         e.preventDefault();
         var gamesetid = $(this).attr("data-gamesetid");
-        GetGameStatus();
+        // GetGameStatus();
         GetGameSetByID(gamesetid, 'update');
     });
 
     $(document).on('click', '.gameset-delete-btn-cls', function (e) {
         e.preventDefault();
         var gamesetid = $(this).attr("data-gamesetid");
-        GetGameStatus();
+        // GetGameStatus();
         GetGameSetByID(gamesetid, 'delete');
     });
 
@@ -1293,11 +1414,13 @@ $(document).ready(function () {
                         // GetLiveScore();
                         // GetGameSet();
                         var urls = [
-                            '/scoreboard/controller.php?GetGameSet=all',
+                            // '/scoreboard/controller.php?GetGameSet=all',
+                            '/scoreboard/controller.php?gameset_get=list',
                             '/scoreboard/controller.php?GetLiveScore=1',
                         ];
                         var actNames = [
-                            'GetGameSet',
+                            // 'GetGameSet',
+                            'GAMESET_LIST',
                             'GetLiveScore',
                         ];
                         ajaxGetReq(urls, actNames);
@@ -1324,11 +1447,13 @@ $(document).ready(function () {
                         // GetLiveScore();
                         // GetGameSet();
                         var urls = [
-                            '/scoreboard/controller.php?GetGameSet=all',
+                            // '/scoreboard/controller.php?GetGameSet=all',
+                            '/scoreboard/controller.php?gameset_get=list',
                             '/scoreboard/controller.php?GetLiveScore=1',
                         ];
                         var actNames = [
-                            'GetGameSet',
+                            // 'GetGameSet',
+                            'GAMESET_LIST',
                             'GetLiveScore',
                         ];
                         ajaxGetReq(urls, actNames);
@@ -1338,22 +1463,22 @@ $(document).ready(function () {
         }
     });
 
-    $("#team-create-btn").click(function (e) {
-        Form_Load_Team(false, 'create');
+    $("#team-create-btn, #create-team-button").click(function (e) {
+        Form_Load_Team(null, 'create');
     });
 
-    $("#player-create-btn").click(function (e) {
+    $("#player-create-btn, #create-player-button").click(function (e) {
         Form_Load_Player(false, 'create');
     });
 
-    $("#gamedraw-create-btn").click(function (e) {
+    $("#gamedraw-create-btn, #create-gamedraw-button").click(function (e) {
         $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: '/scoreboard/controller.php?GetGameDrawNum=count',
+            url: '/scoreboard/controller.php?gamedraw_get=new_num',
             success: function (data) {
                 if (data.status) {
-                    $("#gamedraw-num").val(data.nGameDraw);
+                    $("#gamedraw-num").val(data.new_num);
                 } else {
                     $("#gamedraw-num").val(1);
                 }
@@ -1362,7 +1487,7 @@ $(document).ready(function () {
         });
     });
 
-    $("#gameset-create-btn").click(function (e) {
+    $("#gameset-create-btn, #create-gameset-button").click(function (e) {
         Form_Load_GameSet(false, 'create');
     });
 
@@ -1408,14 +1533,14 @@ $(document).ready(function () {
     });
 
     $('#score-a-setpoints, #score-b-setpoints').on('input', function (e) {
-        if(this.id=="score-a-setpoints"){
-            Set_GamePoints($("#score-a-setpoints"),$("#score-a-gamepoints"));
-        }else if(this.id=="score-b-setpoints"){
-            Set_GamePoints($("#score-b-setpoints"),$("#score-b-gamepoints"));
+        if (this.id == "score-a-setpoints") {
+            Set_GamePoints($("#score-a-setpoints"), $("#score-a-gamepoints"));
+        } else if (this.id == "score-b-setpoints") {
+            Set_GamePoints($("#score-b-setpoints"), $("#score-b-gamepoints"));
         }
     });
 
-    function Set_GamePoints(sender,elementTarget){
+    function Set_GamePoints(sender, elementTarget) {
         var prev_setpoints = parseNum(sender.attr("data-setpoints"));
         var prev_gamepoints = parseNum(elementTarget.attr("data-gamepoints"));
         var result = prev_gamepoints - prev_setpoints + parseNum(sender.val());
@@ -1430,14 +1555,10 @@ $(document).ready(function () {
             $.ajax({
                 type: 'GET',
                 dataType: 'json',
-                url: '/scoreboard/controller.php?GetGameSetLastNum=' + gamedraw_id,
+                url: '/scoreboard/controller.php?gameset_get=new_num&gamedraw_id=' + gamedraw_id,
                 success: function (data) {
                     if (data.status) {
-                        if (data.has_value) {
-                            $("#gameset-setnum").val(data.next_num);
-                        } else {
-                            $("#gameset-setnum").val(1);
-                        }
+                        $("#gameset-setnum").val(data.new_set);
                     } else {
                         $("#gameset-setnum").val(1);
                     }
@@ -1633,17 +1754,27 @@ $(document).ready(function () {
                     // GetLiveScore();
                     // LoadData();
                     var urls = [
-                        '/scoreboard/controller.php?GetGameSet=all',
-                        '/scoreboard/controller.php?GetGameDraw=all',
-                        '/scoreboard/controller.php?GetPlayer=all',
-                        '/scoreboard/controller.php?GetTeam=all',
+                        // '/scoreboard/controller.php?GetGameSet=all',
+                        '/scoreboard/controller.php?gameset_get=list',
+                        // '/scoreboard/controller.php?GetGameDraw=all',
+                        '/scoreboard/controller.php?gamedraw_get=list',
+                        // '/scoreboard/controller.php?game_get=list',
+                        // '/scoreboard/controller.php?GetPlayer=all',
+                        '/scoreboard/controller.php?player_get=list',
+                        // '/scoreboard/controller.php?GetTeam=all',
+                        '/scoreboard/controller.php?team_get=list',
                         '/scoreboard/controller.php?GetLiveScore=1',
                     ];
                     var actNames = [
-                        'GetGameSet',
-                        'GetGameDraw',
-                        'GetPlayer',
-                        'GetTeam',
+                        // 'GetGameSet',
+                        'GAMESET_LIST',
+                        // 'GetGameDraw',
+                        'GAMEDRAW_LIST',
+                        // 'GAME_LIST',
+                        // 'GetPlayer',
+                        'PLAYER_LIST',
+                        // 'GetTeam',
+                        'TEAM_LIST',
                         'GetLiveScore',
                     ];
                     ajaxGetReq(urls, actNames);
@@ -1699,17 +1830,27 @@ $(document).ready(function () {
                 // GetLiveScore();
                 // LoadData();
                 var urls = [
-                    '/scoreboard/controller.php?GetGameSet=all',
-                    '/scoreboard/controller.php?GetGameDraw=all',
-                    '/scoreboard/controller.php?GetPlayer=all',
-                    '/scoreboard/controller.php?GetTeam=all',
+                    // '/scoreboard/controller.php?GetGameSet=all',
+                    '/scoreboard/controller.php?gameset_get=list',
+                    '/scoreboard/controller.php?gamedraw_get=list',
+                    // '/scoreboard/controller.php?game_get=list',
+                    // '/scoreboard/controller.php?GetGameDraw=all',
+                    // '/scoreboard/controller.php?GetPlayer=all',
+                    '/scoreboard/controller.php?player_get=list',
+                    // '/scoreboard/controller.php?GetTeam=all',
+                    '/scoreboard/controller.php?team_get=list',
                     '/scoreboard/controller.php?GetLiveScore=1',
                 ];
                 var actNames = [
-                    'GetGameSet',
-                    'GetGameDraw',
-                    'GetPlayer',
-                    'GetTeam',
+                    // 'GetGameSet',
+                    'GAMESET_LIST',
+                    'GAMEDRAW_LIST',
+                    // 'GAME_LIST',
+                    // 'GetGameDraw',
+                    // 'GetPlayer',
+                    'PLAYER_LIST',
+                    // 'GetTeam',
+                    'TEAM_LIST',
                     'GetLiveScore',
                 ];
                 ajaxGetReq(urls, actNames);
@@ -1782,17 +1923,27 @@ $(document).ready(function () {
                 // GetLiveScore();
                 // LoadData();
                 var urls = [
-                    '/scoreboard/controller.php?GetGameSet=all',
-                    '/scoreboard/controller.php?GetGameDraw=all',
-                    '/scoreboard/controller.php?GetPlayer=all',
-                    '/scoreboard/controller.php?GetTeam=all',
+                    // '/scoreboard/controller.php?GetGameSet=all',
+                    '/scoreboard/controller.php?gameset_get=list',
+                    // '/scoreboard/controller.php?GetGameDraw=all',
+                    '/scoreboard/controller.php?gamedraw_get=list',
+                    // '/scoreboard/controller.php?game_get=list',
+                    // '/scoreboard/controller.php?GetPlayer=all',
+                    '/scoreboard/controller.php?player_get=list',
+                    // '/scoreboard/controller.php?GetTeam=all',
+                    '/scoreboard/controller.php?team_get=list',
                     '/scoreboard/controller.php?GetLiveScore=1',
                 ];
                 var actNames = [
-                    'GetGameSet',
-                    'GetGameDraw',
-                    'GetPlayer',
-                    'GetTeam',
+                    // 'GetGameSet',
+                    'GAMESET_LIST',
+                    // 'GetGameDraw',
+                    'GAMEDRAW_LIST',
+                    // 'GAME_LIST',
+                    // 'GetPlayer',
+                    'PLAYER_LIST',
+                    // 'GetTeam',
+                    'TEAM_LIST',
                     'GetLiveScore',
                 ];
                 ajaxGetReq(urls, actNames);
@@ -1832,17 +1983,27 @@ $(document).ready(function () {
                 // GetLiveScore();
                 // LoadData();
                 var urls = [
-                    '/scoreboard/controller.php?GetGameSet=all',
-                    '/scoreboard/controller.php?GetGameDraw=all',
-                    '/scoreboard/controller.php?GetPlayer=all',
-                    '/scoreboard/controller.php?GetTeam=all',
+                    // '/scoreboard/controller.php?GetGameSet=all',
+                    '/scoreboard/controller.php?gameset_get=list',
+                    '/scoreboard/controller.php?gamedraw_get=list',
+                    // '/scoreboard/controller.php?GetGameDraw=all',
+                    // '/scoreboard/controller.php?game_get=list',
+                    // '/scoreboard/controller.php?GetPlayer=all',
+                    '/scoreboard/controller.php?player_get=list',
+                    // '/scoreboard/controller.php?GetTeam=all',
+                    '/scoreboard/controller.php?team_get=list',
                     '/scoreboard/controller.php?GetLiveScore=1',
                 ];
                 var actNames = [
-                    'GetGameSet',
-                    'GetGameDraw',
-                    'GetPlayer',
-                    'GetTeam',
+                    // 'GetGameSet',
+                    'GAMESET_LIST',
+                    'GAMEDRAW_LIST',
+                    // 'GetGameDraw',
+                    // 'GAME_LIST',
+                    // 'GetPlayer',
+                    'PLAYER_LIST',
+                    // 'GetTeam',
+                    'TEAM_LIST',
                     'GetLiveScore',
                 ];
                 ajaxGetReq(urls, actNames);

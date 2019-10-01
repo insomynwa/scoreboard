@@ -1,5 +1,92 @@
 <?php
 
+if ( isset( $_GET['gameset_get'])){
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    if( $_GET['gameset_get'] == 'list') {
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gameset = new GameSet($db);
+        $result_query = $gameset->get_gameset_list();
+        if( $result_query['status'] ){
+            $result['status'] = true;
+            $result['has_value'] = $result_query['has_value'];
+            if($result['has_value']){
+                /* $gamedraw_list = $resGamedraws['gamedraws'];
+                $result['gamedraws'] = $gamedraw_list; */
+                // Get the gameset
+                /* for( $i=0; $i<sizeof($gamedraw_list); $i++){
+                    $gameset = new GameSet($db);
+                    $resGameSets = $gameset->GetGameSetListByGameDrawID($gamedraw_list[$i]['id']);
+                    if( $resGameSets['status']){
+                        if($resGameSets['has_value']){
+                            $result['gamedraws'][$i]['gamesets'] = $resGameSets['gamesets'];
+                        }else{
+                            $result['gamedraws'][$i]['gamesets'] = array();
+                        }
+                    }else{
+                        $result['gamedraws'][$i]['gamesets'] = array();
+                    }
+                } */
+                $item_template = TEMPLATE_DIR . 'gameset/item.php';
+                $render_item = '';
+                foreach( $result_query['gamesets'] as $item){
+                    $render_item .= template( $item_template, $item);
+                }
+                $result['gamesets'] = $render_item;
+            }else{
+                $item_template = TEMPLATE_DIR . 'gameset/no-item.php';
+                $render_item = '';
+                $render_item .= template( $item_template, null);
+                $result['gamesets'] = $render_item;
+                $result['message'] = "has no value";
+            }
+        }else{
+            $result['message'] = "ERROR: status 0";
+        }
+    }
+    else if ( $_GET['gameset_get'] == 'new_num' && isset( $_GET['gamedraw_id']) && is_numeric( $_GET['gamedraw_id']) && $_GET['gamedraw_id'] > 0){
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gamedraw_id = $_GET['gamedraw_id'];
+        $gameset = new GameSet($db);
+        $result_array = $gameset->gamedraw_id($gamedraw_id)->get_last_set();
+
+        $database->conn->close();
+
+        if($result['status'] = $result_array['status']){
+            if($result_array['last_set'] != NULL){
+                $result['new_set'] = $result_array['last_set'] + 1;
+            }else{
+                $result['new_set'] = 1;
+            }
+
+        }
+
+    }
+    else if ( $_GET['gameset_get'] == 'single' && isset( $_GET['id']) && is_numeric( $_GET['id']) && $_GET['id'] > 0) {
+        $gameset_id = $_GET['id'];
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gameset = new GameSet($db);
+        $result_array = $gameset->id($gameset_id)->action('update')->get_this_gameset();
+        if($result['status'] = $result_array['status']){
+            if($result_array['has_value']){
+                $result['gameset'] = $result_array['gameset'];
+            }
+        }
+
+        $database->conn->close();
+    }
+    echo json_encode($result);
+}
 // Create Game Set
 if ( isset( $_POST['gameset_action']) ) {
     $result = array(

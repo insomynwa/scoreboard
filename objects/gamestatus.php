@@ -43,6 +43,34 @@ class GameStatus{
         return $res;
     }
 
+    public function get_gamestatus_list(){
+        $res = array( 'status' => false );
+
+        $query =
+        "SELECT gamestatus_id, gamestatus_name
+        FROM {$this->table_name}";
+
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = true;
+            $res['has_value'] = $result->num_rows>0;
+            $res['gamestatuses'] = array();
+            if($res['has_value']){
+                $i = 0;
+                $gamestatuses = array();
+                while($row = $result->fetch_assoc()) {
+                    $gamestatuses[$i]['id'] = $row['gamestatus_id'];
+                    $gamestatuses[$i]['name'] = $row['gamestatus_name'];
+
+                    $i++;
+                }
+
+                $res['gamestatuses'] = $gamestatuses;
+            }
+        }
+
+        return $res;
+    }
+
     public function GetGameStatusByID(){
         $res = array ( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE gamestatus_id={$this->id}";

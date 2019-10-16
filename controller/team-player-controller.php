@@ -132,6 +132,14 @@ if(isset( $_POST['team_action'])){
         $final_image = "";
         $sql = "";
 
+        $team_data = array(
+            'id'            => 0,
+            'name'          => $name,
+            'logo'          => '',
+            'initial'       => $team_initial,
+            'description'   => $team_desc
+        );
+
         if( $is_upload ) {
 
             // get uploaded file's extension
@@ -157,37 +165,81 @@ if(isset( $_POST['team_action'])){
 
                     if( $team_action == 'create' ){
                         $result['action'] = "create";
-                        $sql = "INSERT team (team_name,team_logo,team_initial,team_desc) VALUES ('".$name."','". strtolower($final_image) ."', '". $team_initial ."', '". $team_desc ."' )";
-                    }else if ( $team_action == 'update'){
-                        $team_id = $_POST['team_id'];
-                        $teamCls = new Team($db);
-                        $teamCls->SetID($team_id);
-                        $resTeamLogo = $teamCls->GetLogo();
-                        $result['new_logo'] = '';
-                        if($resTeamLogo['status'] && $resTeamLogo['has_value']){
-                            $prev_team_logo = $resTeamLogo['logo'];
-                            $result['new_logo'] = $final_image;
-                        }
-                        $result['action'] = "update";
-                        $sql = "UPDATE team SET team_logo='{$final_image}', team_name='{$name}', team_initial='{$team_initial}', team_desc='{$team_desc}' WHERE team_id={$team_id}";
-                    }
+                        $team_data['logo'] = strtolower($final_image);
+                        $team = new Team($db);
+                        $is_success = $team->set_data($team_data)->create();
+                        $database->conn->close();
 
-                    $tempRes = $db->query($sql);
-                    $database->conn->close();
-                    if ($tempRes){
-                        $result['message'] = "Success";
-                        $result['status'] = true;
-                        if($team_action=='update'){
-                            if($prev_team_logo != "no-image.png"){
-                                unlink( UPLOAD_DIR . $prev_team_logo );
-                            }
+                        if($is_success){
+                            $result['message'] = 'Success';
+                            $result['status'] = $is_success;
+                        }else{
+                            $result['message'] = 'ERROR: create a team';
                         }
-                    }else{
-                        $result['message'] = "ERROR: create/update data";
+
+                        // $sql = "INSERT team (team_name,team_logo,team_initial,team_desc) VALUES ('".$name."','". strtolower($final_image) ."', '". $team_initial ."', '". $team_desc ."' )";
+                    }else if ( $team_action == 'update'){
+                        $result['action'] = 'update';
+                        $result['new_logo'] = '';
+                        $team_id = $_POST['team_id'];
+
+                        $team = new Team($db);
+                        $result_query = $team->id($team_id)->get_logo();
+                        if($result_query['status']){
+                            $prev_team_logo = $result_query['logo'];
+                            $result['new_logo'] = $final_image;
+
+                            $team_data['id'] = $team_id;
+                            $team_data['logo'] = $final_image;
+
+                            $is_success = $team->set_data($team_data)->update();
+                            $database->conn->close();
+
+                            if( $is_success){
+                                $result['message'] = 'success';
+                                $result['status'] = $is_success;
+                                if($prev_team_logo != "no-image.png"){
+                                    unlink( UPLOAD_DIR . $prev_team_logo );
+                                }
+                            }else{
+                                $result['message'] = "ERROR: update TEAM";
+                            }
+                        }else{
+                            $result['message'] = "ERROR: get TEAM logo";
+                        }
                     }
                 }else{
                     if ( $team_action == 'update'){
                         $result['action'] = "update";
+                        $team_id = $_POST['team_id'];
+
+                        $database = new Database();
+                        $db = $database->getConnection();
+
+                        $team = new Team($db);
+                        $result_query = $team->id($team_id)->get_logo();
+                        if($result_query['status']){
+                            $prev_team_logo = $result_query['logo'];
+                            $result['new_logo'] = $prev_team_logo;
+
+                            $team_data['id'] = $team_id;
+                            $team_data['logo'] = $prev_team_logo;
+
+                            $is_success = $team->set_data($team_data)->update();
+                            $database->conn->close();
+
+                            if( $is_success){
+                                $result['message'] = 'ERROR: update logo, SUCCESS: update data';
+                                $result['status'] = $is_success;
+                            }else{
+                                $result['message'] = "ERROR: update TEAM";
+                            }
+                        }else{
+                            $result['message'] = "ERROR: get TEAM logo";
+                        }
+
+
+                        /* $result['action'] = "update";
                         $team_id = $_POST['team_id'];
                         $sql = "UPDATE team SET team_name='{$name}', team_initial='{$team_initial}', team_desc='{$team_desc}' WHERE team_id={$team_id}";
 
@@ -204,7 +256,7 @@ if(isset( $_POST['team_action'])){
                             $result['status'] = true;
                         }else{
                             $result['message'] = "ERROR: update team";
-                        }
+                        } */
                     }else{
                         $result['message'] = "ERROR: upload logo";
                     }
@@ -216,37 +268,51 @@ if(isset( $_POST['team_action'])){
             }
         }else{
             if ( $team_action == 'update'){
+                $result['action'] = "update";
                 $team_id = $_POST['team_id'];
-                $sql = "UPDATE team SET team_name='{$name}', team_initial='{$team_initial}', team_desc='{$team_desc}' WHERE team_id={$team_id}";
 
                 $database = new Database();
                 $db = $database->getConnection();
 
-                $tempRes = $db->query($sql);
-                $database->conn->close();
-                if ($tempRes){
-                    $result['message'] = "ERROR: update logo, SUCCESS: update data";
-                    $result['status'] = true;
+                $team = new Team($db);
+                $result_query = $team->id($team_id)->get_logo();
+                if($result_query['status']){
+                    $prev_team_logo = $result_query['logo'];
+                    $result['new_logo'] = $prev_team_logo;
+
+                    $team_data['id'] = $team_id;
+                    $team_data['logo'] = $prev_team_logo;
+
+                    $is_success = $team->set_data($team_data)->update();
+                    $database->conn->close();
+
+                    if( $is_success){
+                        $result['message'] = 'success';
+                        $result['status'] = $is_success;
+                    }else{
+                        $result['message'] = "ERROR: update TEAM";
+                    }
                 }else{
-                    $result['message'] = "ERROR: no-logo, update team";
+                    $result['message'] = "ERROR: get TEAM logo";
                 }
             }else if( $team_action == 'create'){
                 $result['action'] = "create";
-                $sql = "INSERT team (team_name,team_logo,team_initial,team_desc) VALUES ('".$name."','no-image.png', '". $team_initial ."', '". $team_desc ."' )";
 
                 $database = new Database();
                 $db = $database->getConnection();
 
-                $tempRes = $db->query($sql);
+                $team = new Team($db);
+                $is_success = $team->set_data($team_data)->create();
                 $database->conn->close();
-                if ($tempRes){
-                    $result['message'] = "Success";
-                    $result['status'] = true;
+
+                if($is_success){
+                    $result['message'] = 'Success';
+                    $result['status'] = $is_success;
                 }else{
-                    $result['message'] = "ERROR: create team";
+                    $result['message'] = 'ERROR: create a team';
                 }
             }else{
-                $result['message'] = "ERROR: upload logo";
+                $result['message'] = "ERROR: team_action";
             }
         }
     }
@@ -259,76 +325,67 @@ if(isset( $_POST['team_action'])){
             $database = new Database();
             $db = $database->getConnection();
 
-            $team = new Team($db);
-            $team->SetID($teamid);
-            $resTeam = $team->GetTeamByID();
-            if($resTeam['status']){
-                $teamPlayers = $team->GetPlayers();
-                for( $i=0; $i<sizeof($teamPlayers); $i++){
-                    $teamPlayer = new Player($db);
-                    $teamPlayer->SetID($teamPlayers[$i]['id']);
-                    $teamPlayerGameDraws = $teamPlayer->GetGameDraws();
-                    for( $j=0; $j<sizeof($teamPlayerGameDraws); $j++){
-                        $teamPlayerGameDraw = new GameDraw($db);
-                        $teamPlayerGameDraw->SetID($teamPlayerGameDraws[$j]['id']);
-                        $teamPlayerGameDrawsSets = $teamPlayerGameDraw->GetGameSets();
-                        for( $k=0; $k<sizeof($teamPlayerGameDrawsSets); $k++){
-                            $teamPlayerGameDrawsSet = new GameSet($db);
-                            $teamPlayerGameDrawsSet->SetID($teamPlayerGameDrawsSets[$k]['id']);
-                            $teamPlayerGameDrawsSetScores = $teamPlayerGameDrawsSet->GetScores();
-                            for( $l=0; $l<sizeof($teamPlayerGameDrawsSetScores); $l++){
-                                $teamPlayerGameDrawsSetScore = new Score($db);
-                                $teamPlayerGameDrawsSetScore->SetID($teamPlayerGameDrawsSetScores[$l]['id']);
-                                $teamPlayerGameDrawsSetScore->DeleteScore();
-                            }
-                            $teamPlayerGameDrawsSet->DeleteGameSet();
-                            $livegameid = GetLiveGameID($db);
-                            if($livegameid == $teamPlayerGameDrawsSets[$k]['id']){
-                                SetLiveGame($db,0);
-                            }
-                        }
-                        $teamPlayerGameDraw->DeleteGameDraw();
-                    }
-                    $teamPlayer->DeletePlayer();
-                }
-                $teamGameDraws = $team->GetGameDraws();
-                for( $i=0; $i<sizeof($teamGameDraws); $i++){
-                    $teamGamedraw = new GameDraw($db);
-                    $teamGamedraw->SetID($teamGameDraws[$i]['id']);
-                    $teamGameDrawsSets = $teamGamedraw->GetGameSets();
-                    for( $k=0; $k<sizeof($teamGameDrawsSets); $k++){
-                        $teamGameDrawsSet = new GameSet($db);
-                        $teamGameDrawsSet->SetID($teamGameDrawsSets[$k]['id']);
-                        $teamGameDrawsSetScores = $teamGameDrawsSet->GetScores();
-                        for( $l=0; $l<sizeof($teamGameDrawsSetScores); $l++){
-                            $teamGameDrawsSetScore = new Score($db);
-                            $teamGameDrawsSetScore->SetID($teamGameDrawsSetScores[$l]['id']);
-                            $teamGameDrawsSetScore->DeleteScore();
-                        }
-                        $teamGameDrawsSet->DeleteGameSet();
-                        $livegameid = GetLiveGameID($db);
-                        if($livegameid == $teamGameDrawsSets[$k]['id']){
-                            SetLiveGame($db,0);
-                        }
-                    }
-                    $teamGamedraw->DeleteGameDraw();
-                }
-            }else{
-                $result['message'] = "ERROR: Get Team";
-            }
-            // Delete LOGO
-            if($resTeam['team']['logo'] != "no-image.png"){
-                unlink( UPLOAD_DIR . $resTeam['team']['logo'] );
-            }
-            $tempRes = $team->DeleteTeam();
-            $database->conn->close();
+            $score = new Score($db);
+            $score_resul_query = $score->delete_team_related_score($teamid);
+            $result['status'] = $score_resul_query['status'];
+            if($score_resul_query['status']){
 
-            if( $tempRes['status'] ){
-                $result['status'] = $tempRes['status'];
-                $result['action'] = 'delete';
+                $livegame = new Live_Game($db);
+                $is_live = $livegame->is_team_playing($teamid);
+                if($is_live){
+                    $result_livegame_query = $livegame->set_live(0);
+                    if($result_livegame_query['status'] != true){
+                        $result['message'] = "ERROR: set TEAM LIVEGAME";
+                    }
+                }else{
+                    $result['message'] = "ERROR: no TEAM LIVEGAME/error";
+                }
+
+                $gameset = new GameSet($db);
+                $gameset_result_query = $gameset->delete_team_related_gameset($teamid);
+                $result['status'] = $result['status'] && $gameset_result_query['status'];
+                if($gameset_result_query['status']){
+
+                    $gamedraw = new GameDraw($db);
+                    $gamedraw_result_query = $gamedraw->delete_team_related_gamedraw($teamid);
+                    $result['status'] = $result['status'] && $gamedraw_result_query['status'];
+                    if($gamedraw_result_query['status']){
+                        $player = new Player($db);
+                        $player_result_query = $player->delete_team_related_player($teamid);
+                        $result['status'] = $result['status'] && $player_result_query['status'];
+                        if($player_result_query['status']){
+                            $team = new Team($db);
+                            $result_team_logo_query = $team->id($teamid)->get_logo();
+                            if($result_team_logo_query['status']){
+                                if($result_team_logo_query['logo'] != "no-image.png"){
+                                    unlink( UPLOAD_DIR . $result_team_logo_query['logo'] );
+                                }else{
+                                    // $result['message'] = "TEAM has no logo";
+                                }
+                            }else{
+                                $result['message'] = "ERROR: get TEAM logo filename";
+                            }
+                            $result_team_query = $team->id($teamid)->delete();
+                            $result['status'] = $result['status'] && $result_team_query['status'];
+                            if($result['status']){
+                                $result['action'] = 'delete';
+                            }else{
+                                $result['message'] = "ERROR: delete TEAM";
+                            }
+                        }else{
+                            $result['message'] = "ERROR: delete TEAM related PLAYER";
+                        }
+                    }else{
+                        $result['message'] = "ERROR: delete TEAM related GAMEDRAW";
+                    }
+                }else{
+                    $result['message'] = "ERROR: delete TEAM related GAMESET";
+                }
             }else{
-                $result['message'] = "ERROR: Delete Team";
+                $result['message'] = "ERROR: delete TEAM related SCORE";
             }
+
+            $database->conn->close();
 
         }
     }
@@ -350,20 +407,26 @@ if ( isset( $_POST['player_action']) ) {
             $result['message'] = "ERROR: player name is required!";
             $result['action'] = 'create';
         }else{
+
+            $player_data = array(
+                'id'            => 0,
+                'name'          => $player_name,
+                'team_id'          => $team_id
+            );
+
             $database = new Database();
             $db = $database->getConnection();
 
             $player = new Player($db);
-            $player->SetName( $player_name );
-            $player->SetTeamId( $team_id );
-            $tempRes = $player->CreatePlayer();
+            $is_success = $player->set_data($player_data)->create();
             $database->conn->close();
 
-            if( $tempRes['status'] ){
-                $result['status'] = $tempRes['status'];
+            if( $is_success){
+                $result['status'] = $is_success;
                 $result['action'] = 'create';
+                $result['message'] = "success";
             }else{
-                $result['message'] = "ERROR: create player";
+                $result['message'] = "ERROR: create PLAYER";
             }
 
         }
@@ -377,20 +440,27 @@ if ( isset( $_POST['player_action']) ) {
         if( $name == '' || $playerid == 0 ){
             $result['message'] = "ERROR: All fields are required!";
         }else{
+
+            $player_data = array(
+                'id'            => $playerid,
+                'name'          => $name,
+                'team_id'          => $teamid
+            );
+
             $database = new Database();
             $db = $database->getConnection();
 
             $player = new Player($db);
-            $player->SetID( $playerid );
-            $player->SetName( $name );
-            $player->SetTeamId( $teamid );
-            $tempRes = $player->UpdatePlayer();
-            if( $tempRes['status'] ){
-                $result['status'] = $tempRes['status'];
-                $result['action'] = 'update';
-            }
-
+            $is_success = $player->set_data($player_data)->update();
             $database->conn->close();
+
+            if( $is_success){
+                $result['status'] = $is_success;
+                $result['action'] = 'update';
+                $result['message'] = "success";
+            }else{
+                $result['message'] = "ERROR: update PLAYER";
+            }
         }
 
     }else if( $_POST['player_action'] == 'delete') {
@@ -403,42 +473,51 @@ if ( isset( $_POST['player_action']) ) {
             $database = new Database();
             $db = $database->getConnection();
 
-            $player = new Player($db);
-            $player->SetID( $playerid );
-            $resPlayer = $player->GetPlayerByID();
-            if($resPlayer['status']){
-                $playerGameDraws = $player->GetGameDraws();
-                for( $i=0; $i<sizeof($playerGameDraws); $i++){
-                    $playerGameDraw = new GameDraw($db);
-                    $playerGameDraw->SetID($playerGameDraws[$i]['id']);
-                    $playerGameDrawGameSets = $playerGameDraw->GetGameSets();
-                    for( $j=0; $j<sizeof($playerGameDrawGameSets); $j++){
-                        $playerGameDrawGameSet = new GameSet($db);
-                        $playerGameDrawGameSet->SetID($playerGameDrawGameSets[$j]['id']);
-                        $playerGameDrawGameSetScores = $playerGameDrawGameSet->GetScores();
-                        for( $k=0; $k<sizeof($playerGameDrawGameSetScores); $k++){
-                            $playerGameDrawGameSetScore = new Score($db);
-                            $playerGameDrawGameSetScore->SetID($playerGameDrawGameSetScores[$k]['id']);
-                            $playerGameDrawGameSetScore->DeleteScore();
-                        }
-                        $playerGameDrawGameSet->DeleteGameSet();
-                        $livegameid = GetLiveGameID($db);
-                        if($livegameid == $playerGameDrawGameSets[$j]['id']){
-                            SetLiveGame($db,0);
-                        }
+            $score = new Score($db);
+            $score_success_delete = $score->delete_player_related_score($playerid);
+            $result['status'] = $score_success_delete;
+            if($score_success_delete){
+
+                $livegame = new Live_Game($db);
+                $is_live = $livegame->is_player_playing($playerid);
+                if($is_live){
+                    $result_livegame_query = $livegame->set_live(0);
+                    if($result_livegame_query['status'] != true){
+                        $result['message'] = "ERROR: set PLAYER LIVEGAME";
                     }
-                    $playerGameDraw->DeleteGameDraw();
+                }else{
+                    $result['message'] = "ERROR: no PLAYER LIVEGAME/error";
+                }
+
+                $gameset = new GameSet($db);
+                $gameset_success_delete = $gameset->delete_player_related_gameset($playerid);
+                $result['status'] = $result['status'] && $gameset_success_delete;
+                if($gameset_success_delete){
+
+                    $gamedraw = new GameDraw($db);
+                    $gamedraw_success_delete = $gamedraw->delete_player_related_gamedraw($playerid);
+                    $result['status'] = $result['status'] && $gamedraw_success_delete;
+                    if($gamedraw_success_delete){
+                        $player = new Player($db);
+                        $player_success_delete = $player->id($playerid)->delete();
+                        $result['status'] = $result['status'] && $player_success_delete;
+                        if($player_success_delete){
+                            if($result['status']){
+                                $result['action'] = 'delete';
+                            }else{
+                                $result['message'] = "ERROR: delete PLAYER";
+                            }
+                        }else{
+                            $result['message'] = "ERROR: delete PLAYER";
+                        }
+                    }else{
+                        $result['message'] = "ERROR: delete PLAYER related GAMEDRAW";
+                    }
+                }else{
+                    $result['message'] = "ERROR: delete PLAYER related GAMESET";
                 }
             }else{
-                $result['message'] = "ERROR: Load Player";
-            }
-
-            $tempRes = $player->DeletePlayer();
-            if( $tempRes['status'] ){
-                $result['status'] = $tempRes['status'];
-                $result['action'] = 'delete';
-            }else{
-                $result['message'] = "ERROR: Delete Player " . $playerid;
+                $result['message'] = "ERROR: delete PLAYER related SCORE";
             }
 
             $database->conn->close();

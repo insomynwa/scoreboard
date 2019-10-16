@@ -1,18 +1,18 @@
 <?php
 
 // Get Game Mode
-if (isset( $_GET['GetGameModes']) && $_GET['GetGameModes'] != '') {
+if (isset( $_GET['gamemode_get']) && $_GET['gamemode_get'] != '') {
     $result = array(
         'status'    => false,
         'message'   => ''
     );
-    if( $_GET['GetGameModes'] == 'all') {
+    if( $_GET['gamemode_get'] == 'list') {
 
         $database = new Database();
         $db = $database->getConnection();
 
         $gamemode = new GameMode($db);
-        $tempRes = $gamemode->GetGameModes();
+        $tempRes = $gamemode->get_gamemode_list();
 
         $database->conn->close();
 

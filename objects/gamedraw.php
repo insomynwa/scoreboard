@@ -159,7 +159,7 @@ class GameDraw{
         return array('game_total_points'=>$this->game_total_points, 'game_points' => $this->game_points);
     }
 
-    public function CreateGameDraw(){
+    /* public function CreateGameDraw(){
         $sql = "INSERT INTO " . $this->table_name . " ( bowstyle_id, gamedraw_num, gamemode_id, contestant_a_id, contestant_b_id) VALUES ( '{$this->bowstyle_id}', '{$this->num}', '{$this->gamemode_id}', '{$this->contestant_a_id}', '{$this->contestant_b_id}')";
 
         $res = array( 'status' => false );
@@ -171,6 +171,45 @@ class GameDraw{
         }
 
         return $res;
+    } */
+
+    /**
+     * Set Game Draw Data
+     *
+     * param [ id, num, bowstyle_id, gamemode_id, contestant_a_id, contestant_b_id ]
+     * @param array $gamedraw_data
+     * @return instance
+     */
+    public function set_data($gamedraw_data){
+        $data = array(
+            'id'                => $gamedraw_data['id'] == 0 ? 0 : $gamedraw_data['id'],
+            'num'               => $gamedraw_data['num'] == 0 ? 1: $gamedraw_data['num'],
+            'bowstyle_id'       => $gamedraw_data['bowstyle_id'] == 0 ? 0 : $gamedraw_data['bowstyle_id'],
+            'gamemode_id'       => $gamedraw_data['gamemode_id'] == 0 ? 0 : $gamedraw_data['gamemode_id'],
+            'contestant_a_id'   => $gamedraw_data['contestant_a_id'] == 0 ? 0 : $gamedraw_data['contestant_a_id'],
+            'contestant_b_id'   => $gamedraw_data['contestant_b_id'] == 0 ? 0 : $gamedraw_data['contestant_b_id']
+        );
+
+        $this->id = $data['id'];
+        $this->num = $data['num'];
+        $this->bowstyle_id = $data['bowstyle_id'];
+        $this->gamemode_id = $data['gamemode_id'];
+        $this->contestant_a_id = $data['contestant_a_id'];
+        $this->contestant_b_id = $data['contestant_b_id'];
+
+        return $this;
+    }
+
+    /**
+     * Create A Game Draw
+     * called after set gamedraw data => set_data()
+     *
+     * @return boolean
+     */
+    public function create(){
+        $sql = "INSERT INTO {$this->table_name} ( bowstyle_id, gamedraw_num, gamemode_id, contestant_a_id, contestant_b_id) VALUES ( '{$this->bowstyle_id}', '{$this->num}', '{$this->gamemode_id}', '{$this->contestant_a_id}', '{$this->contestant_b_id}')";
+
+        return $this->conn->query($sql);
     }
 
     public function GetGameDraws(){
@@ -252,6 +291,28 @@ class GameDraw{
 
     }
 
+    /**
+     * Get Gamedraw Contestants
+     *
+     * return [ contestant_a_id, contestant_b_id, status ]
+     * @return array
+     */
+    public function get_contestants(){
+        $res = array( 'status' => false );
+        $query = "SELECT contestant_a_id, contestant_b_id FROM {$this->table_name} WHERE gamedraw_id={$this->id}";
+
+        if( $result = $this->conn->query( $query ) ){
+            if($result->num_rows > 0){
+                $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+                $res['status'] = true;
+                $res['contestant_a_id'] = $row['contestant_a_id'];
+                $res['contestant_b_id'] = $row['contestant_b_id'];
+            }
+        }
+
+        return $res;
+    }
+
     public function GetGameDrawByID(){
         $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE gamedraw_id={$this->id}";
@@ -326,6 +387,17 @@ class GameDraw{
         return $res;
     }
 
+    /**
+     * Update Game Draw
+     *
+     * @return boolean
+     */
+    public function update(){
+        $sql = "UPDATE {$this->table_name} SET gamedraw_num={$this->num} WHERE gamedraw_id={$this->id}";
+
+        return $this->conn->query($sql);
+    }
+
     public function DeleteGameDraw(){
         $sql = "DELETE FROM {$this->table_name} WHERE gamedraw_id={$this->id}";
 
@@ -338,6 +410,74 @@ class GameDraw{
         }
 
         return $res;
+    }
+
+    /**
+     * Delete Game Draw
+     *
+     * @return boolean
+     */
+    public function delete(){
+        $sql = "DELETE FROM {$this->table_name} WHERE gamedraw_id={$this->id}";
+
+        return $this->conn->query($sql);
+    }
+
+    public function delete_team_related_gamedraw($teamid){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE
+        (
+            gamemode_id=2
+            AND
+            (
+                contestant_a_id IN
+                ( SELECT p.player_id FROM player p WHERE team_id={$teamid} )
+                OR
+                contestant_b_id IN
+                ( SELECT p.player_id FROM player p WHERE team_id={$teamid} )
+            )
+        )
+        OR
+        (
+            gamemode_id=1
+            AND
+            (
+                contestant_a_id = {$teamid}
+                OR
+                contestant_b_id = {$teamid}
+            )
+        )";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    /**
+     * Delete Player Game Draw
+     *
+     * @param number $player_id
+     * @return boolean
+     */
+    public function delete_player_related_gamedraw($player_id){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gamemode_id = 2
+        AND
+        (
+            contestant_a_id={$player_id}
+            OR
+            contestant_b_id={$player_id}
+        )";
+
+        return $this->conn->query($sql);
     }
 
     /* public function DeleteGameDrawsByPlayer(){

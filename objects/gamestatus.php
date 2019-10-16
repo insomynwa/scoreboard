@@ -20,7 +20,7 @@ class GameStatus{
         $this->id = $id;
     }
 
-    public function GetGameStatuses(){
+    /* public function GetGameStatuses(){
         $res['status'] = false;
         $query = "SELECT * FROM {$this->table_name}";
 
@@ -41,7 +41,7 @@ class GameStatus{
         }
 
         return $res;
-    }
+    } */
 
     public function get_gamestatus_list(){
         $res = array( 'status' => false );

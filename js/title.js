@@ -56,7 +56,8 @@ $(document).ready(function () {
         $.ajax({
             type: "get",
             // url: "/scoreboard/controller.php?GetWebScoreboard=live&mode=" + mode,
-            url: "/scoreboard/controller.php?GetWebScoreboard=live",
+            //url: "/scoreboard/controller.php?GetWebScoreboard=live",
+            url: "/scoreboard/controller.php?title_get=scoreboard",
             dataType: "json",
             success: function (response) {
 

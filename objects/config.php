@@ -52,6 +52,29 @@ class Config{
         return $res;
     }
 
+    /**
+     * Get Scoreboard Config
+     *
+     * return [ 'scoreboard_config', 'status' ]
+     * @return array
+     */
+    public function get_scoreboard_config(){
+        $res = array( 'status' => false );
+        $query =
+        "SELECT config_value
+        FROM {$this->table_name}
+        WHERE config_name = 'scoreboard' LIMIT 1";
+
+        if( $result = $this->conn->query( $query ) ){
+            $config = array();
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $res['scoreboard_config'] = $row['config_value'];
+            $res['status'] = ($result->num_rows > 0) && ($res['scoreboard_config'] != NULL);
+        }
+
+        return $res;
+    }
+
     public function GetConfigByID(){
         $res = array ( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE config_id={$this->id}";

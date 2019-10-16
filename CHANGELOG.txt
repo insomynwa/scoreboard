@@ -1,3 +1,12 @@
+6.2.2 17-Oct-2019
+    [+] Game Status controller class
+    [+] Print.js Library
+
+    [*] Object Controller
+    [*] Team, Player, Game Draw, Game Set CRUD function
+
+    [-] Remove VMIX function
+
 6.0.0 01-Oct-2019
     [+] PHP template rendering >> tools.php
     [+] Bowstyle controller

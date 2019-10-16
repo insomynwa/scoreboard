@@ -19,6 +19,17 @@ class Player{
         $this->id = $id;
     }
 
+    /**
+     * Set Team ID
+     *
+     * @param number $id
+     * @return instance
+     */
+    public function id($id){
+        $this->id = $id;
+        return $this;
+    }
+
     public function SetName( $name ){
         $this->name = $name;
     }
@@ -37,6 +48,50 @@ class Player{
         }
 
         return $res;
+    }
+
+    /**
+     * Set Player Data
+     *
+     * @param array $player_data
+     * @return instance
+     */
+    public function set_data($player_data){
+        $data = array(
+            'id'            => $player_data['id'] == 0 ? 0 : $player_data['id'],
+            'name'          => $player_data['name'] == '' ? 'player name': $player_data['name'],
+            'team_id'          => $player_data['team_id'] == 0 ? 0: $player_data['team_id']
+        );
+
+        $this->id = $data['id'];
+        $this->name = $data['name'];
+        $this->team_id = $data['team_id'];
+
+        return $this;
+    }
+
+    /**
+     * Create New Player
+     *
+     * return query result
+     * @return boolean
+     */
+    public function create(){
+        $sql = "INSERT INTO {$this->table_name} (player_name, team_id) VALUES ('{$this->name}', {$this->team_id})";
+
+        return $this->conn->query($sql);
+    }
+
+    /**
+     * Update Player
+     *
+     * return query result
+     * @return boolean
+     */
+    public function update(){
+        $sql = "UPDATE {$this->table_name} SET team_id={$this->team_id}, player_name='{$this->name}' WHERE player_id={$this->id}";
+
+        return $this->conn->query($sql);
     }
 
     public function get_player_list(){
@@ -184,6 +239,33 @@ class Player{
 
     public function DeletePlayer(){
         $sql = "DELETE FROM {$this->table_name} WHERE player_id={$this->id}";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    /**
+     * Delete Player
+     *
+     * @return boolean
+     */
+    public function delete(){
+        $sql = "DELETE FROM {$this->table_name} WHERE player_id={$this->id}";
+
+        return $this->conn->query($sql);
+    }
+
+    public function delete_team_related_player($teamid){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE team_id={$teamid}";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {

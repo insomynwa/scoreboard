@@ -8,7 +8,6 @@ class Web_Config{
     private $id;            //_[int]
     private $time_interval;          //_[string]
     private $active_mode;
-    private $arr_gameset = array();
 
     public function __construct( $db ){
         $this->conn = $db;
@@ -18,38 +17,44 @@ class Web_Config{
         $this->id = $id;
     }
 
-    public function SetTimeInterval($time_interval){
-        $this->time_interval = $time_interval;
+    public function id($id){
+        $this->id = $id;
+
+        return $this;
     }
 
-    public function SetActiveMode($active_mode){
-        $this->active_mode = $active_mode;
-    }
-
-    public function CreateDefaultConfig(){
+    /**
+     * Create Default Config
+     *
+     * @return boolean
+     */
+    public function create_default(){
         $sql = "INSERT INTO {$this->table_name} (time_interval,active_mode) VALUES (1000,1)";
 
-        $res = array( 'status' => false );
-        if($this->conn->query($sql) === TRUE) {
-
-            $res = array(
-                'status'    => true
-            );
-        }
-
-        return $res;
+        return $this->conn->query($sql);
     }
 
-    public function CountRow(){
-        $sql = "SELECT COUNT(*) as setting FROM {$this->table_name}";
+    /**
+     * Count Web Config
+     *
+     * @return number
+     */
+    public function count(){
+        $sql = "SELECT COUNT(web_config_id) as nConfig FROM {$this->table_name}";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
-        return $row['setting'];
+        return $row['nConfig'];
     }
 
-    public function GetConfig(){
+    /**
+     * Get Web Config
+     *
+     * return [ 'status', 'config' => ( 'id', 'time_interval', 'active_mode' )]
+     * @return array
+     */
+    public function get(){
         $res = array( 'status' => false );
         $query = "SELECT web_config_id, time_interval, active_mode FROM {$this->table_name}";
 
@@ -69,18 +74,36 @@ class Web_Config{
         return $res;
     }
 
-    public function UpdateConfig(){
-        $sql = "UPDATE {$this->table_name} SET active_mode={$this->active_mode}, time_interval=500 WHERE web_config_id={$this->id}";
+    /**
+     * Set Config Data
+     *
+     * param [ 'id', 'time_interval', 'active_mode' ]
+     * @param array $config_data
+     * @return instance
+     */
+    public function set_data($config_data){
+        $data = array(
+            'id'            => $config_data['id'] == 0 ? 0 : $config_data['id'],
+            'time_interval' => 500,//$config_data['time_interval'] == '' ? 'team name': $config_data['name'],
+            'active_mode'   => $config_data['active_mode'] == '' ? 0: $config_data['active_mode']
+        );
 
-        $res = array( 'status' => false );
-        if($this->conn->query($sql) === TRUE) {
+        $this->id = $data['id'];
+        $this->time_interval = $data['time_interval'];
+        $this->active_mode = $data['active_mode'];
 
-            $res = array(
-                'status'    => true
-            );
-        }
+        return $this;
+    }
 
-        return $res;
+    /**
+     * Update Config
+     *
+     * @return boolean
+     */
+    public function update(){
+        $sql = "UPDATE {$this->table_name} SET active_mode={$this->active_mode}, time_interval={$this->time_interval} WHERE web_config_id={$this->id}";
+
+        return $this->conn->query($sql);
     }
 }
 ?>

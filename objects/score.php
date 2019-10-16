@@ -97,6 +97,37 @@ class Score{
         return $res;
     }
 
+    /**
+     * Set Score Data
+     *
+     * param [ gameset_id, contestant_id ]
+     * @param array $score_data
+     * @return instance
+     */
+    public function set_data($score_data){
+        $data = array(
+            'gameset_id'                => $score_data['gameset_id'] == 0 ? 0 : $score_data['gameset_id'],
+            'contestant_id'               => $score_data['contestant_id'] == 0 ? 1: $score_data['contestant_id']
+        );
+
+        $this->gameset_id = $data['gameset_id'];
+        $this->contestant_id = $data['contestant_id'];
+
+        return $this;
+    }
+
+    /**
+     * Create A Contestant Score
+     *
+     * called after set data >> set_data()
+     * @return boolean
+     */
+    public function create(){
+        $sql = "INSERT INTO {$this->table_name} (gameset_id, contestant_id) VALUES ('{$this->gameset_id}', '{$this->contestant_id}')";
+
+        return $this->conn->query($sql);
+    }
+
     public function CreateScore(){
         $sql = "INSERT INTO " . $this->table_name . " (gameset_id, contestant_id) VALUES ('{$this->gameset_id}', '{$this->contestant_id}')";
 
@@ -165,6 +196,124 @@ class Score{
         }
 
         return $res;
+    }
+
+    /**
+     * Delete Team Score
+     *
+     * @param number $team_id
+     * return ['status']
+     * @return array
+     */
+    public function delete_team_related_score($team_id){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gameset_id IN
+        (
+            SELECT gs.gameset_id
+            FROM gameset gs
+            WHERE gs.gamedraw_id IN
+            (
+                SELECT gd.gamedraw_id
+                FROM gamedraw gd
+                WHERE
+                (
+                    gd.gamemode_id=2
+                    AND
+                    (
+                        gd.contestant_a_id IN
+                        ( SELECT p.player_id FROM player p WHERE team_id={$team_id} )
+                        OR
+                        gd.contestant_b_id IN
+                        ( SELECT p.player_id FROM player p WHERE team_id={$team_id} )
+                    )
+                )
+                OR
+                (
+                    gd.gamemode_id=1
+                    AND
+                    (
+                        gd.contestant_a_id = {$team_id}
+                        OR
+                        gd.contestant_b_id = {$team_id}
+                    )
+                )
+            )
+        )";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    /**
+     * Delete Player Score
+     *
+     * @param number $player_id
+     *
+     * @return boolean
+     */
+    public function delete_player_related_score($player_id){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gameset_id IN
+        (
+            SELECT gameset_id
+            FROM gameset
+            WHERE gamedraw_id IN
+            (
+                SELECT gamedraw_id
+                FROM gamedraw
+                WHERE gamemode_id = 2
+                AND
+                (
+                    contestant_a_id={$player_id}
+                    OR
+                    contestant_b_id={$player_id}
+                )
+            )
+        )";
+
+        return $this->conn->query($sql);
+    }
+
+    /**
+     * Delete Game Draw Score
+     *
+     * @param number $gamedraw_id
+     * @return boolean
+     */
+    public function delete_gamedraw_related_score($gamedraw_id){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gameset_id IN
+        (
+            SELECT gameset_id
+            FROM gameset
+            WHERE gamedraw_id={$gamedraw_id}
+        )";
+
+        return $this->conn->query($sql);
+    }
+
+    /**
+     * Delete Game Set Score
+     *
+     * @param number $gameset_id
+     * @return boolean
+     */
+    public function delete_gameset_related_score($gameset_id){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gameset_id={$gameset_id}";
+
+        return $this->conn->query($sql);
     }
 
     /* public function DeleteScoreByGameSetID(){

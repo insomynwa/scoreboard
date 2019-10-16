@@ -25,7 +25,34 @@ class GameMode{
         $this->desc = $desc;
     }
 
-    public function GetGameModes(){
+    /* public function GetGameModes(){
+        $query = "SELECT gamemode_id, gamemode_name, gamemode_desc FROM " . $this->table_name;
+
+        $result = $this->conn->query( $query );
+
+        $res = array( 'gamemodes' => array(), 'status' => $result->num_rows > 0 );
+
+        if( $res['status'] ){
+            $i = 0;
+            $gamemodes = null;
+            while($row = $result->fetch_assoc()) {
+                $gamemodes[$i]['id'] = $row['gamemode_id'];
+                $gamemodes[$i]['name'] = $row['gamemode_name'];
+                $gamemodes[$i]['desc'] = $row['gamemode_desc'];
+
+                $i++;
+            }
+
+            $res = array(
+                'gamemodes'      => $gamemodes,
+                'status'    => true
+            );
+        }
+
+        return $res;
+    } */
+
+    public function get_gamemode_list(){
         $query = "SELECT gamemode_id, gamemode_name, gamemode_desc FROM " . $this->table_name;
 
         $result = $this->conn->query( $query );

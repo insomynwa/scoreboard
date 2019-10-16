@@ -2,7 +2,7 @@
 
 class Class_Query{
 
-    private $conn;
+    /* private $conn;
     private $gamedraw_table = 'gamedraw';
     private $gameset_table = 'gameset';
     private $gamemode_table = 'gamemode';
@@ -86,7 +86,7 @@ class Class_Query{
 
         return $res;
 
-    }
+    } */
 
 }
 ?>

@@ -88,6 +88,51 @@ class GameSet{
         return $this->arr_scores;
     }
 
+    /**
+     * Set Game Set Data
+     *
+     * param [ gamedraw_id, num ]
+     * @param array $gameset_data
+     * @return instance
+     */
+    public function set_data($gameset_data){
+        $data = array(
+            'id'            => $gameset_data['id'] == 0 ? 0 : $gameset_data['id'],
+            'gamedraw_id'   => $gameset_data['gamedraw_id'] == 0 ? 0 : $gameset_data['gamedraw_id'],
+            'num'           => $gameset_data['num'] == 0 ? 1: $gameset_data['num'],
+            'status_id'     => $gameset_data['status_id'] == 0 ? 1: $gameset_data['status_id']
+        );
+
+        $this->gamedraw_id = $data['gamedraw_id'];
+        $this->id = $data['id'];
+        $this->num = $data['num'];
+        $this->status = $data['status_id'];
+
+        return $this;
+    }
+
+    /**
+     * Create A Game Set
+     * called after set data => set_data()
+     *
+     * return [ latest_id, status ]
+     * @return array
+     */
+    public function create(){
+        $res = array( 'status' => false );
+        $sql = "INSERT INTO {$this->table_name} (gamedraw_id, gameset_num) VALUES ({$this->gamedraw_id}, {$this->num})";
+
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true,
+                'latest_id' => $this->conn->insert_id
+            );
+        }
+
+        return $res;
+    }
+
     public function CreateSet(){
         $res = array( 'status' => false );
         $sql = "INSERT INTO " . $this->table_name . " (gamedraw_id, gameset_num) VALUES ('{$this->gamedraw_id}', '{$this->num}')";
@@ -103,6 +148,17 @@ class GameSet{
         }
 
         return $res;
+    }
+
+    /**
+     * Update Game Set
+     *
+     * @return boolean
+     */
+    public function update(){
+        $sql = "UPDATE {$this->table_name} SET gameset_num={$this->num}, gameset_status={$this->status} WHERE gameset_id={$this->id}";
+
+        return $this->conn->query($sql);
     }
 
     public function UpdateGameSet(){
@@ -133,6 +189,17 @@ class GameSet{
         return $res;
     }
 
+    /**
+     * Set Game Set Stand By
+     *
+     * @return boolean
+     */
+    public function set_status_standby(){
+        $sql = "UPDATE {$this->table_name} SET gameset_status=1 WHERE gameset_id={$this->id}";
+
+        return $this->conn->query($sql);
+    }
+
     public function DeleteGameSet(){
         $sql = "DELETE FROM {$this->table_name} WHERE gameset_id={$this->id}";
 
@@ -145,6 +212,104 @@ class GameSet{
         }
 
         return $res;
+    }
+
+    /**
+     * Delete Game Set
+     *
+     * @return boolean
+     */
+    public function delete(){
+        $sql = "DELETE FROM {$this->table_name} WHERE gameset_id={$this->id}";
+
+        return $this->conn->query($sql);
+    }
+
+    /**
+     * Delete Team Game Set
+     *
+     * @param number $teamid
+     * @return boolean
+     */
+    public function delete_team_related_gameset($teamid){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gamedraw_id IN
+        (
+            SELECT gd.gamedraw_id
+            FROM gamedraw gd
+            WHERE
+            (
+                gd.gamemode_id=2
+                AND
+                (
+                    gd.contestant_a_id IN
+                    ( SELECT p.player_id FROM player p WHERE team_id={$teamid} )
+                    OR
+                    gd.contestant_b_id IN
+                    ( SELECT p.player_id FROM player p WHERE team_id={$teamid} )
+                )
+            )
+            OR
+            (
+                gd.gamemode_id=1
+                AND
+                (
+                    gd.contestant_a_id = {$teamid}
+                    OR
+                    gd.contestant_b_id = {$teamid}
+                )
+            )
+        )";
+
+        $res = array( 'status' => false );
+        if($this->conn->query($sql) === TRUE) {
+
+            $res = array(
+                'status'    => true
+            );
+        }
+
+        return $res;
+    }
+
+    /**
+     * Delete Player Game Set
+     *
+     * @param number $player_id
+     * @return boolean
+     */
+    public function delete_player_related_gameset($player_id){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gamedraw_id IN
+        (
+            SELECT gamedraw_id
+            FROM gamedraw
+            WHERE gamemode_id = 2
+            AND
+            (
+                contestant_a_id={$player_id}
+                OR
+                contestant_b_id={$player_id}
+            )
+        )";
+
+        return $this->conn->query($sql);
+    }
+
+    /**
+     * Delete Game Draw Set
+     *
+     * @param number $gamedraw_id
+     * @return boolean
+     */
+    public function delete_gamedraw_related_gameset($gamedraw_id){
+        $sql =
+        "DELETE FROM {$this->table_name}
+        WHERE gamedraw_id={$gamedraw_id}";
+
+        return $this->conn->query($sql);
     }
 
     public function GetGameSetsByGameDraw(){

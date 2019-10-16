@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
 <link href="font-awesome/css/all.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="css/print.min.css">
 <!-- <script src="js/jquery-3.3.1.min.map"></script> -->
 <style>
     .no-boradius { border-radius: 0 }
@@ -19,17 +20,8 @@
 <?php
     include 'includes/init.php';
 ?>
-<!-- Title Section -->
-<!-- <div id="score-title" class="score-area mb-3 container">
-    <div class="row">
-        <div class="col-lg-12 py-3 border-bottom border-gray-5">
-            <h4 class="text-warning font-weight-light"><i class="fab fa-readme text-secondary"></i> DASHBOARD</h4>
-        </div>
-    </div>
-</div> -->
-<!-- End Title Section -->
 
-<div class="container mt-5 mb-3">
+<div id="" class="container mt-5 mb-3">
     <div class="row">
         <div class="col-lg-12 px-2 mb-2">
             <div class="card bg-gray-2">
@@ -82,6 +74,7 @@
                             </tbody>
                         </table>
                     </form>
+                    <!-- / form-score-a -->
                 </div>
                 <div class="card-footer pt-0">
                     <div id="score-a-control" class="btn-group btn-group-sm">
@@ -156,20 +149,6 @@
         </div>
     </div>
 </div>
-<!-- End Score B Section -->
-
-<!-- Web Config Section -->
-<!-- <div class="container mb-3">
-    <div class="row">
-        <div class="col-lg-3 py-3">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> WEB SETTING</h4>
-        </div>
-        <div class="col-lg-9">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> PREVIEW</h4>
-        </div>
-    </div>
-</div> -->
-<!-- End Web Config Section -->
 
 <div id="config-section" class="container mb-3">
     <div class="row">
@@ -297,23 +276,6 @@
 </div>
 <!-- / config-section -->
 
-<!-- Game Draw & Set Section -->
-<!-- <div class="container mb-3">
-    <div class="row">
-        <div class="col-lg-6">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary mr-2"></i>GAME</h4>
-            <button type="button" id="gamedraw-create-btn" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square mr-1"></i>New Game Draw</button>
-            <button type='button' id='gameset-create-btn' class='btn btn-sm btn-link my-1'><i class='fas fa-plus-square mr-1'></i>New Game Set</button>
-            <div id="gamedraw-accordion">
-                <div class="card">
-                    <?php // include 'templates/game-list.php'; ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6"></div>
-    </div>
-</div> -->
-
 <div id="game-wrapper" class="container mb-3">
     <div class="row">
         <!-- <div class="col-lg-12">
@@ -381,40 +343,8 @@
 </div>
 <!-- / game-wrapper -->
 
-<!-- <div class="container mb-3">
-    <div class="row">
-        <div class="col-lg-6">
-            <a class="btn btn-outline-warning btn-menu" data-toggle="collapse" href="#gamedraw-collapse" role="button" aria-expanded="false" aria-controls="gamedraw-collapse">
-                <h4 class="text-warning font-weight-light"><i class="fas fa-trophy text-secondary"></i> GAME DRAW <i class="fas fa-caret-down text-warning caret-cls"></i></h4>
-            </a>
-            <div class="collapse card-block" id="gamedraw-collapse">
-                <div class="card card-body">
-                    <button type="button" id="gamedraw-create-btn-old" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Draw</button>
-                    <table id="tbl-gamedraw" class="table table-sm table-hover"><tr><td>0 game draw. buat dulu!</td></tr></table>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <a class="btn btn-outline-warning btn-menu" data-toggle="collapse" href="#gameset-collapse" role="button" aria-expanded="false" aria-controls="gameset-collapse">
-                <h4 class="text-warning font-weight-light"><i class="fas fa-ellipsis-v text-secondary"></i> GAME SET <i class="fas fa-caret-down text-warning caret-cls"></i></h4>
-            </a>
-            <div class="collapse card-block" id="gameset-collapse">
-                <div class="card card-body">
-                    <button type="button" id="gameset-create-btn-old" class="btn btn-sm btn-link my-1"><i class="fas fa-plus-square"></i> New Game Set</button>
-                    <table id="gameset-table" class="table table-sm table-hover"><tr><td>0 game set. buat dulu!</td></tr></table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-<!-- End Game Draw & Set Section -->
-
-<!-- Team & Player Section -->
 <div id="contestant-wrapper" class="container mb-3">
     <div class="row">
-        <!-- <div class="col-lg-12">
-            <h4 class="text-warning font-weight-light"><i class="fas fa-user text-secondary mr-2" aria-hidden="true"></i>CONTESTANT</h4>
-        </div> -->
         <div class="col-lg-4 px-2">
         </div>
         <div class="col-lg-4 px-2">
@@ -630,5 +560,6 @@
 
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <script src="js/script.js"></script>
+<script src="js/print.min.js"></script>
 </body>
 </html>

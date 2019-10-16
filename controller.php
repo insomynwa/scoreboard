@@ -22,12 +22,14 @@ include_once 'objects/scoreboard.php';
 include_once 'objects/bowstyle.php';
 
 // CONTROLLER
+include_once 'controller/class-config-controller.php';
 include_once 'controller/team-player-controller.php';
 include_once 'controller/gamedraw-controller.php';
 include_once 'controller/gamemode-controller.php';
 include_once 'controller/score-controller.php';
 include_once 'controller/gameset-controller.php';
 include_once 'controller/class-bowstyle-controller.php';
+include_once 'controller/class-gamestatus-controller.php';
 
 
 // Get Init Setup
@@ -160,16 +162,12 @@ if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
         }
 
         $bowstyle = new Bowstyle($db);
-        $nBowstyle = $bowstyle->CountBowstyle();
+        $nBowstyle = $bowstyle->count();
         if($nBowstyle==0){
-            $bowstyle->SetID(1);
-            $bowstyle->SetName('Recurve');
-            $resCreateBs = $bowstyle->CreateDefaultBowstyle();
-            $result['status'] = $resCreateBs['status'] & $result['status'];
-            $bowstyle->SetID(2);
-            $bowstyle->SetName('Compound');
-            $resCreateBs = $bowstyle->CreateDefaultBowstyle();
-            $result['status'] = $resCreateBs['status'] & $result['status'];
+            $is_success = $bowstyle->set_data(array('id'=>1,'name'=>'Recurve'))->create();
+            $result['status'] = $is_success & $result['status'];
+            $is_success = $bowstyle->set_data(array('id'=>2,'name'=>'Compound'))->create();
+            $result['status'] = $is_success & $result['status'];
         }
 
         $gamestatus = new GameStatus($db);
@@ -198,10 +196,10 @@ if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
         }
 
         $config = new Web_Config($db);
-        $row = $config->CountRow();
+        $row = $config->count();
         if($row==0){
-            $resConfigCreate = $config->CreateDefaultConfig();
-            $result['status'] = $resConfigCreate['status'] & $result['status'];
+            $is_success = $config->create_default();
+            $result['status'] = $is_success & $result['status'];
         }
 
         $database->conn->close();
@@ -210,7 +208,7 @@ if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
 }
 
 // Get Game List
-if ( isset( $_GET['game_get'])){
+/* if ( isset( $_GET['game_get'])){
     $result = array(
         'status'    => false,
         'message'   => ''
@@ -226,22 +224,6 @@ if ( isset( $_GET['game_get'])){
             $result['status'] = true;
             $result['has_value'] = $result_query['has_value'];
             if($result['has_value']){
-                /* $gamedraw_list = $resGamedraws['gamedraws'];
-                $result['gamedraws'] = $gamedraw_list; */
-                // Get the gameset
-                /* for( $i=0; $i<sizeof($gamedraw_list); $i++){
-                    $gameset = new GameSet($db);
-                    $resGameSets = $gameset->GetGameSetListByGameDrawID($gamedraw_list[$i]['id']);
-                    if( $resGameSets['status']){
-                        if($resGameSets['has_value']){
-                            $result['gamedraws'][$i]['gamesets'] = $resGameSets['gamesets'];
-                        }else{
-                            $result['gamedraws'][$i]['gamesets'] = array();
-                        }
-                    }else{
-                        $result['gamedraws'][$i]['gamesets'] = array();
-                    }
-                } */
                 $gamedraw_item_template = TEMPLATE_DIR . 'gamedraw/item.php';
                 $render_gamedraw_item = '';
                 foreach( $result_query['gamedraws'] as $item){
@@ -284,127 +266,13 @@ if ( isset( $_GET['game_get'])){
         }
     }
     echo json_encode($result);
-}
+} */
 
 // CUD Config
-if ( isset( $_POST['config_action']) ) {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    if( $_POST['config_action'] == 'update') {
 
-        $config_id = isset($_POST['config_id']) ? $_POST['config_id'] : 0;
-        $time_interval = isset($_POST['config_time_interval']) ? $_POST['config_time_interval'] : 1000;
-        $active_mode = isset($_POST['config_active_mode']) ? $_POST['config_active_mode'] : 0;
-
-        if( $config_id == 0 || $time_interval == 0 ){
-            $result['message'] = "ERROR: All fields are required!";
-        }else{
-            $database = new Database();
-            $db = $database->getConnection();
-
-            $config = new Web_Config($db);
-            $config->SetID( $config_id );
-            $config->SetTimeInterval( $time_interval );
-            $config->SetActiveMode( $active_mode );
-            $tempRes = $config->UpdateConfig();
-            if( $tempRes['status'] ){
-                $result['status'] = $tempRes['status'];
-                $result['action'] = 'update';
-                $result['activated_mode'] = $active_mode;
-            }
-
-            $database->conn->close();
-        }
-
-    }
-    echo json_encode($result);
-}
-
-// Get Config
-if (isset( $_GET['GetConfig']) && $_GET['GetConfig'] != '') {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    if( $_GET['GetConfig'] == 'all') {
-
-        $database = new Database();
-        $db = $database->getConnection();
-
-        $config = new Web_Config($db);
-        $tempRes = $config->GetConfig();
-
-        $bowstyle_id=0;
-        $livegame = new Live_Game($db);
-        $resLiveGame = $livegame->GetLiveGameID();
-
-        if($resLiveGame['status']){
-            $gameset_id = $resLiveGame['live_game'];
-
-            if($gameset_id!=0){
-                $gameset = new GameSet($db);
-                $gameset->SetID( $gameset_id );
-                $tempGSRes = $gameset->GetGameSetByID();
-
-                if( $tempGSRes['status'] ){
-                    $gamedraw_id = $tempGSRes['gameset']['gamedraw_id'];
-                    $gamedraw = new GameDraw($db);
-                    $gamedraw->SetID($gamedraw_id);
-                    $tempGDRes = $gamedraw->GetGameDrawByID();
-                    if($tempGDRes['status']){
-                        $bowstyle_id = $tempGDRes['gamedraw']['bowstyle_id'];
-                    }
-                }
-            }
-        }
-
-        $app_config = new Config($db);
-        $tempAppCfgRes = $app_config->GetConfigs();
-
-        $database->conn->close();
-
-        $result['status'] = $tempRes['status'] && $tempAppCfgRes['status'];
-
-        if( $result['status'] ){
-            $result['config'] = $tempRes['config'];
-            foreach ($tempAppCfgRes['configs'] as $key => $val) {
-                if($val['name']=='scoreboard'){
-                    $scoreboard_cfg = json_decode($val['value']);
-                    $result['config']['scoreboard'] = $scoreboard_cfg[$bowstyle_id];
-                }
-            }
-        }
-    }
-    else if( $_GET['GetConfig'] == 'scoreboard'){
-
-        $database = new Database();
-        $db = $database->getConnection();
-
-        $app_config = new Config($db);
-        $resAppCfg = $app_config->GetConfigs();
-
-        $database->conn->close();
-
-        if($resAppCfg['status']){
-            foreach ($resAppCfg['configs'] as $key => $val) {
-                if($val['name']=='scoreboard'){
-                    $scoreboard_cfg = json_decode($val['value']);
-                    $result['config'] = $scoreboard_cfg;
-                    $result['status'] = true;
-                    break;
-                }
-            }
-        }else{
-            $result['message'] = "Can't load config.";
-        }
-    }
-    echo json_encode($result);
-}
 
 // Get Game Status
-if (isset( $_GET['GetGameStatus']) && $_GET['GetGameStatus'] != '') {
+/* if (isset( $_GET['GetGameStatus']) && $_GET['GetGameStatus'] != '') {
     $result = array(
         'status'    => false,
         'message'   => ''
@@ -430,7 +298,8 @@ if (isset( $_GET['GetGameStatus']) && $_GET['GetGameStatus'] != '') {
         }
     }
     echo json_encode($result);
-}if ( isset( $_GET['gamestatus_get'])){
+} */
+/* if ( isset( $_GET['gamestatus_get'])){
     $result = array(
         'status'    => false,
         'message'   => ''
@@ -467,7 +336,7 @@ if (isset( $_GET['GetGameStatus']) && $_GET['GetGameStatus'] != '') {
         }
     }
     echo json_encode($result);
-}
+} */
 
 /* if (isset( $_GET['TestLoadGames']) && $_GET['TestLoadGames'] != "" ){
     $result = array(
@@ -859,260 +728,20 @@ function GetLiveGameID ($db){
     return 0;
 }
 
-/**
- * VMIX FUNCTION
- */
-
-// Get Scoreboard
-if (isset( $_GET['GetScoreboard']) && $_GET['GetScoreboard'] != '' && isset( $_GET['mode']) && $_GET['mode'] != '') {
+if (isset( $_GET['title_get']) && $_GET['title_get'] != '' /* && isset( $_GET['mode']) && $_GET['mode'] != '' */) {
     $result = array(
         'status'    => false,
         'message'   => ''
     );
-    $scoreboard = $_GET['GetScoreboard'];
-    $mode = is_numeric($_GET['mode']) ? $_GET['mode'] : 0;
-    if ( $scoreboard == 'live' ) {
-        $database = new Database();
-        $db = $database->getConnection();
-
-        $livegame = new Live_Game($db);
-        $resLiveGame = $livegame->GetLiveGameID();
-
-        /* $result['scoreboard']['set'] = "Set 0";
-        $result['scoreboard']['backgroud'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/images/panahan1_default.png";
-
-        $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
-        $result['scoreboard']['contestant_a'] = "Player A";
-        $result['scoreboard']['timer_a'] = "0s";
-        $result['scoreboard']['point_1a'] = 0;
-        $result['scoreboard']['point_2a'] = 0;
-        $result['scoreboard']['point_3a'] = 0;
-        $result['scoreboard']['point_4a'] = 0;
-        $result['scoreboard']['point_5a'] = 0;
-        $result['scoreboard']['point_6a'] = 0;
-        $result['scoreboard']['total_a'] = 0;
-        $result['scoreboard']['setpoints_a'] = 0;
-        $result['scoreboard']['desc_a'] = "";
-
-        $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
-        $result['scoreboard']['contestant_b'] = "Player A";
-        $result['scoreboard']['timer_b'] = "0s";
-        $result['scoreboard']['point_1b'] = 0;
-        $result['scoreboard']['point_2b'] = 0;
-        $result['scoreboard']['point_3b'] = 0;
-        $result['scoreboard']['point_4b'] = 0;
-        $result['scoreboard']['point_5b'] = 0;
-        $result['scoreboard']['point_6b'] = 0;
-        $result['scoreboard']['total_b'] = 0;
-        $result['scoreboard']['setpoints_b'] = 0;
-        $result['scoreboard']['desc_b'] = ""; */
-
-        if($resLiveGame['status']){
-            $result['scoreboard'] = array();
-            $scoreboard = new ScoreBoard();
-
-            $result['scoreboard'] = $scoreboard->GetDefaultDataMode( $mode);
-
-            $gameset_id = $resLiveGame['live_game'];
-            if($gameset_id > 0){
-
-                $gameset = new GameSet($db);
-                $gameset->SetID($gameset_id);
-                $resLiveGameSet = $gameset->GetGameSetByID();
-
-                if($resLiveGameSet['status']){
-                    $result['status'] = true;
-                    $liveGameSet = $resLiveGameSet['gameset'];
-                    $result['scoreboard']['set'] = "Set " . $liveGameSet['num'];
-                    $gameset->SetGameDrawID($liveGameSet['gamedraw_id']);
-                    $resGameDraw = $gameset->GetGameDraw();
-
-                    $gamedraw = new GameDraw($db);
-                    $gamedraw->SetContestantAID($resGameDraw['contestant_a_id']);
-                    $gamedraw->SetContestantBID($resGameDraw['contestant_b_id']);
-                    /**
-                     * TO-DO: Dinamis Game Mode
-                     */
-                    if($resGameDraw['gamemode_id'] == 1){
-                        $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $gamedraw->GetTeamContestantA()['logo'];
-                        $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $gamedraw->GetTeamContestantB()['logo'];
-                        $result['scoreboard']['contestant_a'] = $gamedraw->GetTeamContestantA()['name'];
-                        $result['scoreboard']['contestant_b'] = $gamedraw->GetTeamContestantB()['name'];
-                    }else if($resGameDraw['gamemode_id'] == 2){
-                        $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
-                        $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/no-team.png";
-                        $contestant_a = $gamedraw->GetPlayerContestantA();
-                        $contestant_b = $gamedraw->GetPlayerContestantB();
-                        $result['scoreboard']['contestant_a'] = $contestant_a['name'];
-                        $result['scoreboard']['contestant_b'] = $contestant_b['name'];
-                        if($contestant_a['team_id']>0 || $contestant_b['team_id']>0){
-                            $team = new Team($db);
-                            $team->SetID($contestant_a['team_id']);
-                            $resGetLogo = $team->GetLogo();
-                            if($resGetLogo['status']){
-                                if($resGetLogo['has_value']){
-                                    $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $resGetLogo['logo'];
-                                }
-                            }
-                            $team->SetID($contestant_b['team_id']);
-                            $resGetLogo = $team->GetLogo();
-                            if($resGetLogo['status']){
-                                if($resGetLogo['has_value']){
-                                    $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $resGetLogo['logo'];
-                                }
-                            }
-                        }
-
-                    }
-
-                    $score = new Score($db);
-                    $score->SetGameSetID($liveGameSet['id']);
-                    $score->SetContestantID($resGameDraw['contestant_a_id']);
-                    $resScore = $score->GetScoreByGameSetAndContestant();
-
-                    $timeout_a = false;
-                    $hasDesc_a = false;
-                    $timeout_b = false;
-                    $hasDesc_b = false;
-
-                    if($resScore['status']){
-                        $result['status'] = true && $result['status'];
-                        $score_a = $resScore['score'];
-                        if($score_a['timer'] < 10){
-                            $timeout_a = true;
-                        }
-                        if($score_a['desc'] != ''){
-                            $hasDesc_a = true;
-                        }
-                        $result['scoreboard']['timer_a'] = $score_a['timer'] . "s";
-                        if( $mode == 2){
-                            $result['scoreboard']['point_1a'] = $score_a['score_1'];
-                            $result['scoreboard']['point_2a'] = $score_a['score_2'];
-                            $result['scoreboard']['point_3a'] = $score_a['score_3'];
-                            $result['scoreboard']['point_4a'] = $score_a['score_4'];
-                            $result['scoreboard']['point_5a'] = $score_a['score_5'];
-                            $result['scoreboard']['point_6a'] = $score_a['score_6'];
-                        }
-                        $result['scoreboard']['desc_a'] = $score_a['desc'];
-                        $total_a = $score_a['score_1'] + $score_a['score_2'] + $score_a['score_3'] + $score_a['score_4'] + $score_a['score_5'] + $score_a['score_6'];
-                        if( $mode == 1 || $mode == 2){
-                            $result['scoreboard']['total_a'] = $total_a;
-                        }
-                        $result['scoreboard']['timer_a'] = $score_a['timer'] . "s";
-                        $result['scoreboard']['setpoints_a'] = $score_a['point'];
-                    }else{
-                        $result['message'][] = "ERROR: Load Score A";
-                    }
-
-                    $score->SetContestantID($resGameDraw['contestant_b_id']);
-                    $resScore = $score->GetScoreByGameSetAndContestant();
-
-                    if($resScore['status']){
-                        $result['status'] = true && $result['status'];
-                        $score_b = $resScore['score'];
-                        if($score_b['timer'] < 10){
-                            $timeout_b = true;
-                        }
-                        if($score_b['desc'] != ''){
-                            $hasDesc_b = true;
-                        }
-                        $result['scoreboard']['timer_b'] = $score_b['timer'] . "s";
-                        if( $mode == 2){
-                            $result['scoreboard']['point_1b'] = $score_b['score_1'];
-                            $result['scoreboard']['point_2b'] = $score_b['score_2'];
-                            $result['scoreboard']['point_3b'] = $score_b['score_3'];
-                            $result['scoreboard']['point_4b'] = $score_b['score_4'];
-                            $result['scoreboard']['point_5b'] = $score_b['score_5'];
-                            $result['scoreboard']['point_6b'] = $score_b['score_6'];
-                        }
-                        $result['scoreboard']['desc_b'] = $score_b['desc'];
-                        $total_b = $score_b['score_1'] + $score_b['score_2'] + $score_b['score_3'] + $score_b['score_4'] + $score_b['score_5'] + $score_b['score_6'];
-                        if( $mode == 1 || $mode == 2){
-                            $result['scoreboard']['total_b'] = $total_b;
-                        }
-                        $result['scoreboard']['setpoints_b'] = $score_b['point'];
-                    }else{
-                        $result['message'] = "ERROR: Load Score B";
-                    }
-                    if($mode == 1){
-                        if(!$timeout_a && $hasDesc_a && !$timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 1);
-                        }else if($timeout_a && !$hasDesc_a && !$timeout_b && $hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 2);
-                        }else if($timeout_a && $hasDesc_a && !$timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 3);
-                        }else if($timeout_a && !$hasDesc_a && !$timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 4);
-                        }else if($timeout_a && $hasDesc_a && $timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 5);
-                        }else if($timeout_a && !$hasDesc_a && $timeout_b && $hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 6);
-                        }else if($timeout_a && $hasDesc_a && $timeout_b && $hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 7);
-                        }else if($timeout_a && !$hasDesc_a && $timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 8);
-                        }else if(!$timeout_a && !$hasDesc_a && !$timeout_b && $hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 9);
-                        }else if(!$timeout_a && $hasDesc_a && $timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 10);
-                        }else if(!$timeout_a && !$hasDesc_a && $timeout_b && $hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 11);
-                        }else if(!$timeout_a && !$hasDesc_a && $timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 12);
-                        }else if(!$timeout_a && !$hasDesc_a && !$timeout_b && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 13);
-                        }
-                    }else if($mode == 2 || $mode == 3){
-                        if($hasDesc_a && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 1);
-                        }else if($hasDesc_a && $hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 2);
-                        }else if(!$hasDesc_a && $hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 3);
-                        }else if(!$hasDesc_a && !$hasDesc_b){
-                            $result['scoreboard']['backgroud'] = $scoreboard->GetBackgroundMode( $mode, 4);
-                        }
-                    }
-                }else{
-                    $result['message'] = "ERROR: LOAD Live Game Set";
-                }
-
-            }else{
-                $result['message'] = "NO LIVE GAME";
-            }
-        }else{
-            $result['message'] = "ERROR: Load LIVE GAME";
-        }
-        $database->conn->close();
-
-    }
-
-    echo "[". json_encode($result['scoreboard']) . "]";
-    /* if($result['status']){
-    }else{
-        echo "[". json_encode($result['message']) . "]";
-    } */
-}
-
-/**
- * WEB FUNCTION
- */
-
-// Get Scoreboard
-if (isset( $_GET['GetWebScoreboard']) && $_GET['GetWebScoreboard'] != '' /* && isset( $_GET['mode']) && $_GET['mode'] != '' */) {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    $scoreboard = $_GET['GetWebScoreboard'];
+    $scoreboard = $_GET['title_get'];
     // $mode = is_numeric($_GET['mode']) ? $_GET['mode'] : 0;
     $mode = 0;
-    if ( $scoreboard == 'live' ) {
+    if ( $scoreboard == 'scoreboard' ) {
         $database = new Database();
         $db = $database->getConnection();
 
         $config = new Web_Config($db);
-        $resConfig = $config->GetConfig();
+        $resConfig = $config->get();
         if($resConfig['status']){
             $mode = $resConfig['config']['active_mode'];
             $result['active_mode'] = $mode;
@@ -1169,31 +798,25 @@ if (isset( $_GET['GetWebScoreboard']) && $_GET['GetWebScoreboard'] != '' /* && i
                                 $result['scoreboard']['team_b'] = "";
                                 if($contestant_a['team_id']>0 || $contestant_b['team_id']>0){
                                     $team = new Team($db);
-                                    $team->SetID($contestant_a['team_id']);
-                                    $resGetLogo = $team->GetLogo();
-                                    if($resGetLogo['status']){
-                                        if($resGetLogo['has_value']){
-                                            $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $resGetLogo['logo'];
-                                        }
+
+                                    $result_query_logo = $team->id($contestant_a['team_id'])->get_logo();
+                                    $result_query_name = $team->id($contestant_a['team_id'])->get_name();
+                                    if($result_query_logo['status']){
+                                        $result['scoreboard']['logo_a'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $result_query_logo['logo'];
                                     }
-                                    $resGetName = $team->GetName();
-                                    if($resGetName['status']){
-                                        if($resGetName['has_value']){
-                                            $result['scoreboard']['team_a'] = $resGetName['name'];
-                                        }
+
+                                    if($result_query_name['status']){
+                                        $result['scoreboard']['team_a'] = $result_query_name['name'];
                                     }
-                                    $team->SetID($contestant_b['team_id']);
-                                    $resGetLogo = $team->GetLogo();
-                                    if($resGetLogo['status']){
-                                        if($resGetLogo['has_value']){
-                                            $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $resGetLogo['logo'];
-                                        }
+
+                                    $result_query_logo = $team->id($contestant_b['team_id'])->get_logo();
+                                    $result_query_name = $team->id($contestant_b['team_id'])->get_name();
+                                    if($result_query_logo['status']){
+                                        $result['scoreboard']['logo_b'] = "http://" . $_SERVER['SERVER_NAME'] . "/scoreboard/uploads/" . $result_query_logo['logo'];
                                     }
-                                    $resGetName = $team->GetName();
-                                    if($resGetName['status']){
-                                        if($resGetName['has_value']){
-                                            $result['scoreboard']['team_b'] = $resGetName['name'];
-                                        }
+
+                                    if($result_query_name['status']){
+                                        $result['scoreboard']['team_a'] = $result_query_name['name'];
                                     }
                                 }
 

@@ -111,24 +111,27 @@ if ( isset( $_POST['gamedraw_action']) ) {
 
             $database = new Database();
             $db = $database->getConnection();
-
             $gamedraw_num = isset($_POST['gamedraw_num']) ? $_POST['gamedraw_num'] : 1;
 
+            $data = array(
+                'id'                => 0,
+                'num'               => $gamedraw_num,
+                'bowstyle_id'       => $bowstyle_id,
+                'gamemode_id'       => $gamemode_id,
+                'contestant_a_id'   => $contestant_a_id,
+                'contestant_b_id'   => $contestant_b_id
+            );
+
             $gamedraw = new GameDraw($db);
-            $gamedraw->SetNum($gamedraw_num);
-            $gamedraw->SetBowstyleID($bowstyle_id);
-            $gamedraw->SetGameModeID($gamemode_id);
-            $gamedraw->SetContestantAID($contestant_a_id);
-            $gamedraw->SetContestantBID($contestant_b_id);
-            $tempRes = $gamedraw->CreateGameDraw();
+            $result_query = $gamedraw->set_data($data)->create();
             $database->conn->close();
 
-            if( $tempRes['status'] ){
+            if( $result_query ){
                 $result['next_num'] = $gamedraw_num + 1;
                 $result['action'] = 'create';
-                $result['status'] = $tempRes['status'];
+                $result['status'] = $result_query;
             }else{
-                $result['message'] = "ERROR: Create Game Draw";
+                $result['message'] = "ERROR: Create GAME DRAW";
             }
 
         }else{
@@ -160,21 +163,37 @@ if ( isset( $_POST['gamedraw_action']) ) {
 
             $database = new Database();
             $db = $database->getConnection();
-
             $gamenum = isset($_POST['gamedraw_num']) ? $_POST['gamedraw_num'] : 1;
 
+            $data = array(
+                'id'                => $gamedraw_id,
+                'num'               => $gamenum,
+                'bowstyle_id'       => $bowstyle_id,
+                'gamemode_id'       => $gamemode_id,
+                'contestant_a_id'   => $contestant_a_id,
+                'contestant_b_id'   => $contestant_b_id
+            );
+
             $gamedraw = new GameDraw($db);
-            $gamedraw->SetID($gamedraw_id);
-            $gamedraw->SetNum($gamenum);
-            $tempRes = $gamedraw->UpdateGameDraw();
+            // $gamedraw->SetID($gamedraw_id);
+            // $gamedraw->SetNum($gamenum);
+            // $tempRes = $gamedraw->UpdateGameDraw();
+            $result_query = $gamedraw->set_data($data)->update();
             $database->conn->close();
 
-            if( $tempRes['status'] ){
+            if( $result_query ){
                 $result['action'] = 'update';
-                $result['status'] = $tempRes['status'];
+                $result['status'] = $result_query;
             }else{
-                $result['message'] = "ERROR: Update Game Draw";
+                $result['message'] = "ERROR: Update GAME DRAW";
             }
+
+            // if( $tempRes['status'] ){
+            //     $result['action'] = 'update';
+            //     $result['status'] = $tempRes['status'];
+            // }else{
+            //     $result['message'] = "ERROR: Update Game Draw";
+            // }
 
 
         }else{
@@ -187,7 +206,45 @@ if ( isset( $_POST['gamedraw_action']) ) {
         $database = new Database();
         $db = $database->getConnection();
 
-        $gamedraw = new GameDraw( $db );
+        $score = new Score($db);
+        $success_delete_score = $score->delete_gamedraw_related_score($gamedraw_id);
+        $result['status'] = $success_delete_score;
+
+        if( $success_delete_score){
+
+            $livegame = new Live_Game($db);
+            $is_live = $livegame->is_gamedraw_playing($gamedraw_id);
+            if($is_live){
+                $result_livegame_query = $livegame->set_live(0);
+                if($result_livegame_query['status'] != true){
+                    $result['message'] = "ERROR: set GAMEDRAW LIVEGAME";
+                }
+            }else{
+                $result['message'] = "ERROR: no GAMEDRAW LIVEGAME/error";
+            }
+
+            $gameset = new GameSet($db);
+            $success_delete_gameset = $gameset->delete_gamedraw_related_gameset($gamedraw_id);
+            $result['status'] = $result['status'] && $success_delete_gameset;
+            if($success_delete_gameset){
+                $gamedraw = new GameDraw($db);
+                $success_delete_gamedraw = $gamedraw->id($gamedraw_id)->delete();
+                $result['status'] = $result['status'] && $success_delete_gamedraw;
+                if($success_delete_gamedraw){
+                    $result['action'] = 'delete';
+                }else{
+                    $result['message'] = "ERROR: Delete Game Draw";
+                }
+            }else{
+                $result['message'] = "ERROR: delete GAMEDRAW related GAMESET";
+            }
+        }else{
+            $result['message'] = "ERROR: delete GAMEDRAW related SCORE";
+        }
+
+        $database->conn->close();
+
+        /* $gamedraw = new GameDraw( $db );
         $gamedraw->SetID( $gamedraw_id );
         $resGameDraw = $gamedraw->GetGameDrawByID();
 
@@ -217,210 +274,8 @@ if ( isset( $_POST['gamedraw_action']) ) {
             $result['action'] = 'delete';
         }else{
             $result['message'] = "ERROR: Delete Game Draw";
-        }
+        } */
 
-        $database->conn->close();
-    }
-    echo json_encode($result);
-}
-
-// Get Game Draws
-if (isset( $_GET['GetGameDraw']) && $_GET['GetGameDraw'] != '') {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    if( $_GET['GetGameDraw'] == 'all') {
-
-        $database = new Database();
-        $db = $database->getConnection();
-
-        $gamedraw = new GameDraw($db);
-        $resGamedraws = $gamedraw->GetGameDraws();
-
-        if( $resGamedraws['status'] ){
-            $result['status'] = true;
-            $result['has_value'] = $resGamedraws['has_value'];
-            if($result['has_value']){
-                $gamedraws = $resGamedraws['gamedraws'];
-                $result['gamedraws'] = $gamedraws;
-
-                for( $i=0; $i<sizeof($gamedraws); $i++){
-
-                    $bowstyle_id = $gamedraws[$i]['bowstyle_id'];
-                    $gamemode_id = $gamedraws[$i]['gamemode_id'];
-                    $contestant_a_id = $gamedraws[$i]['contestant_a_id'];
-                    $contestant_b_id = $gamedraws[$i]['contestant_b_id'];
-                    $gamestatus_id = $gamedraws[$i]['gamestatus_id'];
-
-                    $gamedraw->SetBowstyleID($bowstyle_id);
-                    $bowstyle = $gamedraw->GetBowstyle();
-                    if($bowstyle['id']>0){
-                        $result['gamedraws'][$i]['bowstyle'] = $bowstyle;
-                    }else{
-                        $result['gamedraws'][$i]['bowstyle']['name'] = "-";
-                    }
-
-                    $gamedraw->SetGameModeID($gamemode_id);
-                    $gamemode = $gamedraw->GetGameMode();
-                    if($gamemode['id']>0){
-                        $result['gamedraws'][$i]['gamemode'] = $gamemode;
-                    }else{
-                        $result['gamedraws'][$i]['gamemode']['name'] = "-";
-                    }
-
-                    // Contestant
-                    $gamedraw->SetContestantAID($contestant_a_id);
-                    $gamedraw->SetContestantBID($contestant_b_id);
-
-                    if($gamemode_id==1) { // Beregu
-                        $result['gamedraws'][$i]['contestant_a'] = $gamedraw->GetTeamContestantA();
-                        $result['gamedraws'][$i]['contestant_b'] = $gamedraw->GetTeamContestantB();
-                    }else if( $gamemode_id ==2 ){ // Individu
-                        $result['gamedraws'][$i]['contestant_a'] = $gamedraw->GetPlayerContestantA();
-                        $result['gamedraws'][$i]['contestant_b'] = $gamedraw->GetPlayerContestantB();
-                        if($result['gamedraws'][$i]['contestant_a']['team_id']>0){
-                            $player = new Player($db);
-                            $player->SetTeamId($result['gamedraws'][$i]['contestant_a']['team_id']);
-                            $team = $player->GetTeam();
-                            $result['gamedraws'][$i]['contestant_a']['logo'] = $team['logo'];
-                        }else{
-                            $result['gamedraws'][$i]['contestant_a']['logo'] = "no-team.png";
-                        }
-                        if($result['gamedraws'][$i]['contestant_b']['team_id']>0){
-                            $player = new Player($db);
-                            $player->SetTeamId($result['gamedraws'][$i]['contestant_b']['team_id']);
-                            $team = $player->GetTeam();
-                            $result['gamedraws'][$i]['contestant_b']['logo'] = $team['logo'];
-                        }else{
-                            $result['gamedraws'][$i]['contestant_b']['logo'] = "no-team.png";
-                        }
-                    }
-
-                    // Game  Status
-                    $gamedraw->SetGameStatusID($gamestatus_id);
-                    $gamestatus = $gamedraw->GetGameStatus();
-                    $result['gamedraws'][$i]['gamestatus'] = $gamestatus;
-                }
-            }
-        }else{
-            $result['message'] = "ERROR: Load Game Draw";
-        }
-        $database->conn->close();
-
-    }else{
-        $gamedraw_id = isset($_GET['GetGameDraw']) ? $_GET['GetGameDraw'] : 0;
-        if(is_numeric($gamedraw_id) > 0){
-            $database = new Database();
-            $db = $database->getConnection();
-
-            $gamedraw = new GameDraw($db);
-            $gamedraw->SetID( $gamedraw_id );
-            $tempRes = $gamedraw->GetGameDrawByID();
-
-            if( $tempRes['status'] ){
-                $result['status'] = $tempRes['status'];
-                $result['gamedraw'] = $tempRes['gamedraw'];
-
-                $bowstyle_id = $tempRes['gamedraw']['bowstyle_id'];
-                $gamemode_id = $tempRes['gamedraw']['gamemode_id'];
-                $contestant_a_id = $tempRes['gamedraw']['contestant_a_id'];
-                $contestant_b_id = $tempRes['gamedraw']['contestant_b_id'];
-                $gamestatus_id = $tempRes['gamedraw']['gamestatus_id'];
-
-                // Bowstyle
-                if($bowstyle_id>0){
-                    $bowstyle = new Bowstyle($db);
-                    $bowstyle->SetID($bowstyle_id);
-                    $resBowstyle = $bowstyle->GetBowstyleByID();
-                    if( $resBowstyle['status'] ){
-                        $result['gamedraw']['bowstyle'] = $resBowstyle['bowstyle'];
-                    }else{
-                        $result['gamedraw']['bowstyle']['name'] = "-";
-                    }
-                }else{
-                    $result['gamedraw']['bowstyle']['name'] = "-";
-                }
-                /**
-                 * TO-DO: Game mode dinamis
-                 */
-                // Game mode
-                if($gamemode_id>0){
-                    $gamemode = new GameMode($db);
-                    $gamemode->SetID($gamemode_id);
-                    $resGameMode = $gamemode->GetGameModeByID();
-                    if( $resGameMode['status'] ){
-                        $result['gamedraw']['gamemode'] = $resGameMode['gamemode'];
-                    }else{
-                        $result['gamedraw']['gamemode']['name'] = "-";
-                    }
-                }else{
-                    $result['gamedraw']['gamemode']['name'] = "-";
-                }
-
-                // Contestant
-                if($contestant_a_id > 0 && $contestant_b_id > 0){
-                    if($gamemode_id==1) { // Beregu
-                        $team = new Team($db);
-                        $team->SetID($contestant_a_id);
-                        $resTeam = $team->GetTeamByID();
-                        if($resTeam['status']){
-                            $result['gamedraw']['contestant_a'] = $resTeam['team'];
-                        }else{
-                            $result['gamedraw']['contestant_a']['name'] = '-';
-                        }
-                        $team->SetID($contestant_b_id);
-                        $resTeam = $team->GetTeamByID();
-                        if($resTeam['status']){
-                            $result['gamedraw']['contestant_b'] = $resTeam['team'];
-                        }else{
-                            $result['gamedraw']['contestant_b']['name'] = '-';
-                        }
-                    }else if( $gamemode_id ==2 ){ // Individu
-                        $player = new Player($db);
-                        $player->SetID($contestant_a_id);
-                        $resPlayer = $player->GetPlayerByID();
-                        if($resPlayer['status']){
-                            $result['gamedraw']['contestant_a'] = $resPlayer['player'];
-                        }else{
-                            $result['gamedraw']['contestant_a']['name'] = '-';
-                        }
-                        $player->SetID($contestant_b_id);
-                        $resPlayer = $player->GetPlayerByID();
-                        if($resPlayer['status']){
-                            $result['gamedraw']['contestant_b'] = $resPlayer['player'];
-                        }else{
-                            $result['gamedraw']['contestant_b']['name'] = '-';
-                        }
-                    }else{
-                        $result['gamedraw']['contestant_a']['name'] = '-';
-                        $result['gamedraw']['contestant_b']['name'] = '-';
-                    }
-                }else{
-                    $result['gamedraw']['contestant_a']['name'] = '-';
-                    $result['gamedraw']['contestant_b']['name'] = '-';
-                }
-
-                // Game  Status
-                if( $gamestatus_id > 0){
-                    $gamestatus = new GameStatus($db);
-                    $gamestatus->SetID($gamestatus_id);
-                    $resGameStatus = $gamestatus->GetGameStatusByID();
-                    if( $resGameStatus['status'] ){
-                        $result['gamedraw']['gamestatus'] = $resGameStatus['gamestatus'];
-                    }else{
-                        $result['gamedraw']['gamestatus']['name'] = "-";
-                    }
-                }else{
-                    $result['gamedraw']['gamestatus']['name'] = "-";
-                }
-            }else{
-                $result['message'] = "ERROR: Load Game Draw";
-            }
-            $database->conn->close();
-        }else{
-            $result['message'] = "ERROR: ID = 0";
-        }
     }
     echo json_encode($result);
 }
@@ -484,19 +339,15 @@ if (isset( $_GET['GetGameDrawInfo']) && $_GET['GetGameDrawInfo'] != '') {
 
                     if($contestant_a['team_id']>0 || $contestant_b['team_id']>0){
                         $team = new Team($db);
-                        $team->SetID($contestant_a['team_id']);
-                        $resGetLogo = $team->GetLogo();
-                        if($resGetLogo['status']){
-                            if($resGetLogo['has_value']){
-                                $result['gamedraw']['contestant_a']['logo'] = $resGetLogo['logo'];
-                            }
+
+                        $result_query = $team->id($contestant_a['team_id'])->get_logo();
+                        if($result_query['status']){
+                            $result['gamedraw']['contestant_a']['logo'] = $result_query['logo'];
                         }
-                        $team->SetID($contestant_b['team_id']);
-                        $resGetLogo = $team->GetLogo();
-                        if($resGetLogo['status']){
-                            if($resGetLogo['has_value']){
-                                $result['gamedraw']['contestant_b']['logo'] = $resGetLogo['logo'];
-                            }
+
+                        $result_query = $team->id($contestant_b['team_id'])->get_logo();
+                        if($result_query['status']){
+                            $result['gamedraw']['contestant_b']['logo'] = $result_query['logo'];
                         }
                     }
                 }else{

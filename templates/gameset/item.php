@@ -7,7 +7,7 @@
             }
         ?>
         <button data-gamesetid='<?php echo $id; ?>' <?php echo $statusTxt; ?> class='btn btn-sm btn-outline-danger border-0 rounded-circle font-weight-bolder gameset-delete-btn-cls'>X</button>
-        <button data-gamesetid='<?php echo $id; ?>' <?php echo $statusTxt; ?> class='btn btn-sm btn-outline-warning border-0 rounded-circle gameset-update-btn-cls'><i class='fas fa-pen'></i></button>
+        <button data-gamesetid='<?php echo $id; ?>' <?php echo $statusTxt; ?> class='btn btn-sm btn-outline-warning-2 border-0 rounded-circle gameset-update-btn-cls'><i class='fas fa-pen'></i></button>
     </td>
     <td class='text-info font-weight-light border-gray-3'>
         <?php echo $game_num . '.'; ?>

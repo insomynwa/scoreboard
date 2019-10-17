@@ -359,7 +359,7 @@ if ( isset( $_POST['gameset_action']) ) {
 }
 
 // Get Game Set Last Num
-if (isset( $_GET['GetGameSetLastNum']) && $_GET['GetGameSetLastNum'] != '') {
+/* if (isset( $_GET['GetGameSetLastNum']) && $_GET['GetGameSetLastNum'] != '') {
     $result = array(
         'status'    => false,
         'message'   => ''
@@ -383,7 +383,7 @@ if (isset( $_GET['GetGameSetLastNum']) && $_GET['GetGameSetLastNum'] != '') {
     $database->conn->close();
 
     echo json_encode($result);
-}
+} */
 
 // Get Game Set by Game Draw
 /* if (isset( $_GET['GetGameSetsByGameDraw']) && $_GET['GetGameSetsByGameDraw'] != '') {

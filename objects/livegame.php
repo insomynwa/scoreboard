@@ -21,7 +21,7 @@ class Live_Game{
         $this->gameset_id = $gameset_id;
     }
 
-    public function GetGameSet(){
+    /* public function GetGameSet(){
         $gameset = new GameSet($this->conn);
         $gameset->SetID( $this->gameset_id);
         $res = $gameset->GetGameSetByID();
@@ -29,7 +29,7 @@ class Live_Game{
             $this->arr_gameset = $res['gameset'];
         }
         return $this->arr_gameset;
-    }
+    } */
 
     public function GetLiveGameID(){
         $res = array( 'status' => false );
@@ -55,7 +55,7 @@ class Live_Game{
      */
     public function get_live_gameset_id(){
         $current_id = 0;
-        $query = "SELECT gameset_id FROM {$this->table_name} WHERE livegame_id=1 LIMIT 1";
+        $query = "SELECT gameset_id FROM {$this->table_name} WHERE livegame_id=1";
 
         if( $result = $this->conn->query( $query ) ){
             $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
@@ -94,6 +94,12 @@ class Live_Game{
         return $res;
     }
 
+    /**
+     * Check Team Live Game
+     *
+     * @param number $teamid
+     * @return boolean
+     */
     public function is_team_playing($teamid){
         $query =
         "SELECT COUNT(l.gameset_id) as live
@@ -228,7 +234,7 @@ class Live_Game{
         return false;
     }
 
-    public function UpdateLiveGame(){
+    /* public function UpdateLiveGame(){
         $query = "UPDATE {$this->table_name} SET gameset_id={$this->gameset_id} WHERE livegame_id=1";
 
         $result = $this->conn->query( $query );
@@ -239,8 +245,15 @@ class Live_Game{
             $res['status'] = true;
         }
         return $res;
-    }
+    } */
 
+    /**
+     * Set Live Game
+     *
+     * return [ status]
+     * @param number $gameset_id
+     * @return array
+     */
     public function set_live($gameset_id){
         $query = "UPDATE {$this->table_name} SET gameset_id={$gameset_id} WHERE livegame_id=1";
 
@@ -254,7 +267,7 @@ class Live_Game{
         return $res;
     }
 
-    public function StopLiveGame(){
+    /* public function StopLiveGame(){
         $query = "UPDATE {$this->table_name} SET gameset_id=0";
 
         $result = $this->conn->query( $query );
@@ -265,7 +278,7 @@ class Live_Game{
             $res['status'] = true;
         }
         return $res;
-    }
+    } */
 
     public function CreateDefaultLiveGame(){
         $sql = "INSERT INTO {$this->table_name} (livegame_id,gameset_id) VALUES (1,0)";
@@ -282,7 +295,7 @@ class Live_Game{
     }
 
     public function CountLiveGame(){
-        $sql = "SELECT COUNT(*) as nLiveGame FROM {$this->table_name}";
+        $sql = "SELECT COUNT(livegame_id) as nLiveGame FROM {$this->table_name}";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);

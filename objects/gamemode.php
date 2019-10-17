@@ -52,6 +52,12 @@ class GameMode{
         return $res;
     } */
 
+    /**
+     * Get Game Mode List
+     *
+     * return [ status, gamemodes ]
+     * @return array
+     */
     public function get_gamemode_list(){
         $query = "SELECT gamemode_id, gamemode_name, gamemode_desc FROM " . $this->table_name;
 
@@ -79,7 +85,7 @@ class GameMode{
         return $res;
     }
 
-    public function GetGameModeByID(){
+    /* public function GetGameModeByID(){
         $res = array ( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE gamemode_id={$this->id}";
 
@@ -96,7 +102,7 @@ class GameMode{
         }
 
         return $res;
-    }
+    } */
 
     public function CreateDefaultGameMode(){
         $sql = "INSERT INTO {$this->table_name} (gamemode_id,gamemode_name,gamemode_desc) VALUES ({$this->id}, '{$this->name}', '{$this->desc}')";
@@ -113,7 +119,7 @@ class GameMode{
     }
 
     public function CountGameMode(){
-        $sql = "SELECT COUNT(*) as nGameMode FROM {$this->table_name}";
+        $sql = "SELECT COUNT(gamemode_id) as nGameMode FROM {$this->table_name}";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);

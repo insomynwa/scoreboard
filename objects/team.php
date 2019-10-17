@@ -221,7 +221,7 @@ class Team{
         return $res;
     }
 
-    public function GetGameDraws(){
+    /* public function GetGameDraws(){
         $gamedraws = new GameDraw($this->conn);
         $gamedraws->SetContestantID($this->id);
         $res = $gamedraws->GetGameDrawsByTeamID();
@@ -229,7 +229,7 @@ class Team{
             $this->arr_gamedraws = $res['gamedraws'];
         }
         return $this->arr_gamedraws;
-    }
+    } */
 
     public function GetPlayers(){
         $players = new Player($this->conn);

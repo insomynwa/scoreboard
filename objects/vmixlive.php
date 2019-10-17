@@ -31,7 +31,7 @@ class VMIX_LIVE{
         return $this->arr_gameset;
     }
 
-    public function GetLiveGameID(){
+    /* public function GetLiveGameID(){
         $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE vmix_live_id=1 LIMIT 1";
 
@@ -45,7 +45,7 @@ class VMIX_LIVE{
         }
 
         return $res;
-    }
+    } */
 
     public function UpdateLiveGame(){
         $query = "UPDATE {$this->table_name} SET gameset_id={$this->gameset_id} WHERE vmix_live_id=1";

@@ -1,3 +1,8 @@
+6.3.3 17-Oct-2019
+    [+] Print Game Summary
+
+    [*] Game Summary Table rendering
+
 6.2.2 17-Oct-2019
     [+] Game Status controller class
     [+] Print.js Library

@@ -59,6 +59,8 @@ if ( isset( $_GET['gamedraw_get'])){
         if($res['status']){
             $result['status'] = true;
             $result['new_num'] = $res['count'] + 1;
+        }else{
+            $result['message'] = 'ERROR: get GAMEDRAW new number';
         }
 
     }
@@ -74,9 +76,30 @@ if ( isset( $_GET['gamedraw_get'])){
             if($result_array['has_value']){
                 $result['gamedraw'] = $result_array['gamedraw'];
             }
+        }else{
+            $result['message'] = 'ERROR: get GAMEDRAW';
         }
 
         $database->conn->close();
+    }else if( $_GET['gamedraw_get'] == 'summary' && isset( $_GET['id']) && is_numeric( $_GET['id']) && $_GET['id'] > 0){
+        $gamedraw_id = $_GET['id'];
+
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $gamedraw = new GameDraw($db);
+        $result_query = $gamedraw->id($gamedraw_id)->get_summary();
+        $database->conn->close();
+
+        $result['status'] = $result_query['status'];
+        if($result['status']){
+            $item_template = TEMPLATE_DIR . 'gamedraw/summary.php';
+            $renderitem = '';
+            $renderitem .= template( $item_template, $result_query);
+            $result['summaries'] = $renderitem;
+        }else{
+            $result['message'] = 'ERROR: get GAMEDRAW summaries';
+        }
     }
     echo json_encode($result);
 }
@@ -281,7 +304,7 @@ if ( isset( $_POST['gamedraw_action']) ) {
 }
 
 // Get Game Draws Info
-if (isset( $_GET['GetGameDrawInfo']) && $_GET['GetGameDrawInfo'] != '') {
+/* if (isset( $_GET['GetGameDrawInfo']) && $_GET['GetGameDrawInfo'] != '') {
     $result = array(
         'status'    => false,
         'message'   => ''
@@ -312,9 +335,7 @@ if (isset( $_GET['GetGameDrawInfo']) && $_GET['GetGameDrawInfo'] != '') {
                 $gamedraw->SetBowstyleID( $bowstyle_id );
                 $resBowstyle = $gamedraw->GetBowstyle();
                 $result['gamedraw']['bowstyle'] = $resBowstyle;
-                /**
-                 * TO-DO: Game mode dinamis
-                 */
+
                 // Game mode
                 $gamedraw->SetGameModeID( $gamemode_id );
                 $resGameMode = $gamedraw->GetGameMode();
@@ -387,7 +408,7 @@ if (isset( $_GET['GetGameDrawInfo']) && $_GET['GetGameDrawInfo'] != '') {
         $result['message'] = "ERROR: ID = 0";
     }
     echo json_encode($result);
-}
+} */
 
 /* if (isset( $_GET['GetGameDrawNum']) && $_GET['GetGameDrawNum'] != '') {
     $result = array(

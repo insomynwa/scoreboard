@@ -131,6 +131,7 @@ if (isset( $_GET['config_get']) && $_GET['config_get'] != '') {
     }
     echo json_encode($result);
 }
+
 if ( isset( $_POST['config_action']) ) {
     $result = array(
         'status'    => false,

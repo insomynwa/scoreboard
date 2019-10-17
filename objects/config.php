@@ -75,7 +75,7 @@ class Config{
         return $res;
     }
 
-    public function GetConfigByID(){
+    /* public function GetConfigByID(){
         $res = array ( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE config_id={$this->id}";
 
@@ -92,7 +92,7 @@ class Config{
         }
 
         return $res;
-    }
+    } */
 
     public function CreateDefaultConfig(){
         $sql = "INSERT INTO {$this->table_name} (config_id,config_name,config_value) VALUES ({$this->id}, '{$this->name}', '{$this->value}')";

@@ -46,6 +46,12 @@ class Bowstyle{
         return $res;
     } */
 
+    /**
+     * Get Bow Style List
+     *
+     * return [ bowstyles, status ]
+     * @return array
+     */
     public function get_bowstyle_list(){
         $query = "SELECT bowstyle_id, bowstyle_name FROM " . $this->table_name;
 
@@ -72,7 +78,7 @@ class Bowstyle{
         return $res;
     }
 
-    public function GetBowstyleByID(){
+    /* public function GetBowstyleByID(){
         $res = array ( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE bowstyle_id={$this->id}";
 
@@ -88,7 +94,7 @@ class Bowstyle{
         }
 
         return $res;
-    }
+    } */
 
     /**
      * Set Bow Style Data

@@ -43,6 +43,12 @@ class GameStatus{
         return $res;
     } */
 
+    /**
+     * Get Game Status List
+     *
+     * return [ status, has_value, gamestatuses ]
+     * @return array
+     */
     public function get_gamestatus_list(){
         $res = array( 'status' => false );
 
@@ -104,7 +110,7 @@ class GameStatus{
     }
 
     public function CountGameStatus(){
-        $sql = "SELECT COUNT(*) as nGameStatus FROM {$this->table_name}";
+        $sql = "SELECT COUNT(gamestatus_id) as nGameStatus FROM {$this->table_name}";
 
         $result = $this->conn->query( $sql );
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);

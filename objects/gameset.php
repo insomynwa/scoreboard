@@ -133,7 +133,7 @@ class GameSet{
         return $res;
     }
 
-    public function CreateSet(){
+    /* public function CreateSet(){
         $res = array( 'status' => false );
         $sql = "INSERT INTO " . $this->table_name . " (gamedraw_id, gameset_num) VALUES ('{$this->gamedraw_id}', '{$this->num}')";
 
@@ -148,7 +148,7 @@ class GameSet{
         }
 
         return $res;
-    }
+    } */
 
     /**
      * Update Game Set
@@ -161,7 +161,7 @@ class GameSet{
         return $this->conn->query($sql);
     }
 
-    public function UpdateGameSet(){
+    /* public function UpdateGameSet(){
         $sql = "UPDATE " . $this->table_name . " SET gameset_num={$this->num}, gameset_status={$this->status} WHERE gameset_id={$this->id}";
 
         $res = array( 'status' => false );
@@ -173,9 +173,9 @@ class GameSet{
         }
 
         return $res;
-    }
+    } */
 
-    public function UpdateStatusGameSet(){
+    /* public function UpdateStatusGameSet(){
         $sql = "UPDATE {$this->table_name} SET gameset_status={$this->status} WHERE gameset_id={$this->id}";
 
         $res = array( 'status' => false );
@@ -187,7 +187,7 @@ class GameSet{
         }
 
         return $res;
-    }
+    } */
 
     /**
      * Set Game Set Stand By
@@ -200,7 +200,18 @@ class GameSet{
         return $this->conn->query($sql);
     }
 
-    public function DeleteGameSet(){
+    /**
+     * Set Game Set Live
+     *
+     * @return boolean
+     */
+    public function set_status_live(){
+        $sql = "UPDATE {$this->table_name} SET gameset_status=2 WHERE gameset_id={$this->id}";
+
+        return $this->conn->query($sql);
+    }
+
+    /* public function DeleteGameSet(){
         $sql = "DELETE FROM {$this->table_name} WHERE gameset_id={$this->id}";
 
         $res = array( 'status' => false );
@@ -212,7 +223,7 @@ class GameSet{
         }
 
         return $res;
-    }
+    } */
 
     /**
      * Delete Game Set
@@ -337,7 +348,7 @@ class GameSet{
         return $res;
     }
 
-    public function GetGameSetListByGameDrawID($gamedraw_id){
+    /* public function GetGameSetListByGameDrawID($gamedraw_id){
         $res = array( 'status' => false );
         $query =
         "SELECT gs.gameset_id, gs.gameset_num, s.gamestatus_id, s.gamestatus_name
@@ -366,7 +377,7 @@ class GameSet{
         }
 
         return $res;
-    }
+    } */
 
     /* public function CountGameSetsByGameDraw(){
         $sql = "SELECT COUNT(*) as nGameSet FROM {$this->table_name} WHERE gamedraw_id={$this->gamedraw_id}";
@@ -377,7 +388,7 @@ class GameSet{
         return $row['nGameSet'];
     } */
 
-    public function GetGameSets(){
+    /* public function GetGameSets(){
         $res = array( 'status' => false );
 
         $query = "SELECT * FROM {$this->table_name}";
@@ -404,8 +415,14 @@ class GameSet{
         }
 
         return $res;
-    }
+    } */
 
+    /**
+     * Get Game Set List
+     *
+     * return [ status, has_value, gamesets ]
+     * @return array
+     */
     public function get_gameset_list(){
         $res = array( 'status' => false );
 
@@ -510,6 +527,12 @@ class GameSet{
         return $res;
     }
 
+    /**
+     * Get Single Game Set
+     *
+     * return [ status, has_value, gameset ]
+     * @return array
+     */
     public function get_this_gameset(){
         $res = array( 'status' => false );
 
@@ -543,7 +566,7 @@ class GameSet{
         return $res;
     }
 
-    public function GetLastNum(){
+    /* public function GetLastNum(){
         $res = array( 'status' => false);
         $query = "SELECT gameset_num FROM {$this->table_name} WHERE gamedraw_id={$this->gamedraw_id} ORDER BY gameset_num DESC LIMIT 1";
 
@@ -560,8 +583,14 @@ class GameSet{
         }
 
         return $res;
-    }
+    } */
 
+    /**
+     * Get Last Set Num
+     *
+     * return [ status, last_set ]
+     * @return array
+     */
     public function get_last_set(){
         $res = array( 'status' => false);
         $query =

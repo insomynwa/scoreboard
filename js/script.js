@@ -531,7 +531,11 @@ $(document).ready(function () {
         $("#gameset-table tbody").html(gamesetItem);
     }
 
-    function Table_Load_GameDrawInfo(elemTarget, gamedraw) {
+    /* function renderGamedrawInfo(gamedrawItem){
+        $("#gamedraw-info-modal-table").html(gamedrawItem);
+    } */
+
+    /* function Table_Load_GameDrawInfo(elemTarget, gamedraw) {
         var total_setpoint_a = 0;
         var total_setpoint_b = 0;
         var gameWinnerAClass = "text-gray-4";
@@ -597,7 +601,7 @@ $(document).ready(function () {
         }
         tdText += "</tbody>";
         elemTarget.html(tdText);
-    }
+    } */
 
     function Table_Load_GameSetInfo(elemTarget, gameset) {
         var tdText = "<thead class='bg-dark text-white'><tr><th>Point</th><th>" + gameset.contestant_a['name'] + "</th><th>" + gameset.contestant_b['name'] + "</th></tr></thead>";
@@ -782,15 +786,41 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: '/scoreboard/controller.php?GetGameDrawInfo=' + gamedrawid,
+            // url: '/scoreboard/controller.php?GetGameDrawInfo=' + gamedrawid,
+            url: '/scoreboard/controller.php?gamedraw_get=summary&id=' + gamedrawid,
             success: function (data) {
-                if (data.status) {
+                if(data.status){
+                    $("#gamedraw-summary").html(data.summaries);
+                    $("#gamedraw-summary-print").removeAttr('disabled');
+                }else{
+                    $("#gamedraw-summary").html('<h3 class="text-center text-light">-</h3>');
+                    $("#gamedraw-summary-print").attr('disabled','disabled');
+                }
+                $("#gamedraw-info-modal").modal();
+                /* if (data.status) {
                     if (data.has_value) {
                         Table_Load_GameDrawInfo($("#gamedraw-info-modal-table"), data.gamedraw);
                         $("#gamedraw-info-modal").modal();
                     }
-                }
+                } */
             }
+        });
+    });
+
+    /* $("#gamedraw-summary-print").click(function(e){
+        printJS({
+            printable: 'gamedraw-summary',
+            type:'html',
+            // CSS: 'http://localhost/scoreboard/css/style.css'
+        });
+    }); */
+
+    $(document).on('click', '#gamedraw-summary-print', function(e){
+        printJS({
+            printable: 'gamedraw-summary',
+            type:'html',
+            //scanStyles: false,
+            css: ['http://localhost/scoreboard/bootstrap/css/bootstrap.min.css','http://localhost/scoreboard/css/style.css']
         });
     });
 
@@ -948,15 +978,15 @@ $(document).ready(function () {
         }
     });
 
-    $("#team-create-btn, #create-team-button").click(function (e) {
+    $("#create-team-button").click(function (e) {
         Form_Load_Team(null, 'create');
     });
 
-    $("#player-create-btn, #create-player-button").click(function (e) {
+    $("#create-player-button").click(function (e) {
         Form_Load_Player(false, 'create');
     });
 
-    $("#gamedraw-create-btn, #create-gamedraw-button").click(function (e) {
+    $("#create-gamedraw-button").click(function (e) {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -972,7 +1002,7 @@ $(document).ready(function () {
         });
     });
 
-    $("#gameset-create-btn, #create-gameset-button").click(function (e) {
+    $("#create-gameset-button").click(function (e) {
         Form_Load_GameSet(false, 'create');
     });
 

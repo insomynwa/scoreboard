@@ -194,40 +194,53 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	padding-left:105px;
 	padding-top:908px;
 } */
+/* #scoreboard-style .card-body{
+	min-height: 245px;
+} */
+/* #form-scoreboard-style {
+	min-height: 208px;
+} */
 
-#prev-scoreboard table td{
+#prev-scoreboard table td,
+#scoreboard-style-preview table td{
 	text-align:center;
 	width:65px;
 	height:1px;
 	padding:2px;
 }
 
-#prev-scoreboard table thead tr td{
+#prev-scoreboard table thead tr td,
+#scoreboard-style-preview table thead tr td{
 	padding:0;
 }
 
-#prev-scoreboard table .td-w{
+#prev-scoreboard table .td-w,
+#scoreboard-style-preview table .td-w{
 	width:300px;
 }
 
-#prev-scoreboard td.prev-score-timer{
+#prev-scoreboard td.prev-score-timer,
+#scoreboard-style-preview td.scoreboard-style-preview-timer{
 	width:96px;
 }
 
-#prev-scoreboard div{
+#prev-scoreboard div,
+#scoreboard-style-preview div{
 	background:#2B6986;
 	padding-top:0px;
 	height:100%;
 }
 
-#prev-scoreboard td.prev-score-logo div{
+#prev-scoreboard td.prev-score-logo div,
+#scoreboard-style-preview td.scoreboard-style-preview-logo div{
 	padding:0 !important;
 	margin:0 !important;
 	width:36px;
 	background:none;
 }
 
-#prev-scoreboard tbody span, #prev-scoreboard thead span{
+#prev-scoreboard tbody span, #prev-scoreboard thead span,
+#scoreboard-style-preview tbody span, #scoreboard-style-preview thead span{
 	display:block;
 	height:100%;
 	padding:10px;
@@ -236,31 +249,33 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	font-size: .7em;
 }
 
-.prev-score-team div, .prev-score-player div{
+.prev-score-team div, .prev-score-player div,
+.scoreboard-style-preview-team div, .scoreboard-style-preview-player div {
 	text-align:left;
 	padding-left:15px;
 	letter-spacing:1px;
 }
 
-#prev-scoreboard table thead td:nth-child(2), #prev-scoreboard table thead td:nth-child(3) {
+#prev-scoreboard table thead td:nth-child(2), #prev-scoreboard table thead td:nth-child(3),
+#scoreboard-style-preview table thead td:nth-child(2), #scoreboard-style-preview table thead td:nth-child(3) {
 	text-align:left;
 	padding-left:20px;
 }
 
-.prev-score-timer div{
+.prev-score-timer div,
+.scoreboard-style-preview-timer div{
 	font-family: "Roboto Italic", sans-serif;
 }
 
-.prev-score-total div{
+.prev-score-total div,
+.scoreboard-style-preview-setscore div{
 	background: #006C9C !important;
 }
 
-td.prev-score-desc div{
+td.prev-score-desc div,
+.scoreboard-style-preview-desc div{
 	background:#278F7A !important;
 	letter-spacing:1px;
-}
-
-#footer-section{
 }
 
 #footer-section p{

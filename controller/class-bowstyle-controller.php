@@ -11,14 +11,29 @@ if (isset( $_GET['bowstyle_get']) && $_GET['bowstyle_get'] != '') {
         $db = $database->getConnection();
 
         $bowstyle = new Bowstyle($db);
-        $tempRes = $bowstyle->get_bowstyle_list();
+        $result_query = $bowstyle->get_bowstyle_list();
 
         $database->conn->close();
 
-        $result['status'] = $tempRes['status'];
+        $result['status'] = $result_query['status'];
 
         if( $result['status'] ){
-            $result['bowstyles'] = $tempRes['bowstyles'];
+            $item_template = TEMPLATE_DIR . 'bowstyle/option.php';
+            $bostyle_option = '';
+            foreach( $result_query['bowstyles'] as $item){
+                $bostyle_option .= template( $item_template, $item);
+            }
+            $result['bowstyle_option'] = '<option value="0">choose</option>' . $bostyle_option;
+
+            $item_template = TEMPLATE_DIR . 'bowstyle/radio.php';
+            $bostyle_radio = '';
+            foreach( $result_query['bowstyles'] as $item){
+                $bostyle_radio .= template( $item_template, $item);
+            }
+            $result['bowstyle_radio'] = $bostyle_radio;
+            // $result['bowstyles'] = $result_query['bowstyles'];
+        }else{
+            $result['message'] = 'ERROR: get BOWSTYLE';
         }
     }
     echo json_encode($result);

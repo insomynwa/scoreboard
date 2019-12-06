@@ -53,7 +53,7 @@ class Bowstyle{
      * @return array
      */
     public function get_bowstyle_list(){
-        $query = "SELECT bowstyle_id, bowstyle_name FROM " . $this->table_name;
+        $query = "SELECT bowstyle_id, bowstyle_name FROM {$this->table_name}";
 
         $result = $this->conn->query( $query );
 
@@ -69,10 +69,7 @@ class Bowstyle{
                 $i++;
             }
 
-            $res = array(
-                'bowstyles'      => $bowstyles,
-                'status'    => true
-            );
+            $res['bowstyles'] = $bowstyles;
         }
 
         return $res;

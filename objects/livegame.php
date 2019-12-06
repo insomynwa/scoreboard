@@ -7,6 +7,7 @@ class Live_Game{
 
     private $id;            //_[int]
     private $gameset_id;          //_[string]
+    private $scoreboard_style_id;
     private $arr_gameset = array();
 
     public function __construct( $db ){
@@ -281,7 +282,7 @@ class Live_Game{
     } */
 
     public function CreateDefaultLiveGame(){
-        $sql = "INSERT INTO {$this->table_name} (livegame_id,gameset_id) VALUES (1,0)";
+        $sql = "INSERT INTO {$this->table_name} (livegame_id,gameset_id,scoreboard_style_id) VALUES (1,0,0)";
 
         $res = array( 'status' => false );
         if($this->conn->query($sql) === TRUE) {

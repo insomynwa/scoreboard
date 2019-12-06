@@ -19,6 +19,7 @@ include_once 'objects/livegame.php';
 include_once 'objects/webconfig.php';
 include_once 'objects/scoreboard.php';
 include_once 'objects/bowstyle.php';
+include_once 'objects/class-scoreboard-style.php';
 
 // CONTROLLER
 include_once 'controller/class-config-controller.php';
@@ -29,6 +30,7 @@ include_once 'controller/score-controller.php';
 include_once 'controller/gameset-controller.php';
 include_once 'controller/class-bowstyle-controller.php';
 include_once 'controller/class-gamestatus-controller.php';
+include_once 'controller/scoreboard-style-controller.php';
 
 
 // Get Init Setup
@@ -167,6 +169,12 @@ if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
             $result['status'] = $is_success & $result['status'];
             $is_success = $bowstyle->set_data(array('id'=>2,'name'=>'Compound'))->create();
             $result['status'] = $is_success & $result['status'];
+        }
+
+        $scoreboard_style = new Scoreboard_Style($db);
+        if( $scoreboard_style->is_table_empty()){
+            $success_create_default_value = $scoreboard_style->create_default_style_config();
+            $result['status'] = $success_create_default_value & $result['status'];
         }
 
         $gamestatus = new GameStatus($db);

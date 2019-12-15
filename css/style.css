@@ -94,25 +94,160 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-#form-config .form-control:disabled, #form-config .form-control[readonly] {
+.form-scoreboard table{
+	font-weight:500;
+	color: #C2C2C2;
+	font-size:14px;
+}
+
+.form-scoreboard .table thead td{
+	text-align:center;
+}
+
+.form-scoreboard .table td{
+	border-top:0;
+	vertical-align:middle;
+}
+
+.form-scoreboard .table td:last-child{
+	text-align:center;
+}
+.form-scoreboard .table thead th{
+	border-bottom: 0;
+	border-top:0;
+	vertical-align:middle;
+}
+
+.form-scoreboard thead td {
+	color:#2B6986;
+}
+
+.form-scoreboard thead td.td-w {
+	color:#ffffff;
+}
+
+.form-scoreboard .table td.td-w{
+	width:150px ;
+	text-align:left;
+}
+.form-scoreboard tbody tr{
+	border-top:2px solid #2B6986;
+}
+.form-scoreboard tbody td{
+	border:2px solid #2B6986;
+}
+
+.form-scoreboard tbody .form-scoreboard-team,
+.form-scoreboard tbody .form-scoreboard-player
+{
+	background:#2B6986;
+	color: #ffffff;
+	padding-left:15px;
+	font-weight:400;
+	letter-spacing:1px;
+}
+
+.form-scoreboard tbody .form-scoreboard-team{
+	border-right:2px solid #191C20;
+}
+
+.form-scoreboard input[type='text'] {
+	background:none;
+	text-align:center;
+	border:none;
+	color:#C2C2C2;
+	font-size:1.1em;
+	font-weight:500;
+	padding:0;
+	border-radius:0;
+}
+
+.form-scoreboard .form-control:focus {
+	color: #ffffff;
+	background-color: #24272A;
+	outline: 0;
+	box-shadow: 0 0 0 0 #2B6986;
+}
+
+.form-scoreboard .table td.score-field {
+	width:50px;
+}
+
+.form-scoreboard .table td.form-scoreboard-setpoint,
+.form-scoreboard .table td.form-scoreboard-setscore,
+.form-scoreboard .table td.form-scoreboard-gamepoint,
+.form-scoreboard .table td.form-scoreboard-gamescore
+ {
+	width:75px;
+}
+
+.form-scoreboard tbody td.form-scoreboard-setscore,
+.form-scoreboard tbody td.form-scoreboard-gamepoint,
+.form-scoreboard tbody td.form-scoreboard-gamescore
+{
+	background:#2B6986;
+}
+
+.form-scoreboard tbody td.form-scoreboard-setscore input,
+.form-scoreboard tbody td.form-scoreboard-gamepoint input,
+.form-scoreboard tbody td.form-scoreboard-gamescore input
+{
+	color:#ffffff;
+}
+
+.form-scoreboard tbody td.form-scoreboard-setscore .form-control:focus,
+.form-scoreboard tbody td.form-scoreboard-gamepoint .form-control:focus,
+.form-scoreboard tbody td.form-scoreboard-gamescore .form-control:focus
+{
+	background-color: #2B6986;
+	outline: 0;
+	box-shadow: 0 0 0 0 #2B6986;
+}
+
+.form-scoreboard tbody .form-scoreboard-submit-btn {
+	line-height:24px;
+	margin-top:3px;
+}
+
+#form-scoreboard-style .input-group-text,
+.scoreboard-style-select{
+	background: #191C20;
+	border-radius: 0;
+	border-color: #17A2B8;
+	color: #C2C2C2;
+}
+
+#form-scoreboard-style .input-group-text{
+	background: #17A2B8;
+	color: #ffffff;
+	width:90px;
+	text-align:center;
+}
+
+.scoreboard-style-select:focus {
+	color: #ffffff;
+	background-color: #24272A;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem #17A2B8;
+	border-color: #17A2B8;
+}
+/* #form-config .form-control:disabled, #form-config .form-control[readonly] {
 	background-color: #191C20 !important;
 	opacity: 1;
-}
+} */
 
-#form-config .form-control {
+/* #form-config .form-control {
 	color: #17A2B8;
 	background-color: #191C20;
-	/* border-color: #80bdff; */
-}
+} */
 
-#form-config .form-control:focus {
+/* #form-config .form-control:focus {
 	color: #C2C2C2;
 	background-color: #24272A;
-	/* border-color: #80bdff; */
 	outline: 0;
 	box-shadow: 0 0 0 0.2rem #17A2B8;
 	border-color:#17A2B8 !important;
-}
+} */
 
 .modal-form .form-control:disabled,.modal-form .form-control[readonly] {
 	background-color: #191C20 !important;
@@ -134,29 +269,27 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	border-color:#191C20 !important;
 }
 
-.form-scoreboard .form-control:disabled, .form-scoreboard .form-control[readonly] {
+/* .form-scoreboard .form-control:disabled, .form-scoreboard .form-control[readonly] {
 	background-color: #191C20 !important;
 	opacity: 1;
-}
+} */
 
-.form-scoreboard .form-control {
+/* .form-scoreboard .form-control {
 	color: #C2C2C2 !important;
 	background-color: #24272A !important;
-	/* border-color: #80bdff; */
-}
+} */
 
-.form-scoreboard .form-control:focus {
+/* .form-scoreboard .form-control:focus {
 	color: #C2C2C2;
 	background-color: #343A40 !important;
-	/* border-color: #80bdff; */
 	outline: 0;
 	box-shadow: 0 0 0 0 #28A745;
-}
+} */
 
-.form-scoreboard .form-control:disabled:focus, .form-scoreboard .form-control[readonly]:focus {
+/* .form-scoreboard .form-control:disabled:focus, .form-scoreboard .form-control[readonly]:focus {
 	background-color: #191C20 !important;
 	opacity: 1;
-}
+} */
 
 .modal-close-btn:hover{
 	color:#C2C2C2;
@@ -201,7 +334,7 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	min-height: 208px;
 } */
 
-#prev-scoreboard table td,
+/* #prev-scoreboard table td, */
 #scoreboard-style-preview table td{
 	text-align:center;
 	width:65px;
@@ -209,29 +342,29 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	padding:2px;
 }
 
-#prev-scoreboard table thead tr td,
+/* #prev-scoreboard table thead tr td, */
 #scoreboard-style-preview table thead tr td{
 	padding:0;
 }
 
-#prev-scoreboard table .td-w,
+/* #prev-scoreboard table .td-w, */
 #scoreboard-style-preview table .td-w{
 	width:300px;
 }
 
-#prev-scoreboard td.prev-score-timer,
+/* #prev-scoreboard td.prev-score-timer, */
 #scoreboard-style-preview td.scoreboard-style-preview-timer{
 	width:96px;
 }
 
-#prev-scoreboard div,
+/* #prev-scoreboard div, */
 #scoreboard-style-preview div{
 	background:#2B6986;
 	padding-top:0px;
 	height:100%;
 }
 
-#prev-scoreboard td.prev-score-logo div,
+/* #prev-scoreboard td.prev-score-logo div, */
 #scoreboard-style-preview td.scoreboard-style-preview-logo div{
 	padding:0 !important;
 	margin:0 !important;
@@ -239,8 +372,9 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	background:none;
 }
 
-#prev-scoreboard tbody span, #prev-scoreboard thead span,
-#scoreboard-style-preview tbody span, #scoreboard-style-preview thead span{
+/* #prev-scoreboard tbody span, #prev-scoreboard thead span, */
+#scoreboard-style-preview tbody span,
+#scoreboard-style-preview thead span{
 	display:block;
 	height:100%;
 	padding:10px;
@@ -249,30 +383,31 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	font-size: .7em;
 }
 
-.prev-score-team div, .prev-score-player div,
+/* .prev-score-team div, .prev-score-player div, */
 .scoreboard-style-preview-team div, .scoreboard-style-preview-player div {
 	text-align:left;
 	padding-left:15px;
 	letter-spacing:1px;
 }
 
-#prev-scoreboard table thead td:nth-child(2), #prev-scoreboard table thead td:nth-child(3),
-#scoreboard-style-preview table thead td:nth-child(2), #scoreboard-style-preview table thead td:nth-child(3) {
+/* #prev-scoreboard table thead td:nth-child(2), #prev-scoreboard table thead td:nth-child(3), */
+#scoreboard-style-preview table thead td:nth-child(2),
+#scoreboard-style-preview table thead td:nth-child(3) {
 	text-align:left;
 	padding-left:20px;
 }
 
-.prev-score-timer div,
+/* .prev-score-timer div, */
 .scoreboard-style-preview-timer div{
 	font-family: "Roboto Italic", sans-serif;
 }
 
-.prev-score-total div,
+/* .prev-score-total div, */
 .scoreboard-style-preview-setscore div{
 	background: #006C9C !important;
 }
 
-td.prev-score-desc div,
+/* td.prev-score-desc div, */
 .scoreboard-style-preview-desc div{
 	background:#278F7A !important;
 	letter-spacing:1px;
@@ -303,5 +438,9 @@ div.customscroll::-webkit-scrollbar-track {
 }
 
 div.customscroll::-webkit-scrollbar-thumb {
-	background: #24272A;
+	background: #111111;
+}
+
+.hide{
+	display:none !important;
 }

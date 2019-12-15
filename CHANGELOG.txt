@@ -1,10 +1,10 @@
-6.x.x xx-Dec-2019
+6.4.0 xx-Dec-2019
     [+] Scoreboard Style
-    [+] Table scoreboard_style
-    [+] CRUD scoreboard style
+    [+] Print Game Set summary
 
-    [*] Bowstyle Radio & Option rendering
     [*] Alter Live Game Table >> add active scoreboard style
+    [*] Alter Config Table >> config_name VARCHAR(50) from 25
+    [*] Reformat Js
 
     [-] Drop Vmix table
     [-] Remove Vmix Class

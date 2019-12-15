@@ -21,9 +21,10 @@ if (isset( $_GET['bowstyle_get']) && $_GET['bowstyle_get'] != '') {
             $item_template = TEMPLATE_DIR . 'bowstyle/option.php';
             $bostyle_option = '';
             foreach( $result_query['bowstyles'] as $item){
+                $item['live'] = 0;
                 $bostyle_option .= template( $item_template, $item);
             }
-            $result['bowstyle_option'] = '<option value="0">choose</option>' . $bostyle_option;
+            $result['bowstyle_option'] = '<option value="0">Choose</option>' . $bostyle_option;
 
             $item_template = TEMPLATE_DIR . 'bowstyle/radio.php';
             $bostyle_radio = '';

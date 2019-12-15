@@ -75,6 +75,34 @@ class Bowstyle{
         return $res;
     }
 
+    /**
+     * Get Bow Styles List
+     *
+     * return [status,bowstyles]
+     * @return array
+     */
+    public function get_list(){
+        $res = array( 'status' => false );
+
+        $query = "SELECT bowstyle_id, bowstyle_name FROM {$this->table_name}";
+
+        if( $result = $this->conn->query( $query ) ){
+            if( $result->num_rows > 0 ) {
+                $res['status'] = true;
+
+                $i = 0;
+                while($row = $result->fetch_assoc()) {
+                    $res['bowstyles'][$i]['id'] = $row['bowstyle_id'];
+                    $res['bowstyles'][$i]['name'] = $row['bowstyle_name'];
+
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
+
     /* public function GetBowstyleByID(){
         $res = array ( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE bowstyle_id={$this->id}";
@@ -134,6 +162,42 @@ class Bowstyle{
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
         return $row['nBowstyle'];
+    }
+
+    /**
+     * Create Default Bow Style
+     *
+     * @param int $style_id
+     * @param string $style_name
+     * @return boolean
+     */
+    public function create_default_style( $style_id, $style_name ) {
+        $sql = "INSERT INTO {$this->table_name} (bowstyle_id,bowstyle_name) VALUES ({$style_id}, '{$style_name}')";
+
+        if($this->conn->query($sql) === TRUE) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if Bow Style is defined
+     * > default Bow Style
+     *
+     * @return boolean
+     */
+    public function is_created() {
+        $sql = "SELECT COUNT(*) as nStyle FROM {$this->table_name}";
+
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        if( $row['nStyle'] == 0 ) {
+            return false;
+        }
+        return true;
     }
 }
 ?>

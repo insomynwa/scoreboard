@@ -6,7 +6,8 @@ $(document).ready(function () {
     var firstLoad = true;
 
     // GetWebScoreboard(active_mode);
-    GetWebScoreboard();
+    // GetWebScoreboard();
+    getLiveGameScoreboard();
     /* setInterval(function () {
         GetWebScoreboard(active_mode);
     }, 1000); */
@@ -45,10 +46,42 @@ $(document).ready(function () {
         }, interval);
     }
 
+    function startLoadScoreboard() {
+        if (timer !== null) return;
+        timer = setInterval(function () {
+            // GetWebScoreboard(active_mode);
+            getLiveGameScoreboard();
+        }, interval);
+    }
+
     function StopLoadData() {
         if (timer == null) return;
         clearInterval(timer);
         timer = null;
+    }
+
+    function stopLoadScoreboard() {
+        if (timer == null) return;
+        clearInterval(timer);
+        timer = null;
+    }
+
+    function getLiveGameScoreboard() {
+        $.ajax({
+            type: "get",
+            // url: "/scoreboard/controller.php?GetWebScoreboard=live&mode=" + mode,
+            //url: "/scoreboard/controller.php?GetWebScoreboard=live",
+            url: "/scoreboard/controller.php?livegame_get=scoreboard",
+            dataType: "json",
+            success: function (response) {
+                if (response.status) {
+                    $("#live-scoreboard table").html(response.style_config);
+                }else{
+                    $("#live-scoreboard table").html('');
+                }
+                startLoadScoreboard();
+            }
+        });
     }
 
     // function GetWebScoreboard(mode) {
@@ -214,7 +247,7 @@ $(document).ready(function () {
         // console.log(bowstyle);
         var bowstyle_id = scoreboard.bowstyle_id;
         if (bowstyle_id == 1) {
-            $(".set-num").text( "Set " + scoreboard.set);
+            $(".set-num").text("Set " + scoreboard.set);
             if (mode == 4) {
                 $(".score-logo").hide();
                 if (scoreboard.gamemode == 1) {
@@ -324,7 +357,7 @@ $(document).ready(function () {
             }
         }
         else if (bowstyle_id == 2) {
-            $(".set-num").text( "Set " + scoreboard.set + " of " + scoreboard.num_set);
+            $(".set-num").text("Set " + scoreboard.set + " of " + scoreboard.num_set);
             if (mode == 7) {
                 $(".score-logo").hide();
                 if (scoreboard.gamemode == 1) {

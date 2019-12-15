@@ -7,6 +7,7 @@ define("TEMPLATE_DIR", BASE_DIR . '/templates/');
 include_once 'config/database.php';
 include 'includes/tools.php';
 include_once 'objects/config.php';
+// include_once 'objects/class-contestant.php';
 include_once 'objects/team.php';
 include_once 'objects/player.php';
 include_once 'objects/gamemode.php';
@@ -23,6 +24,7 @@ include_once 'objects/class-scoreboard-style.php';
 
 // CONTROLLER
 include_once 'controller/class-config-controller.php';
+// include_once 'controller/contestant-controller.php';
 include_once 'controller/team-player-controller.php';
 include_once 'controller/gamedraw-controller.php';
 include_once 'controller/gamemode-controller.php';
@@ -31,7 +33,7 @@ include_once 'controller/gameset-controller.php';
 include_once 'controller/class-bowstyle-controller.php';
 include_once 'controller/class-gamestatus-controller.php';
 include_once 'controller/scoreboard-style-controller.php';
-
+include_once 'controller/livegame-controller.php';
 
 // Get Init Setup
 if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
@@ -215,85 +217,7 @@ if (isset( $_GET['InitSetup']) && $_GET['InitSetup'] != '') {
 }
 
 // Live Game
-if ( isset( $_POST['livegame_action']) ) {
-    $result = array(
-        'status'    => false,
-        'message'   => ''
-    );
-    if( $_POST['livegame_action'] != ''){
-        $timer = 120;
-        if( $_POST['livegame_action'] == 'stop-live-game'){
-            $gameset_id = isset($_POST['gamesetid']) ? $_POST['gamesetid'] : 0;
 
-            $database = new Database();
-            $db = $database->getConnection();
-
-            $livegame = new Live_Game($db);
-            $result_livegame = $livegame->set_live(0);
-            $result['status'] = $result_livegame['status'];
-
-            $gameset = new GameSet($db);
-            $result_gameset = $gameset->id($gameset_id)->set_status_standby();
-            $result['status'] = $result['status'] && $result_gameset;
-
-            $database->conn->close();
-
-            /* SetLiveGame( $db, 0);
-            $gamesetCls = new GameSet($db);
-            $gamesetCls->SetID($gameset_id);
-            $gamesetCls->SetStatus(1);
-            $gamesetCls->UpdateStatusGameSet();
-
-            $result['status'] = true;
-
-            $database->conn->close(); */
-        }
-        else if( $_POST['livegame_action'] == 'set-live-game'){
-            $gameset_id = isset($_POST['gamesetid']) ? $_POST['gamesetid'] : 0;
-            if(is_numeric($gameset_id)){
-                $database = new Database();
-                $db = $database->getConnection();
-
-                $livegame = new Live_Game($db);
-                $current_live_gameset_id = $livegame->get_live_gameset_id();
-
-                if($current_live_gameset_id != $gameset_id){
-                    $livegame->set_live($gameset_id);
-
-                    $gameset = new GameSet( $db );
-                    $success_update_new_live_gameset = $gameset->id($gameset_id)->set_status_live();
-                    if($current_live_gameset_id > 0){
-                        $gameset = new GameSet( $db );
-                        $success_update_curr_live_gameset = $gameset->id($current_live_gameset_id)->set_status_standby();
-                    }
-                }
-                $database->conn->close();
-                $result['status'] = true;
-                $result['live_game'] = $gameset_id;
-
-
-                /* $prev_livegameid = GetLiveGameID($db);
-                if($prev_livegameid != $gameset_id){
-                    SetLiveGame( $db, $gameset_id);
-                    $gamesetCls = new GameSet($db);
-
-                    $gamesetCls->SetID($gameset_id);
-                    $gamesetCls->SetStatus(2);
-                    $gamesetCls->UpdateStatusGameSet();
-                    if($prev_livegameid > 0){
-                        $gamesetCls->SetID($prev_livegameid);
-                        $gamesetCls->SetStatus(1);
-                        $gamesetCls->UpdateStatusGameSet();
-                    }
-                }
-                $result['live_game'] = $gameset_id;
-                $result['status'] = true;
-                $database->conn->close(); */
-            }
-        }
-    }
-    echo json_encode($result);
-}
 
 /**
  * Function

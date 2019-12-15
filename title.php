@@ -18,8 +18,10 @@
         <![endif]-->
 
         <div id="wrapper">
-            <div id="scoreboard">
+            <div id="live-scoreboard">
                 <table>
+                </table>
+                <!-- <table>
                     <thead>
                         <tr>
                             <td class="score-logo"></td>
@@ -75,7 +77,7 @@
                             <td class="td-w align-middle score-desc"><div><span id="desc-b">WINNER</span></div></td>
                         </tr>
                     </tbody>
-                </table>
+                </table> -->
             </div>
         </div>
 

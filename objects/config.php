@@ -75,6 +75,31 @@ class Config{
         return $res;
     }
 
+    /**
+     * Get Scoreboard Form Style Config
+     *
+     * return string, decode it using json_decode()
+     * @return string
+     */
+    public function get_scoreboard_form_style_config(){
+        // $res = array( 'status' => false );
+
+        $config_name = 'form_scoreboard';
+        $config_value = '';
+        $query = "SELECT config_value FROM {$this->table_name} WHERE config_name = '{$config_name}'";
+
+        if( $result = $this->conn->query( $query ) ){
+            $config = array();
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            if( $row[ 'config_value' ] != NULL && $row[ 'config_value' ] != '' ) {
+                $config_value = $row['config_value'];
+            }
+            // $res['status'] = ($result->num_rows > 0) && ($res['config_value'] != NULL);
+        }
+
+        return $config_value;
+    }
+
     /* public function GetConfigByID(){
         $res = array ( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE config_id={$this->id}";
@@ -108,6 +133,25 @@ class Config{
         return $res;
     }
 
+    /**
+     * Create Default Config
+     * Scoreboard Form Style, Live Scoreboard Time Interval
+     *
+     * @param string $config_name
+     * @param variant $config_value
+     * @return boolean
+     */
+    public function create_default_config( $config_id, $config_name, $config_value ){
+        $sql = "INSERT INTO {$this->table_name} (config_id,config_name,config_value) VALUES ({$config_id},'{$config_name}', '{$config_value}')";
+
+        if($this->conn->query($sql) === TRUE) {
+
+            return true;
+        }
+
+        return false;
+    }
+
     public function CountConfig(){
         $sql = "SELECT COUNT(*) as nConfig FROM {$this->table_name}";
 
@@ -115,6 +159,24 @@ class Config{
         $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 
         return $row['nConfig'];
+    }
+
+    /**
+     * Check if config is defined
+     * > default config
+     *
+     * @return boolean
+     */
+    public function is_created() {
+        $sql = "SELECT COUNT(*) as nConfig FROM {$this->table_name}";
+
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        if( $row['nConfig'] == 0 ) {
+            return false;
+        }
+        return true;
     }
 }
 ?>

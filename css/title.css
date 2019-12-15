@@ -8,7 +8,7 @@
 }
 
 body{
-    background:transparent;
+    background:black;
     width:1920px;
     height:1080px;
 }
@@ -22,73 +22,142 @@ body{
     height:1080px;
 }
 
-#scoreboard{
+#live-scoreboard{
     padding-left:105px;
     padding-top:908px;
 }
 
-#scoreboard table td{
+#live-scoreboard table td{
     text-align:center;
     width:65px;
     height:1px;
     padding:2px;
 }
 
-#scoreboard table thead tr td{
+#live-scoreboard table thead tr td{
     padding:0;
 }
 
-#scoreboard table .td-w{
+#live-scoreboard table .td-w{
     width:300px;
 }
 
-#scoreboard td.score-timer{
+#live-scoreboard .live-scoreboard-timer{
     width:96px;
 }
 
-#scoreboard div{
+#live-scoreboard div{
     background:#2B6986;
     padding-top:0px;
     height:100%;
 }
 
-#scoreboard td.score-logo div{
+#live-scoreboard .live-scoreboard-logo div{
     padding:0 !important;
     margin:0 !important;
     width:58px;
     background:none;
 }
 
-#scoreboard tbody span{
+#live-scoreboard tbody span{
     display:block;
     height:100%;
     padding:10px;
 }
 
-.score-team div, .score-player div{
+.live-scoreboard-team div, .live-scoreboard-player div{
     text-align:left;
     padding-left:15px;
     letter-spacing:1px;
 }
 
-#scoreboard table thead td:nth-child(2), #scoreboard table thead td:nth-child(3) {
+#live-scoreboard table thead td:nth-child(2), #live-scoreboard table thead td:nth-child(3) {
     text-align:left;
     padding-left:20px;
 }
 
-.score-timer div{
+.live-scoreboard-timer div{
     font-family: "Roboto Italic", sans-serif;
 }
 
-.score-total div{
+.live-scoreboard-setscore div{
     background: #006C9C !important;
 }
 
-td.score-desc div{
+.live-scoreboard-desc div{
     background:#278F7A !important;
-    letter-spacing:1px;
+	letter-spacing:1px;
 }
 
 .time-warning{
     background:#EC5F0E !important;
+}
+
+/* #live-scoreboard table td{
+    text-align:center;
+    width:65px;
+    height:1px;
+    padding:2px;
+}
+
+#live-scoreboard table thead tr td{
+	padding:0;
+}
+
+#live-scoreboard table .td-w{
+	width:300px;
+}
+
+#live-scoreboard td.live-scoreboard-timer{
+	width:96px;
+}
+
+#live-scoreboard div{
+	background:#2B6986;
+	padding-top:0px;
+	height:100%;
+}
+
+#live-scoreboard td.live-scoreboard-logo div{
+	padding:0 !important;
+	margin:0 !important;
+	width:36px;
+	background:none;
+}
+
+#live-scoreboard tbody span, #live-scoreboard thead span{
+	display:block;
+	height:100%;
+	padding:10px;
+	color: #ffffff;
+	font-weight: 600;
+	font-size: .7em;
+}
+
+.live-scoreboard-team div, .live-scoreboard-player div {
+	text-align:left;
+	padding-left:15px;
+	letter-spacing:1px;
+}
+
+#live-scoreboard table thead td:nth-child(2), #live-scoreboard table thead td:nth-child(3) {
+	text-align:left;
+	padding-left:20px;
+}
+
+.live-scoreboard-timer div{
+	font-family: "Roboto Italic", sans-serif;
+}
+
+.live-scoreboard-setscore div{
+	background: #006C9C !important;
+}
+
+.live-scoreboard-desc div{
+	background:#278F7A !important;
+	letter-spacing:1px;
+} */
+
+.hide{
+	display:none;
 }

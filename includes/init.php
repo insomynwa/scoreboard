@@ -1,6 +1,6 @@
 <?php
 
-define("SCOREBOARD_VERSION", "6.3.3");
+define("SCOREBOARD_VERSION", "6.X.X");
 
 // global $message;
 // $message = array(

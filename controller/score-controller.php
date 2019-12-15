@@ -97,6 +97,238 @@ if ( isset( $_POST['score_action']) ) {
     echo json_encode($result);
 }
 
+if ( isset( $_GET[ 'score_get' ] ) && $_GET[ 'score_get' ] != '' ) {
+    $result = array(
+        'status'    => false,
+        'message'   => ''
+    );
+
+    if( $_GET[ 'score_get' ] == 'live' ){
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $obj_livegame = new Live_Game($db);
+        $response = $obj_livegame->get_data();
+
+        $live_gameset_id = 0;
+        $live_style_id = 0;
+        $live_game_bowstyle_id = 0;
+        $live_style_bowstyle_id = 0;
+        $live_style_bowstyle_name = '';
+        $live_style = '';
+
+        if ( $response['status'] ) {
+            $live_gameset_id = $response[ 'gameset_id' ];
+            $live_style_id = $response[ 'scoreboard_style_id' ];
+            $live_game_bowstyle_id = is_null($response[ 'game_bowstyle_id' ]) ? 0 : $response[ 'game_bowstyle_id' ];
+            $live_style_bowstyle_id = is_null($response[ 'style_bowstyle_id' ]) ? 0 : $response[ 'style_bowstyle_id' ];
+            $live_style_bowstyle_name = is_null($response[ 'style_bowstyle_name' ]) ? '' : $response[ 'style_bowstyle_name' ];
+            $live_style = is_null($response[ 'style' ]) ? '' : $response[ 'style' ];
+        }
+        $has_live_game = $live_gameset_id > 0;
+        $has_live_style = $live_style_id > 0;
+
+        $obj_config = new Config($db);
+        $config_data = array();
+
+        $obj_score = new Score($db);
+        $response = $obj_score->get_form_live();
+
+        $form_scoreboard = '<h4 class="text-gray-4 text-center font-weight-light">Start Game</h4>';
+        $livegame_data = array();
+        if( $response[ 'status' ] ){
+            $contestant = null;
+            if( $response[ 'scores' ][ 'gamemode_id' ] == 1 ) {
+                $contestant = new Team($db);
+            }else if ( $response[ 'scores' ][ 'gamemode_id' ] == 2 ) {
+                $contestant = new Player($db);
+            }
+
+            for ($i=0; $i< sizeof($response[ 'scores' ]['contestants']); $i++) {
+                $res_con = $contestant->get_live( $response[ 'scores' ]['contestants'][$i]['id'] );
+                $response[ 'scores' ]['contestants'][$i]['logo'] = 'uploads/' . $res_con[ 'logo' ];
+                $response[ 'scores' ]['contestants'][$i]['team'] = $res_con[ 'team' ];
+                $response[ 'scores' ]['contestants'][$i]['player'] = $res_con[ 'player' ];
+            }
+
+            $livegame_data['gamemode_id'] = $response[ 'scores' ][ 'gamemode_id' ];
+            $livegame_data['sets'] = $response[ 'scores' ][ 'sets' ];
+            $livegame_data['contestants'] = $response[ 'scores' ][ 'contestants' ];
+            $livegame_data[ 'bowstyle_id' ] = $live_game_bowstyle_id;
+            $livegame_data[ 'style_config' ] = json_decode( $obj_config->get_scoreboard_form_style_config(), true)[ $live_game_bowstyle_id ];
+            $template = TEMPLATE_DIR . 'scoreboard/form.php';
+            $form_scoreboard = '';
+            $form_scoreboard .= template( $template, $livegame_data);
+        }
+        $result['form_scoreboard'] = $form_scoreboard;
+
+        if ( isset( $_GET['preview'] ) ) {
+
+            $obj_scoreboard_style = new Scoreboard_Style($db);
+
+            $scoreboard_styles['options']['bowstyle_selected'] = $live_style_bowstyle_id;
+            $scoreboard_styles['options']['style'] = '<option value="0">Choose</option>';
+
+            if ( $has_live_style ) {
+                $response = $obj_scoreboard_style->get_list_by_bowstyle_id( $live_style_bowstyle_id );
+                $renderitem = '<option value="0">Choose</option>';
+                if( $response[ 'status' ] ) {
+                    $item_template = TEMPLATE_DIR . 'scoreboard/style/option.php';
+                    foreach( $response['styles'] as $item){
+                        $item['live'] = $live_style_id;
+                        $renderitem .= template( $item_template, $item);
+                    }
+                }
+                $scoreboard_styles['options']['style'] = $renderitem;
+            }else{
+                $scoreboard_styles['options']['bowstyle_selected'] = $live_game_bowstyle_id;
+                if( $has_live_game ){
+                    $response = $obj_scoreboard_style->get_list_by_bowstyle_id( $live_game_bowstyle_id );
+                    $renderitem = '<option value="0">Choose</option>';
+                    if( $response[ 'status' ] ) {
+                        $item_template = TEMPLATE_DIR . 'scoreboard/style/option.php';
+                        foreach( $response['styles'] as $item){
+                            $item['live'] = $live_style_id;
+                            $renderitem .= template( $item_template, $item);
+                        }
+                    }
+                    $scoreboard_styles['options']['style'] = $renderitem;
+                }
+            }
+            $scoreboard_styles['info']['bowstyle'] = $live_style_bowstyle_name;
+            $scoreboard_styles['info']['style'] = $live_style;
+            if ( $live_style_id == 0 ) {
+                $scoreboard_styles['config']['visibility_class'] = [
+                    'activate_btn'      => 'hide',
+                    'save_btn'          => 'hide',
+                    'cancel_btn'        => 'hide',
+                    'new_btn'           => $has_live_game ? '' : 'hide',
+                    'edit_btn'          => 'hide',
+                    'delete_btn'        => 'hide'
+                ];
+            } else {
+                $scoreboard_styles['config']['visibility_class'] = [
+                    'activate_btn'      => '',
+                    'save_btn'          => 'hide',
+                    'cancel_btn'        => 'hide',
+                    'new_btn'           => '',
+                    'edit_btn'          => '',
+                    'delete_btn'        => ''
+                ];
+            }
+
+            $response = $obj_scoreboard_style->get_config($live_style_id);
+            $scoreboard_styles['preview']['view'] = '';
+
+            if($response['status']){
+                $preview_data = array();
+                $preview_data['game_data'] = NULL;
+                $preview_data['style_config'] = json_decode($response['style_config'],true);//var_dump($style_config);
+                if( $has_live_game ){
+                    $livegame_data['style_config'] = NULL;
+                    $preview_data['game_data'] = $livegame_data;
+                }
+
+                $item_template = TEMPLATE_DIR . 'scoreboard/style/preview.php';
+                $style_preview = '';
+                $style_preview .= template( $item_template, $preview_data);
+                $scoreboard_styles['preview']['view'] = $style_preview;
+            }else{
+                $result['message'] = 'ERROR: get Scoreboard Style ';
+            }
+            $result['scoreboard_styles'] = $scoreboard_styles;
+        }
+
+        $teams = [ 'table' => '', 'options' => '' ];
+        if( isset($_GET['team'] ) ){
+            $obj_team = new Team($db);
+            $response = $obj_team->get_list();
+            if( $response['status'] ){
+                $option_template = TEMPLATE_DIR . 'team/option.php';
+                $item_template = TEMPLATE_DIR . 'team/item.php';
+                $render_option = '<option value="0">Choose</option>';
+                $render_item = '';
+                foreach( $response['teams'] as $item){
+                    $render_option .= template( $option_template, $item);
+                    $render_item .= template( $item_template, $item);
+                }
+                $teams['options'] = $render_option;
+                $teams['table'] = $render_item;
+            }else{
+                $result['message'] = "ERROR: status 0";
+            }
+            $result['teams'] = $teams;
+        }
+
+        $players = [ 'table' => '', 'options' => '' ];
+        if( isset($_GET['player'] ) ){
+            $obj_player = new Player($db);
+            $response = $obj_player->get_list();
+            if( $response['status'] ){
+                $item_template = TEMPLATE_DIR . 'player/item.php';
+                $option_template = TEMPLATE_DIR . 'player/option.php';
+                $render_item = '';
+                $render_option = '<option value="0">Choose</option>';
+                foreach( $response['players'] as $item){
+                    $render_item .= template( $item_template, $item);
+                    $render_option .= template( $option_template, $item);
+                }
+                $players['options'] = $render_option;
+                $players['table'] = $render_item;
+
+            }else{
+                $result['message'] = "ERROR: status 0";
+            }
+            $result['players'] = $players;
+        }
+
+        $gamedraws = [ 'table' => '', 'options' => '' ];
+        if( isset($_GET['gamedraw'] ) ){
+            $obj_gamedraw = new GameDraw($db);
+            $response = $obj_gamedraw->get_list();
+            if( $response['status'] ){
+                $item_template = TEMPLATE_DIR . 'gamedraw/item.php';
+                $render_item = '';
+                $option_template = TEMPLATE_DIR . 'gamedraw/option.php';
+                $render_option = '<option value="0">Choose</option>';
+                foreach( $response['gamedraws'] as $item){
+                    $render_item .= template( $item_template, $item);
+                    $render_option .= template( $option_template, $item);
+                }
+                $gamedraws['table'] = $render_item;
+                $gamedraws['options'] = $render_option;
+            }else{
+                $result['message'] = "ERROR: status 0";
+            }
+            $result['gamedraws'] = $gamedraws;
+        }
+
+        $gamesets = [ 'table' => '' ];
+        if( isset($_GET['gameset'] ) ){
+            $obj_gameset = new GameSet($db);
+            $response = $obj_gameset->get_list();
+            if( $response['status'] ){
+                $item_template = TEMPLATE_DIR . 'gameset/item.php';
+                $render_item = '';
+                foreach( $response['gamesets'] as $item){
+                    $render_item .= template( $item_template, $item);
+                }
+                $gamesets['table'] = $render_item;
+            }else{
+                $result['message'] = "ERROR: status 0";
+            }
+            $result['gamesets'] = $gamesets;
+        }
+
+        $database->conn->close();
+
+        $result['status'] = true;
+
+    }
+
+    echo json_encode( $result );
+}
+
 // Get Live Score
 if (isset( $_GET['GetLiveScore']) && $_GET['GetLiveScore'] != '' ) {
     $result = array(

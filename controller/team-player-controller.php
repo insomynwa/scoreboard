@@ -38,6 +38,27 @@ if ( isset( $_GET['team_get'])){
         }else{
             $result['message'] = "ERROR: status 0";
         }
+    }else if ($_GET['team_get'] == 'single') {
+        $teamid = isset($_GET['id']) ? $_GET['id'] : 0;
+        if(is_numeric($teamid) > 0){
+
+            $database = new Database();
+            $db = $database->getConnection();
+
+            $obj_team = new Team($db);
+            $response = $obj_team->get_by_id($teamid);
+            $database->conn->close();
+
+            if( $response['status'] ){
+                $result['status'] = $response['status'];
+                $result['team'] = $response['team'];
+            }else{
+                $result['message'] = "ERROR: Load Team";
+            }
+
+        }else{
+            $result['message'] = "ERROR: id must be numeric";
+        }
     }
     /* else if( $_GET['team_get'] == 'option') {
         $database = new Database();
@@ -104,6 +125,32 @@ if ( isset( $_GET['player_get'])){
             }
         }else{
             $result['message'] = "ERROR: status 0";
+        }
+    }else if ($_GET['player_get'] == 'single') {
+        $playerid = isset($_GET['id']) ? $_GET['id'] : 0;
+        if(is_numeric($playerid) > 0){
+
+            $database = new Database();
+            $db = $database->getConnection();
+
+            $obj_player = new Player($db);
+            $response = $obj_player->get_by_id($playerid);
+
+            if( $response['status'] ){
+                $result['status'] = $response['status'];
+                if( is_null( $response['player']['team_id'] ) ){
+                    $response['player']['team_id'] = 0;
+                    $response['player']['team_name'] = 'Individu';
+                }
+
+                $result['player'] = $response['player'];
+            }else{
+                $result['message'] = "ERROR: load players";
+            }
+            $database->conn->close();
+
+        }else{
+            $result['message'] = "ERROR: id must be numeric";
         }
     }
     echo json_encode($result);

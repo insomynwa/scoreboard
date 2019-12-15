@@ -121,6 +121,37 @@ class Team{
 
     }
 
+    /**
+     * Get Team List
+     *
+     * return [status,teams]
+     * @return array
+     */
+    public function get_list(){
+        $res = array( 'status' => false );
+
+        $query = "SELECT team_id, team_logo, team_name
+        FROM {$this->table_name}
+        ORDER BY team_name ASC";
+
+        if( $result = $this->conn->query( $query ) ){
+            if( $result->num_rows > 0 ) {
+                $res['status'] = true;
+
+                $i = 0;
+                while($row = $result->fetch_assoc()) {
+                    $res['teams'][$i]['id'] = $row['team_id'];
+                    $res['teams'][$i]['logo'] = $row['team_logo'];
+                    $res['teams'][$i]['name'] = $row['team_name'];
+
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
+
     /* public function get_team_option(){
         $res = array( 'status' => false );
         $query =
@@ -221,6 +252,31 @@ class Team{
         return $res;
     }
 
+    /**
+     * Get Live by ID
+     *
+     * return [logo,team,player]
+     *
+     * @param int $team_id
+     * @return array
+     */
+    public function get_live( $team_id ) {
+        $res = [
+            'logo'  => '',
+            'team'  => '',
+            'player'=> ''
+        ];
+        $query = "SELECT team_logo, team_name FROM {$this->table_name} WHERE team_id={$team_id} LIMIT 1";
+
+        if( $result = $this->conn->query( $query ) ){
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $res[ 'logo' ] = is_null($row[ 'team_logo' ]) ? 'no-image.png' : $row['team_logo'];
+            $res[ 'team' ] = $row[ 'team_name' ];
+            $res[ 'player' ] = '';
+        }
+        return $res;
+    }
+
     /* public function GetGameDraws(){
         $gamedraws = new GameDraw($this->conn);
         $gamedraws->SetContestantID($this->id);
@@ -287,6 +343,31 @@ class Team{
                 'team'      => $team,
                 'status'    => true
             );
+        }
+
+        return $res;
+    }
+
+    /**
+     * Get Team By ID
+     *
+     * return [status,team]
+     * @param int $team_id
+     * @return array
+     */
+    public function get_by_id( $team_id ){
+        $res = array( 'status' => false );
+        $query = "SELECT team_id, team_logo, team_name, team_initial, team_desc FROM {$this->table_name} WHERE team_id={$team_id} LIMIT 1";
+
+        if( $result = $this->conn->query( $query ) ){
+
+            $res['status'] = true;
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $res['team']['id'] = $row['team_id'];
+            $res['team']['logo'] = $row['team_logo'];
+            $res['team']['name'] = $row['team_name'];
+            $res['team']['initial'] = $row['team_initial'];
+            $res['team']['desc'] = $row['team_desc'];
         }
 
         return $res;

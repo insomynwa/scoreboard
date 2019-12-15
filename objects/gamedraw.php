@@ -298,6 +298,54 @@ class GameDraw{
     }
 
     /**
+     * Get Game Draw List
+     *
+     * return [status,gamedraws]
+     * @return array
+     */
+    public function get_list(){
+        $res = array( 'status' => false );
+
+        $query = "SELECT gd.gamedraw_id, gd.gamedraw_num, bs.bowstyle_name, gm.gamemode_name, ta.team_name as contestant_a_name, tb.team_name as contestant_b_name
+        FROM {$this->table_name} gd
+        INNER JOIN bowstyles bs ON bs.bowstyle_id = gd.bowstyle_id
+        INNER JOIN gamemode gm ON gm.gamemode_id = gd.gamemode_id
+        INNER JOIN team ta ON ta.team_id = gd.contestant_a_id
+        INNER JOIN team tb ON tb.team_id = gd.contestant_b_id
+        WHERE gd.gamemode_id = 1
+        UNION
+        SELECT gd.gamedraw_id, gd.gamedraw_num, bs.bowstyle_name, gm.gamemode_name, pa.player_name as contestant_a_name, pb.player_name as contestant_b_name
+        FROM {$this->table_name} gd
+        INNER JOIN bowstyles bs ON bs.bowstyle_id = gd.bowstyle_id
+        INNER JOIN gamemode gm ON gm.gamemode_id = gd.gamemode_id
+        INNER JOIN player pa ON pa.player_id = gd.contestant_a_id
+        INNER JOIN player pb ON pb.player_id = gd.contestant_b_id
+        WHERE gd.gamemode_id = 2
+        ORDER BY gamedraw_num DESC";
+
+        if( $result = $this->conn->query( $query ) ){
+            if( $result->num_rows > 0 ) {
+                $res['status'] = true;
+
+                $i = 0;
+                while($row = $result->fetch_assoc()) {
+                    $res['gamedraws'][$i]['id'] = $row['gamedraw_id'];
+                    $res['gamedraws'][$i]['num'] = $row['gamedraw_num'];
+                    $res['gamedraws'][$i]['bowstyle_name'] = $row['bowstyle_name'];
+                    $res['gamedraws'][$i]['gamemode_name'] = $row['gamemode_name'];
+                    $res['gamedraws'][$i]['contestant_a_name'] = $row['contestant_a_name'];
+                    $res['gamedraws'][$i]['contestant_b_name'] = $row['contestant_b_name'];
+                    $res['gamedraws'][$i]['label'] = $row['gamedraw_num'] . '. ' . $row['contestant_a_name'] . ' vs ' . $row['contestant_b_name'];
+
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    /**
      * Get Game Draw Summary
      *
      * return [ status, summaries ]

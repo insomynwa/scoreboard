@@ -25,6 +25,22 @@
     <div class="row">
         <div class="col-lg-12 px-2 mb-2">
             <div class="card bg-gray-2">
+                <div class="card-header border-bottom border-gray-5 pb-1">
+                    <h5 class="text-warning text-center">Live Score</h5>
+                </div>
+                <div id="form-scoreboard-wrapper" class="card-body pb-1 pt-1">
+                </div>
+                <div class="card-footer pt-0">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <div id="" class="container mt-5 mb-3">
+    <div class="row">
+        <div class="col-lg-12 px-2 mb-2">
+            <div class="card bg-gray-2">
                 <div class="card-header border-bottom border-primary">
                     <img id="score-a-logo" class="sb-logo-cls" src="uploads/no-image.png">
                     <h5 id="score-team-a-title" class="text-primary">Team A - Player A</h5>
@@ -73,9 +89,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </form>
+                    </form> -->
                     <!-- / form-score-a -->
-                </div>
+                <!-- </div>
                 <div class="card-footer pt-0">
                     <div id="score-a-control" class="btn-group btn-group-sm">
                         <button class="btn btn-outline-primary" disabled><i class="far fa-clock"></i></button>
@@ -135,9 +151,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </form>
+                    </form> -->
                     <!-- / form-score-b -->
-                </div>
+                <!-- </div>
                 <div class="card-footer pt-0">
                     <div id="score-b-control" class="btn-group btn-group-sm">
                         <button class="btn btn-outline-success" disabled><i class="far fa-clock"></i></button>
@@ -148,9 +164,120 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
-<div id="config-section" class="container mb-3">
+<div id="scoreboard-style" class="container mb-3">
+    <div class="row">
+        <div class="col-lg-12 px-2">
+            <div class="card bg-gray-2">
+                <div class="card-header border-bottom border-gray-5 pb-1">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <h5 class="text-warning">Scoreboard Style</h5>
+                        </div>
+                        <div class="col-lg-3">
+                            <p class="text-gray-4">Active Style: <span class="text-success font-weight-bold" id="scoreboard-style-active-bowstyle-info"></span><span class="text-success font-weight-bold" id="scoreboard-style-active-bowstyle-style-info"></span></p>
+                            <p id="scoreboard-style-message" class="text-warning small"></p>
+                        </div>
+                        <div class="col-lg-5">
+                            <p class="text-gray-4">Title URL: [<a class="text-info" href="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?>" target="_blank" rel="noopener noreferrer"><?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?></a>]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="form-scoreboard-style" method="post" action="controller.php" class="form">
+                        <div class="row w-100 mb-3">
+                            <div class="col input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="scoreboard-style-bowstyle-select">Bowstyle</label>
+                                </div>
+                                <select class="custom-select shadow-none scoreboard-style-select" name="bowstyle_id" id="scoreboard-style-bowstyle-select"></select>
+                            </div>
+                            <div class="col input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="scoreboard-style-style-select">Style</label>
+                                </div>
+                                <select class="custom-select shadow-none scoreboard-style-select" name="style" id="scoreboard-style-style-select">
+                                    <option value="0">Choose</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <div>
+                                    <input type="button" value="Activate" class="btn btn-outline-success hide" id="scoreboard-style-activate">
+                                    <input type="hidden" id="form-scoreboard-style-mode" name="" value="view">
+                                    <input type="hidden" id="scoreboard-style-action" name="scoreboard_style_action" value="view">
+                                    <input type="submit" value="Save" class="btn btn-primary hide" id="scoreboard-style-submit">
+                                    <input type="button" value="Cancel" class="btn btn-warning hide" id="scoreboard-style-cancel">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div id="scoreboard-style-crud-btn">
+                                    <button type="button" id="scoreboard-style-btn-create" class="btn btn-sm btn-link-gray-4 hide">
+                                        <i class="fas fa-plus mr-1"></i>
+                                        new
+                                    </button>
+                                    <!-- / scoreboard-style-btn-create -->
+                                    <button type="button" id="scoreboard-style-btn-edit" class="btn btn-sm btn-link-gray-4 hide">
+                                        <i class="fas fa-pen mr-1"></i>
+                                        edit
+                                    </button>
+                                    <!-- / scoreboard-style-btn-edit -->
+                                    <button type="button" id="scoreboard-style-btn-delete" class="btn btn-sm btn-link-gray-4 hide">
+                                        <i class="fas fa-trash mr-1"></i>
+                                        delete
+                                    </button>
+                                    <!-- / scoreboard-style-btn-edit -->
+                                </div>
+                            </div>
+                        </div>
+                        <div id="form-scoreboard-style-visibility" class="row hide">
+                            <div class="col">
+                                <label for="table-style-visibility" class="text-light">Visibility:<input type="checkbox" name="" id="ssv-collective-cb" class="ml-3 mr-1"><span class="text-info small">select all</span></label>
+                                <table id="table-style-visibility" class="table table-borderless">
+                                    <!-- <tr>
+                                        <td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-logo" class="ssv-cb" checked name="logo" id="ssv-logo-cb" value=""> logo</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score1" class="ssv-cb" checked name="score1" id="ssv-score1-cb" value=""> score 1</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score4" class="ssv-cb" checked name="score4" id="ssv-score4-cb" value=""> score 4</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setpoint" class="ssv-cb" checked name="setpoint" id="ssv-setpoint-cb" value=""> set point</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamepoint" class="ssv-cb" checked name="gamepoint" id="ssv-gamepoint-cb" value=""> game point</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-team" class="ssv-cb" checked name="team" id="ssv-team-cb" value=""> team</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score2" class="ssv-cb" checked name="score2" id="ssv-score2-cb" value=""> score 2</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score5" class="ssv-cb" checked name="score5" id="ssv-score5-cb" value=""> score 5</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setscore" class="ssv-cb" checked name="setscore" id="ssv-setscore-cb" value=""> set score</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamescore" class="ssv-cb" checked name="gamescore" id="ssv-gamescore-cb" value=""> game score</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-player" class="ssv-cb" checked name="player" id="ssv-player-cb" value=""> player</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score3" class="ssv-cb" checked name="score3" id="ssv-score3-cb" value=""> score 3</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score6" class="ssv-cb" checked name="score6" id="ssv-score6-cb" value=""> score 6</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-timer" class="ssv-cb" checked name="timer" id="ssv-timer-cb" value=""> timer</td>
+                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-desc" class="ssv-cb" checked name="description" id="ssv-description-cb" value=""> description</td>
+                                    </tr> -->
+                                </table>
+                                <!-- / scoreboard-style-visibility -->
+                            </div>
+                        </div>
+                        <!-- / form-scoreboard-style-visibility -->
+                    </form>
+                    <!-- / form-scoreboard-style -->
+                    <div id="scoreboard-style-preview" class="hide mt-4">
+                        <h6 class="text-info">Preview</h6>
+                        <table></table>
+                    </div>
+                    <!-- / form-scoreboard-style -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- / scoreboard-style -->
+
+<!-- <div id="config-section" class="container mb-3">
     <div class="row">
         <div class="col-lg-9 px-2">
             <div class="card bg-gray-2" style="min-height:320px">
@@ -162,7 +289,7 @@
                         <tr>
                             <td><span class="text-gray-4 small">Title Link</span></td>
                             <td><i class="text-warning fas fa-caret-right mx-2" aria-hidden="true"></i></td>
-                            <td><a class="text-info" href="<?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?>" target="_blank" rel="noopener noreferrer"><?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?></a></td>
+                            <td><a class="text-info" href="<?php //echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?>" target="_blank" rel="noopener noreferrer"><?php echo 'http://'.gethostbyname(gethostname()).'/scoreboard/title.php'; ?></a></td>
                         </tr>
                         <tr>
                             <td><span class="text-gray-4 small">Active Mode</span></td>
@@ -227,11 +354,11 @@
                                     <td class="td-w align-middle prev-score-desc"><div><span id="">WINNER</span></div></td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> -->
                         <!-- / table-prev-scoreboard -->
-                    </div>
+                    <!-- </div> -->
                     <!-- <img id="config-img" class="img-fluid" src="images/mode_2.png"> -->
-                </div>
+                <!-- </div>
             </div>
         </div>
         <div class="col-lg-3 px-2">
@@ -244,12 +371,12 @@
                         <div class="form-group">
                             <label for="config-time-interval" class="text-gray-4 small">Time Interval:</label>
                             <input readonly type="number" name="config_time_interval" id="config-time-interval" class="form-control border-gray-5 bg-gray-3 text-gray-4 shadow-none" min="100" max="60000" value="100">
-                        </div>
+                        </div> -->
                         <!-- <div class="form-group">
                             <label for="config-point-per-set" class="text-info">Point per Set (max.6)</label>
                             <input type="number" name="config_point_per_set" id="config-point-per-set" class="form-control border-primary bg-dark text-light" min="3" max="6" value="3">
                         </div> -->
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="config-active-mode" class="text-gray-4 small">Mode:</label>
                             <select name="config_active_mode" id="config-active-mode" class="form-control border-gray-5 bg-gray-4 text-gray-4 shadow-none">
                                 <option value="0">Invisible</option>
@@ -267,13 +394,13 @@
                         <input type="hidden" id="config-id" name="config_id" value="0">
                         <input type="hidden" id="config-action" name="config_action" value="update">
                         <input type="submit" value="Save" class="btn btn-primary" id="config-submit">
-                    </form>
+                    </form> -->
                     <!-- / form-config -->
-                </div>
+                <!-- </div>
             </div>
         </div>
     </div>
-</div>
+</div> -->
 <!-- / config-section -->
 
 <div id="game-wrapper" class="container mb-3">
@@ -404,106 +531,6 @@
     </div>
 </div>
 <!-- / contestant-wrapper -->
-
-<div id="scoreboard-style" class="container mb-3">
-    <div class="row">
-        <div class="col-lg-12 px-2">
-            <div class="card bg-gray-2">
-                <div class="card-header border-bottom border-gray-5 pb-1">
-                    <h5 class="text-warning">Scoreboard Style</h5>
-                </div>
-                <div class="card-body">
-                    <form id="form-scoreboard-style" method="post" action="controller.php" class="form">
-                        <div class="row w-100 mb-3">
-                            <div class="col input-group">
-                                <div class="input-group-prepend">
-                                    <label class="input-group-text" for="scoreboard-style-bowstyle-select">Bowstyle</label>
-                                </div>
-                                <select class="custom-select shadow-none" name="bowstyle_id" id="scoreboard-style-bowstyle-select"></select>
-                            </div>
-                            <div class="col input-group">
-                                <div class="input-group-prepend">
-                                    <label class="input-group-text" for="scoreboard-style-style-select">Style</label>
-                                </div>
-                                <select disabled class="custom-select shadow-none" name="style" id="scoreboard-style-style-select">
-                                    <option value="0">choose</option>
-                                </select>
-                            </div>
-                            <div class="col">
-                                <div>
-                                    <input type="button" value="Activate" class="btn btn-outline-success hide" id="scoreboard-style-activate">
-                                    <input type="hidden" id="form-scoreboard-style-mode" name="" value="view">
-                                    <input type="hidden" id="scoreboard-style-action" name="scoreboard_style_action" value="view">
-                                    <input type="submit" value="Save" class="btn btn-primary hide" id="scoreboard-style-submit">
-                                    <input type="button" value="Cancel" class="btn btn-warning hide" id="scoreboard-style-cancel">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div>
-                                    <button type="button" id="create-scoreboard-style-button" class="btn btn-sm btn-link-gray-4 hide">
-                                        <i class="fas fa-plus mr-1"></i>
-                                        new
-                                    </button>
-                                    <!-- / create-scoreboard-style-button -->
-                                    <button type="button" id="edit-scoreboard-style-button" class="btn btn-sm btn-link-gray-4 hide">
-                                        <i class="fas fa-pen mr-1"></i>
-                                        edit
-                                    </button>
-                                    <!-- / edit-scoreboard-style-button -->
-                                    <button type="button" id="delete-scoreboard-style-button" class="btn btn-sm btn-link-gray-4 hide">
-                                        <i class="fas fa-trash mr-1"></i>
-                                        delete
-                                    </button>
-                                    <!-- / edit-scoreboard-style-button -->
-                                </div>
-                            </div>
-                        </div>
-                        <div id="form-scoreboard-style-visibility" class="row hide">
-                            <div class="col">
-                                <label for="table-style-visibility" class="text-light">Visibility:<input type="checkbox" name="" id="ssv-collective-cb" class="ml-3 mr-1"><span class="text-info small">select all</span></label>
-                                <table id="table-style-visibility" class="table table-borderless">
-                                    <tr>
-                                        <td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-logo" class="ssv-cb" checked name="logo" id="ssv-logo-cb" value=""> logo</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score1" class="ssv-cb" checked name="score1" id="ssv-score1-cb" value=""> score 1</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score4" class="ssv-cb" checked name="score4" id="ssv-score4-cb" value=""> score 4</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setpoint" class="ssv-cb" checked name="setpoint" id="ssv-setpoint-cb" value=""> set point</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamepoint" class="ssv-cb" checked name="gamepoint" id="ssv-gamepoint-cb" value=""> game point</td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-team" class="ssv-cb" checked name="team" id="ssv-team-cb" value=""> team</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score2" class="ssv-cb" checked name="score2" id="ssv-score2-cb" value=""> score 2</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score5" class="ssv-cb" checked name="score5" id="ssv-score5-cb" value=""> score 5</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setscore" class="ssv-cb" checked name="setscore" id="ssv-setscore-cb" value=""> set score</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamescore" class="ssv-cb" checked name="gamescore" id="ssv-gamescore-cb" value=""> game score</td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-player" class="ssv-cb" checked name="player" id="ssv-player-cb" value=""> player</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score3" class="ssv-cb" checked name="score3" id="ssv-score3-cb" value=""> score 3</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score6" class="ssv-cb" checked name="score6" id="ssv-score6-cb" value=""> score 6</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-timer" class="ssv-cb" checked name="timer" id="ssv-timer-cb" value=""> timer</td>
-                                        <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-desc" class="ssv-cb" checked name="description" id="ssv-description-cb" value=""> description</td>
-                                    </tr>
-                                </table>
-                                <!-- / scoreboard-style-visibility -->
-                            </div>
-                        </div>
-                        <!-- / form-scoreboard-style-visibility -->
-                    </form>
-                    <!-- / form-scoreboard-style -->
-                    <div id="scoreboard-style-preview" class="hide mt-4">
-                        <h6 class="text-info">Preview</h6>
-                        <table></table>
-                    </div>
-                    <!-- / form-scoreboard-style -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- / scoreboard-style -->
 
 <div id="footer-section" class="container-fluid py-5 bg-gray-2">
     <div class="row">

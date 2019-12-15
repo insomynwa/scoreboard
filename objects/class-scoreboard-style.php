@@ -61,7 +61,7 @@ class Scoreboard_Style{
         return $this;
     }
 
-    public function get_list(){
+    /* public function get_list(){
         $res = array( 'status' => false );
         $query =
         "SELECT team_id, team_logo, team_name
@@ -88,7 +88,30 @@ class Scoreboard_Style{
 
         return $res;
 
-    }
+    } */
+
+    /* public function get_live(){
+        $res = array( 'status' => false );
+        // $query = "SELECT gameset_id, scoreboard_style_id FROM {$this->table_name}";
+        $query =
+        "SELECT ss.bowstyle_id, b.bowstyle_name
+        FROM scoreboard_style ss
+        LEFT JOIN bowstyles b ON b.bowstyle_id = ss.bowstyle_id
+        GROUP BY ss.bowstyle_id
+        ";
+
+        if( $result = $this->conn->query( $query ) ){
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            // if($row['gameset_id'] != 0){
+                $res['status'] = true;
+                $res['bowstyle_id'] = $row['bowstyle_id'];
+                $res['scoreboard_style_id'] = $row['scoreboard_style_id'];
+                $res['bowstyle_id'] = $row['bowstyle_id'];
+            // }
+        }
+
+        return $res;
+    } */
 
     /**
      * Get Style By Bowstyle ID
@@ -119,6 +142,33 @@ class Scoreboard_Style{
     }
 
     /**
+     * Get Style List By Bowstyle ID
+     *
+     * return [ status, styles]
+     * @return array
+     */
+    public function get_list_by_bowstyle_id( $bowstyle_id ){
+        $res = array( 'status' => false );
+
+        $query = "SELECT id, style FROM {$this->table_name} WHERE bowstyle_id={$bowstyle_id}";
+
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = $result->num_rows > 0;
+            if($res['status']){
+                $i=0;
+                $styles = array();
+                while($row = $result->fetch_assoc()) {
+                    $res['styles'][$i]['id'] = $row['id'];
+                    $res['styles'][$i]['style'] = $row['style'];
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    /**
      * Get Style Config By ID
      *
      * return [ status, style_config ]
@@ -128,6 +178,29 @@ class Scoreboard_Style{
         $res = array( 'status' => false );
 
         $query = "SELECT style_config FROM {$this->table_name} WHERE id={$this->id}";
+
+        if( $result = $this->conn->query( $query ) ){
+            $res['status'] = $result->num_rows == 1;
+            if($res['status']){
+                $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+                $res['style_config'] = $row['style_config'];
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * Get Style Config by ID
+     *
+     * return [status,style_config]
+     * @param int $style_id
+     * @return array
+     */
+    public function get_config( $style_id ){
+        $res = array( 'status' => false );
+
+        $query = "SELECT style_config FROM {$this->table_name} WHERE id={$style_id}";
 
         if( $result = $this->conn->query( $query ) ){
             $res['status'] = $result->num_rows == 1;
@@ -156,6 +229,24 @@ class Scoreboard_Style{
         }
 
         return false;
+    }
+
+    /**
+     * Check if Scoreboard Style is defined
+     * > default Scoreboard Style
+     *
+     * @return boolean
+     */
+    public function is_created() {
+        $sql = "SELECT COUNT(id) as nStyle FROM {$this->table_name}";
+
+        $result = $this->conn->query( $sql );
+        $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+        if( $row['nStyle'] == 0 ) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -227,6 +318,26 @@ class Scoreboard_Style{
         }
 
         return $res;
+    }
+
+    /**
+     * Create Default Style
+     *
+     * @param int $style_id
+     * @param int $bowstyle_id
+     * @param int $style
+     * @param string $style_config
+     * @return void
+     */
+    public function create_default_style( $style_id, $bowstyle_id, $style, $style_config ) {
+        $sql = "INSERT INTO {$this->table_name} (id, bowstyle_id,style,style_config) VALUES ({$style_id}, {$bowstyle_id}, {$style}, '{$style_config}')";
+
+        if($this->conn->query($sql) === TRUE) {
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -361,91 +472,6 @@ class Scoreboard_Style{
         $style_config['description']['visibility_class'] = 'hide';
 
         return json_encode($style_config);
-    }
-
-    /**
-     * Get Default Style Config
-     *
-     * @return array
-     */
-    public function get_default_style_config(){
-        return array(
-            'logo'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'team'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'player'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'timer'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'score1'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'score2'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'score3'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'score4'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'score5'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'score6'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'setpoint'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'gamepoint'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'setscore'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'gamescore'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            ),
-            'description'  => array(
-                'label'             => '',
-                'visibility'        => true,
-                'visibility_class'  => ''
-            )
-        );
     }
 
     /**

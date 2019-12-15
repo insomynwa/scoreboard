@@ -128,6 +128,71 @@ class Player{
 
     }
 
+    /**
+     * Get Player List
+     *
+     * return [status,players]
+     * @return array
+     */
+    public function get_list(){
+        $res = array( 'status' => false );
+
+        $query = "SELECT p.player_id, p.player_name, t.team_name
+        FROM {$this->table_name} p
+        LEFT JOIN team t ON p.team_id = t.team_id
+        ORDER BY t.team_name ASC";
+
+        if( $result = $this->conn->query( $query ) ){
+            if( $result->num_rows > 0 ) {
+                $res['status'] = true;
+
+                $i = 0;
+                while($row = $result->fetch_assoc()) {
+                    $res['players'][$i]['id'] = $row['player_id'];
+                    $res['players'][$i]['name'] = $row['player_name'];
+                    if($row['team_name'] == NULL){
+                        $res['players'][$i]['team_name'] = 'INDIVIDU';
+                    }else{
+                        $res['players'][$i]['team_name'] = $row['team_name'];
+                    }
+
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * Get Live by ID
+     *
+     * return [logo,team,player]
+     *
+     * @param int $player_id
+     * @return array
+     */
+    public function get_live( $player_id ) {
+        $res = [
+            'logo'  => '',
+            'team'  => '',
+            'player'=> ''
+        ];
+        $query =
+        "SELECT team_logo, team_name, player_name
+        FROM {$this->table_name}
+        LEFT JOIN team ON team.team_id = player.player_id
+        WHERE player_id = {$player_id}";
+
+        if( $result = $this->conn->query( $query ) ){
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $res[ 'logo' ] = is_null($row[ 'team_logo' ]) ? 'no-image.png': $row[ 'team_logo' ];
+            $res[ 'team' ] = is_null($row[ 'team_name' ]) ? '' : $row[ 'team_name' ];
+            $res[ 'player' ] = $row[ 'player_name' ];
+        }
+        return $res;
+    }
+
     public function GetPlayersByTeamID(){
         $res = array( 'status' => false );
         $query = "SELECT * FROM {$this->table_name} WHERE team_id={$this->team_id}";
@@ -219,6 +284,35 @@ class Player{
 
             $res['status'] = true;
             $res['player'] = $player;
+        }
+
+        return $res;
+    }
+
+    /**
+     * Get Player By ID
+     *
+     * return [status,player]
+     * @param int $player_id
+     * @return array
+     */
+    public function get_by_id( $player_id ){
+        $res = array( 'status' => false );
+        $query =
+        "SELECT t.team_id, t.team_name, p.player_id, p.player_name
+        FROM player p
+        LEFT JOIN team t ON t.team_id = p.team_id
+        WHERE p.player_id={$player_id}";
+
+        if( $result = $this->conn->query( $query ) ){
+            $player = array();
+            $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+            $res['player']['id'] = $row['player_id'];
+            $res['player']['name'] = $row['player_name'];
+            $res['player']['team_id'] = $row['team_id'];
+            $res['player']['team_name'] = $row['team_name'];
+
+            $res['status'] = true;
         }
 
         return $res;

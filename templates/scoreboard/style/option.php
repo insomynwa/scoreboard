@@ -1,1 +1,1 @@
-<option value="<?php echo $id; ?>" <?php if( $id==$live) echo ' selected="selected"'; ?>><?php echo $style; ?></option>
+<option value="<?php echo $id; ?>" <?php if( $id==$live) echo ' selected="selected"'; ?>><?php echo $name; ?></option>

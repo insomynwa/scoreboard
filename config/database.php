@@ -1,4 +1,8 @@
 <?php
+namespace scoreboard\config;
+
+use \mysqli;
+
 class Database{
 
     // specify your own database credentials

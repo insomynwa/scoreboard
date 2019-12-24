@@ -147,7 +147,9 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	letter-spacing:1px;
 }
 
-.form-scoreboard tbody .form-scoreboard-team{
+.form-scoreboard tbody .form-scoreboard-team,
+.form-scoreboard tbody .form-scoreboard-setscore
+{
 	border-right:2px solid #191C20;
 }
 
@@ -210,7 +212,8 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 }
 
 #form-scoreboard-style .input-group-text,
-.scoreboard-style-select{
+.scoreboard-style-select,
+#scoreboard-style-style-name{
 	background: #191C20;
 	border-radius: 0;
 	border-color: #17A2B8;
@@ -231,23 +234,25 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	box-shadow: 0 0 0 0.2rem #17A2B8;
 	border-color: #17A2B8;
 }
-/* #form-config .form-control:disabled, #form-config .form-control[readonly] {
-	background-color: #191C20 !important;
-	opacity: 1;
-} */
-
-/* #form-config .form-control {
-	color: #17A2B8;
-	background-color: #191C20;
-} */
-
-/* #form-config .form-control:focus {
-	color: #C2C2C2;
-	background-color: #24272A;
+#scoreboard-style-style-name{
+	background: #ffffff;
+	color: #191C20;
+}
+#scoreboard-style-style-name:focus {
+	color: #24272A;
 	outline: 0;
-	box-shadow: 0 0 0 0.2rem #17A2B8;
-	border-color:#17A2B8 !important;
-} */
+	box-shadow: 0 0 0 0rem #17A2B8;
+	border-color: #17A2B8;
+}
+#scoreboard-style-style-name:disabled{
+	background: #191C20;
+	color: #C2C2C2;
+}
+
+.scoreboard-style-select:disabled {
+	background: #191C20;
+	color: #C2C2C2;
+}
 
 .modal-form .form-control:disabled,.modal-form .form-control[readonly] {
 	background-color: #191C20 !important;
@@ -263,33 +268,10 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 .modal-form .form-control:focus {
 	color: #C2C2C2;
 	background-color: #191C20;
-	/* border-color: #80bdff; */
 	outline: 0;
 	box-shadow: 0 0 0 0.2rem #17A2B8;
 	border-color:#191C20 !important;
 }
-
-/* .form-scoreboard .form-control:disabled, .form-scoreboard .form-control[readonly] {
-	background-color: #191C20 !important;
-	opacity: 1;
-} */
-
-/* .form-scoreboard .form-control {
-	color: #C2C2C2 !important;
-	background-color: #24272A !important;
-} */
-
-/* .form-scoreboard .form-control:focus {
-	color: #C2C2C2;
-	background-color: #343A40 !important;
-	outline: 0;
-	box-shadow: 0 0 0 0 #28A745;
-} */
-
-/* .form-scoreboard .form-control:disabled:focus, .form-scoreboard .form-control[readonly]:focus {
-	background-color: #191C20 !important;
-	opacity: 1;
-} */
 
 .modal-close-btn:hover{
 	color:#C2C2C2;
@@ -323,18 +305,6 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	display:none;
 }
 
-/* #prev-scoreboard{
-	padding-left:105px;
-	padding-top:908px;
-} */
-/* #scoreboard-style .card-body{
-	min-height: 245px;
-} */
-/* #form-scoreboard-style {
-	min-height: 208px;
-} */
-
-/* #prev-scoreboard table td, */
 #scoreboard-style-preview table td{
 	text-align:center;
 	width:65px;
@@ -342,29 +312,24 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	padding:2px;
 }
 
-/* #prev-scoreboard table thead tr td, */
 #scoreboard-style-preview table thead tr td{
 	padding:0;
 }
 
-/* #prev-scoreboard table .td-w, */
 #scoreboard-style-preview table .td-w{
 	width:300px;
 }
 
-/* #prev-scoreboard td.prev-score-timer, */
 #scoreboard-style-preview td.scoreboard-style-preview-timer{
 	width:96px;
 }
 
-/* #prev-scoreboard div, */
 #scoreboard-style-preview div{
 	background:#2B6986;
 	padding-top:0px;
 	height:100%;
 }
 
-/* #prev-scoreboard td.prev-score-logo div, */
 #scoreboard-style-preview td.scoreboard-style-preview-logo div{
 	padding:0 !important;
 	margin:0 !important;
@@ -372,42 +337,36 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	background:none;
 }
 
-/* #prev-scoreboard tbody span, #prev-scoreboard thead span, */
 #scoreboard-style-preview tbody span,
 #scoreboard-style-preview thead span{
 	display:block;
 	height:100%;
 	padding:10px;
 	color: #ffffff;
-	font-weight: 600;
-	font-size: .7em;
+	font-weight: 500;
+	font-size: 14px;
 }
 
-/* .prev-score-team div, .prev-score-player div, */
 .scoreboard-style-preview-team div, .scoreboard-style-preview-player div {
 	text-align:left;
 	padding-left:15px;
 	letter-spacing:1px;
 }
 
-/* #prev-scoreboard table thead td:nth-child(2), #prev-scoreboard table thead td:nth-child(3), */
 #scoreboard-style-preview table thead td:nth-child(2),
 #scoreboard-style-preview table thead td:nth-child(3) {
 	text-align:left;
 	padding-left:20px;
 }
 
-/* .prev-score-timer div, */
 .scoreboard-style-preview-timer div{
 	font-family: "Roboto Italic", sans-serif;
 }
 
-/* .prev-score-total div, */
 .scoreboard-style-preview-setscore div{
 	background: #006C9C !important;
 }
 
-/* td.prev-score-desc div, */
 .scoreboard-style-preview-desc div{
 	background:#278F7A !important;
 	letter-spacing:1px;
@@ -415,7 +374,6 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 
 #footer-section p{
 	margin:0;
-	/* color: #eeeeee; */
 }
 
 ::-webkit-scrollbar {

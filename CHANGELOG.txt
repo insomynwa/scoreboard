@@ -1,4 +1,22 @@
-6.4.0 xx-Dec-2019
+
+6.5.0 24-Dec-2019
+    [*] General
+        - OOP
+    [*] Scoreboard Form
+        - Style
+        - Fix Game Scores & Set Scores
+        - Fix New Style
+    [*] Live Scoreboard
+        - Fix Background
+    [*] Drop Dashboard
+    [*] Scoreboard Style
+        - Table DB : add field style_name
+        - Form: Name Field
+    [*] Web Config
+        - Delete file
+        - Drop Table
+
+6.4.0 16-Dec-2019
     [+] Scoreboard Style
     [+] Print Game Set summary
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 15, 2019 at 09:51 PM
+-- Generation Time: Dec 24, 2019 at 11:17 AM
 -- Server version: 10.1.31-MariaDB
 -- PHP Version: 7.2.4
 
@@ -82,12 +82,14 @@ CREATE TABLE `gamedraw` (
 --
 
 INSERT INTO `gamedraw` (`gamedraw_id`, `gamedraw_num`, `bowstyle_id`, `gamemode_id`, `contestant_a_id`, `contestant_b_id`, `gamestatus_id`) VALUES
-(35, 1, 1, 2, 23, 21, 1),
-(36, 2, 2, 1, 20, 19, 1),
-(37, 3, 1, 1, 19, 17, 1),
-(38, 4, 2, 2, 17, 21, 1),
-(39, 5, 1, 1, 21, 18, 1),
-(40, 6, 1, 2, 19, 20, 1);
+(1, 1, 1, 1, 2, 1, 1),
+(2, 2, 1, 2, 1, 2, 1),
+(3, 3, 1, 2, 3, 2, 1),
+(4, 4, 1, 2, 1, 3, 1),
+(5, 5, 2, 1, 2, 1, 1),
+(6, 6, 2, 2, 1, 3, 1),
+(7, 7, 2, 2, 1, 2, 1),
+(8, 8, 2, 2, 2, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -129,17 +131,14 @@ CREATE TABLE `gameset` (
 --
 
 INSERT INTO `gameset` (`gameset_id`, `gamedraw_id`, `gameset_num`, `gameset_point`, `gameset_desc`, `gameset_status`) VALUES
-(49, 35, 1, 0, '', 3),
-(50, 36, 1, 0, '', 1),
-(51, 37, 1, 0, '', 1),
-(52, 38, 1, 0, '', 1),
-(53, 35, 2, 0, '', 1),
-(54, 36, 2, 0, '', 1),
-(55, 37, 2, 0, '', 1),
-(56, 35, 3, 0, '', 1),
-(57, 40, 1, 0, '', 1),
-(58, 40, 2, 0, '', 1),
-(59, 40, 3, 0, '', 1);
+(1, 1, 1, 0, '', 1),
+(2, 2, 1, 0, '', 1),
+(3, 3, 1, 0, '', 1),
+(4, 4, 1, 0, '', 1),
+(5, 5, 1, 0, '', 1),
+(6, 6, 1, 0, '', 1),
+(7, 7, 1, 0, '', 1),
+(8, 8, 1, 0, '', 1);
 
 -- --------------------------------------------------------
 
@@ -197,13 +196,9 @@ CREATE TABLE `player` (
 --
 
 INSERT INTO `player` (`player_id`, `player_name`, `team_id`) VALUES
-(17, 'Solomia', 18),
-(18, 'Anastasia', 18),
-(19, 'Benzema', 19),
-(20, 'Kurniawan', 17),
-(21, 'Kahn', 20),
-(22, 'Klose', 20),
-(23, 'Katniss', 0);
+(1, 'Zidane', 2),
+(2, 'Klopp', 1),
+(3, 'Mugabe', 0);
 
 -- --------------------------------------------------------
 
@@ -231,28 +226,22 @@ CREATE TABLE `score` (
 --
 
 INSERT INTO `score` (`score_id`, `gameset_id`, `contestant_id`, `score_timer`, `score_1`, `score_2`, `score_3`, `score_4`, `score_5`, `score_6`, `set_points`, `score_desc`) VALUES
-(97, 49, 23, 120, 1, 4, 5, 0, 0, 0, 0, ''),
-(98, 49, 21, 120, 2, 3, 6, 0, 0, 0, 2, ''),
-(99, 50, 20, 120, 1, 2, 3, 0, 0, 0, 0, ''),
-(100, 50, 19, 120, 6, 5, 4, 0, 0, 0, 0, ''),
-(101, 51, 19, 120, 1, 1, 1, 0, 0, 0, 0, ''),
-(102, 51, 17, 120, 2, 2, 2, 0, 0, 0, 2, ''),
-(103, 52, 17, 120, 1, 4, 5, 0, 0, 0, 0, ''),
-(104, 52, 21, 120, 2, 3, 6, 0, 0, 0, 0, ''),
-(105, 53, 23, 120, 1, 2, 3, 0, 0, 0, 0, ''),
-(106, 53, 21, 120, 4, 5, 6, 0, 0, 0, 2, ''),
-(107, 54, 20, 120, 1, 4, 5, 0, 0, 0, 0, ''),
-(108, 54, 19, 120, 2, 3, 6, 0, 0, 0, 0, ''),
-(109, 55, 19, 120, 2, 2, 3, 0, 0, 0, 0, ''),
-(110, 55, 17, 120, 1, 5, 4, 0, 0, 0, 2, ''),
-(111, 56, 23, 120, 6, 5, 4, 0, 0, 0, 2, ''),
-(112, 56, 21, 120, 1, 2, 3, 0, 0, 0, 0, ''),
-(113, 57, 19, 120, 10, 10, 10, 0, 0, 0, 2, ''),
-(114, 57, 20, 120, 5, 5, 5, 0, 0, 0, 0, ''),
-(115, 58, 19, 120, 6, 6, 6, 0, 0, 0, 0, ''),
-(116, 58, 20, 120, 8, 7, 8, 0, 0, 0, 2, ''),
-(117, 59, 19, 120, 8, 8, 8, 0, 0, 0, 0, ''),
-(118, 59, 20, 120, 9, 8, 9, 0, 0, 0, 2, '');
+(1, 1, 2, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(2, 1, 1, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(3, 2, 1, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(4, 2, 2, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(5, 3, 3, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(6, 3, 2, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(7, 4, 1, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(8, 4, 3, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(9, 5, 2, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(10, 5, 1, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(11, 6, 1, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(12, 6, 3, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(13, 7, 1, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(14, 7, 2, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(15, 8, 2, 120, 0, 0, 0, 0, 0, 0, 0, NULL),
+(16, 8, 3, 120, 0, 0, 0, 0, 0, 0, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -263,7 +252,7 @@ INSERT INTO `score` (`score_id`, `gameset_id`, `contestant_id`, `score_timer`, `
 CREATE TABLE `scoreboard_style` (
   `id` int(11) NOT NULL,
   `bowstyle_id` int(11) NOT NULL,
-  `style` tinyint(3) UNSIGNED NOT NULL,
+  `style_name` varchar(45) NOT NULL DEFAULT 'style name',
   `style_config` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -271,15 +260,17 @@ CREATE TABLE `scoreboard_style` (
 -- Dumping data for table `scoreboard_style`
 --
 
-INSERT INTO `scoreboard_style` (`id`, `bowstyle_id`, `style`, `style_config`) VALUES
-(1, 1, 1, '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":true,\"visibility_class\":\"\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
-(2, 1, 2, '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":true,\"visibility_class\":\"\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
-(3, 1, 3, '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":true,\"visibility_class\":\"\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
-(4, 2, 1, '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
-(5, 2, 2, '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
-(6, 2, 3, '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
-(19, 1, 4, '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
-(27, 2, 4, '{\"logo\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score5\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score6\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"setpoint\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"description\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"}}');
+INSERT INTO `scoreboard_style` (`id`, `bowstyle_id`, `style_name`, `style_config`) VALUES
+(1, 1, 'Style 1', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":true,\"visibility_class\":\"\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(2, 1, 'Style 2', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":true,\"visibility_class\":\"\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(3, 1, 'Style 3', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":true,\"visibility_class\":\"\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(4, 2, 'Style 1', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(5, 2, 'Style 2', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(6, 2, 'Style 3', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score2\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score3\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"Total\",\"visibility\":true,\"visibility_class\":\"\"},\"gamepoint\":{\"label\":\"Set pts\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(7, 1, 'Beregu 1', '{\"logo\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(8, 1, 'Individu 1', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(9, 2, 'Beregu 1', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"player\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}'),
+(10, 2, 'Individu 1', '{\"logo\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"team\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"player\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"timer\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score1\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score2\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score3\":{\"label\":\"\",\"visibility\":true,\"visibility_class\":\"\"},\"score4\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score5\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"score6\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setpoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamepoint\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"setscore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"gamescore\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"},\"description\":{\"label\":\"\",\"visibility\":false,\"visibility_class\":\"hide\"}}');
 
 -- --------------------------------------------------------
 
@@ -300,30 +291,8 @@ CREATE TABLE `team` (
 --
 
 INSERT INTO `team` (`team_id`, `team_logo`, `team_name`, `team_initial`, `team_desc`) VALUES
-(17, '5608indonesia.png', 'Indon', 'IND', 'description'),
-(18, '530406ukraine.png', 'Ukraine', 'UKR', 'description'),
-(19, '721980france.png', 'France', 'FRA', 'description'),
-(20, '637766jerman.png', 'Germany', 'GER', 'description'),
-(21, 'no-image.png', 'Marvel', 'MAR', 'description');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `web_config`
---
-
-CREATE TABLE `web_config` (
-  `web_config_id` int(11) NOT NULL,
-  `time_interval` int(11) NOT NULL DEFAULT '1000',
-  `active_mode` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `web_config`
---
-
-INSERT INTO `web_config` (`web_config_id`, `time_interval`, `active_mode`) VALUES
-(1, 500, 5);
+(1, '554313jerman.png', 'Germany', 'GER', 'Panzer'),
+(2, '62979france.png', 'France', 'FRA', 'Oui');
 
 --
 -- Indexes for dumped tables
@@ -396,12 +365,6 @@ ALTER TABLE `team`
   ADD PRIMARY KEY (`team_id`);
 
 --
--- Indexes for table `web_config`
---
-ALTER TABLE `web_config`
-  ADD PRIMARY KEY (`web_config_id`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -421,7 +384,7 @@ ALTER TABLE `config`
 -- AUTO_INCREMENT for table `gamedraw`
 --
 ALTER TABLE `gamedraw`
-  MODIFY `gamedraw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `gamedraw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `gamemode`
@@ -433,7 +396,7 @@ ALTER TABLE `gamemode`
 -- AUTO_INCREMENT for table `gameset`
 --
 ALTER TABLE `gameset`
-  MODIFY `gameset_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `gameset_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `gamestatus`
@@ -451,31 +414,25 @@ ALTER TABLE `livegame`
 -- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
-  MODIFY `player_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `player_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `score`
 --
 ALTER TABLE `score`
-  MODIFY `score_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `score_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `scoreboard_style`
 --
 ALTER TABLE `scoreboard_style`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `team`
 --
 ALTER TABLE `team`
-  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
-
---
--- AUTO_INCREMENT for table `web_config`
---
-ALTER TABLE `web_config`
-  MODIFY `web_config_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

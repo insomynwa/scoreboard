@@ -133,8 +133,9 @@ class Live_Game_Controller_Class extends Controller_Class {
             $result['message'] = 'ERROR: Style ID : 0';
             return $result;
         }
+        $live_game_bowstyle_id = $this->get_game_bowstyle_id();
         $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($this->connection);
-        if($this->get_game_bowstyle_id()!= $scoreboard_style_oc->get_bowstyle_id($style_id)){
+        if( ($live_game_bowstyle_id != 0) && ($live_game_bowstyle_id != $scoreboard_style_oc->get_bowstyle_id($style_id))){
             $result['message'] = 'Wrong Style for the Game!';
             return $result;
         }

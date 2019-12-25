@@ -9,32 +9,3 @@ Gamedraw:
 
 JSON
 
-BEFORE
-24.9 KB / 672 KB resources
-Finish: 900 ms
-DOMContentLoaded: 313 ms
-
-NO LIVE
-27.9 KB / 726 KB transferred
-27.4 KB / 721 KB resources
-Finish: 523 ms
-DOMContentLoaded: 304 ms
-
-LIVE GAME & SCORE
-41.5 KB / 744 KB transferred
-41.0 KB / 739 KB resources
-Finish: 507 ms
-DOMContentLoaded: 221 ms
-
-LIVE STYLE
-32.2 KB / 735 KB transferred
-31.7 KB / 729 KB resources
-Finish: 472 ms
-DOMContentLoaded: 265 ms
-
-LIVE GAME
-37.2 KB / 740 KB transferred
-36.7 KB / 734 KB resources
-Finish: 478 ms
-DOMContentLoaded: 266 ms
-

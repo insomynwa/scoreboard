@@ -475,12 +475,6 @@ if (isset($_GET['scoreboard_style_get']) && $_GET['scoreboard_style_get'] != '')
             $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
             $live_game_oc = new Live_Game_Controller_Class($connection);
             $style_id = $live_game_oc->style_id();
-            // $key = 'scoreboard_style_option';
-            // $result[$key] = $scoreboard_style_oc->create_style_option($live_game_oc->style_bowstyle_id(),$key)[$key];
-            // $key = 'style_preview';
-            // $result[$key] = $scoreboard_style_oc->create_preview($style_id,$key)[$key];
-            // $key = 'selected';
-            // $result[$key] = $style_id;
             $scoreboard_style_element = $scoreboard_style_oc->get_elements(['preview','option'],$live_game_oc->style_bowstyle_id(),$style_id);
             $result = array_merge(
                 $result,

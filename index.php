@@ -70,10 +70,10 @@
             <div class="card bg-gray-2">
                 <div class="card-header border-bottom border-gray-5 pb-1">
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <h5 class="text-warning">Scoreboard Style</h5>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-4">
                             <p class="text-gray-4">Active Style: <span class="text-success font-weight-bold" id="scoreboard-style-active-bowstyle-info"></span><span class="text-success font-weight-bold" id="scoreboard-style-active-bowstyle-style-info"></span></p>
                             <p id="scoreboard-style-message" class="text-warning small"></p>
                         </div>

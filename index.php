@@ -107,6 +107,7 @@
                             </div>
                             <div class="col">
                                 <div>
+                                    <input type="button" value="Deactivate" class="btn btn-outline-danger hide" id="scoreboard-style-deactivate">
                                     <input type="button" value="Activate" class="btn btn-outline-success hide" id="scoreboard-style-activate">
                                     <input type="hidden" id="form-scoreboard-style-mode" name="" value="view">
                                     <input type="hidden" id="scoreboard-style-action" name="scoreboard_style_action" value="view">

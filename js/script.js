@@ -258,6 +258,7 @@ $(document).ready(function() {
         styleNameInput: $("#scoreboard-style-style-name"),
         styleNameInputWrapper: $("#scoreboard-style-style-name-wrapper"),
         activateBtn: $("#scoreboard-style-activate"),
+        deactivateBtn: $("#scoreboard-style-deactivate"),
 
         createBtn: $("#scoreboard-style-btn-create"),
         editBtn: $("#scoreboard-style-btn-edit"),
@@ -298,6 +299,7 @@ $(document).ready(function() {
             this.formStyle.on("submit", this.submitForm);
             this.markCBox.change(this.toggleAllColumn);
             this.activateBtn.click(this.activateStyle);
+            this.deactivateBtn.click(this.deactivateStyle);
             this.createBtn.click(this.configCreateForm);
             this.editBtn.click(this.setupUpdateForm);
             this.deleteBtn.click(this.setupDeleteForm);
@@ -311,6 +313,10 @@ $(document).ready(function() {
             Helper.setHide(
                 ScoreboardStyle.activateBtn,
                 cfg["visibility_class"]["activate_btn"]
+            );
+            Helper.setHide(
+                ScoreboardStyle.deactivateBtn,
+                cfg["visibility_class"]["deactivate_btn"]
             );
             Helper.setHide(
                 ScoreboardStyle.saveBtn,
@@ -420,6 +426,29 @@ $(document).ready(function() {
                         ).text();
 
                         ScoreboardStyle.setInfo(bowstyle_info, style_info);
+                        Helper.setHide(ScoreboardStyle.activateBtn, 'hide');
+                        Helper.setHide(ScoreboardStyle.deactivateBtn, '');
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            );
+        },
+        deactivateStyle: function(e) {
+            e.preventDefault();
+
+            $.post(
+                "controller.php",
+                {
+                    scoreboard_style_action: "deactivate-style",
+                    style_id: ScoreboardStyle.styleSelect.val()
+                },
+                function(data, status) {
+                    var result = $.parseJSON(data);
+                    if (result.status) {
+                        Helper.setHide(ScoreboardStyle.activateBtn, '');
+                        Helper.setHide(ScoreboardStyle.deactivateBtn, 'hide');
+                        ScoreboardStyle.setInfo('','');
                     }else{
                         alert(result.message);
                     }
@@ -690,7 +719,13 @@ $(document).ready(function() {
                             value,
                         success: function(data) {
                             if (data.status) {
-                                Helper.setHide(ScoreboardStyle.activateBtn, "");
+                                if( data.is_live){
+                                    Helper.setHide(ScoreboardStyle.activateBtn, "hide");
+                                    Helper.setHide(ScoreboardStyle.deactivateBtn, "");
+                                }else{
+                                    Helper.setHide(ScoreboardStyle.activateBtn, "");
+                                    Helper.setHide(ScoreboardStyle.deactivateBtn, "hide");
+                                }
                                 Helper.setHide(ScoreboardStyle.editBtn, "");
                                 Helper.setHide(ScoreboardStyle.deleteBtn, "");
                                 // ScoreboardStyle.visibilityTable.html(

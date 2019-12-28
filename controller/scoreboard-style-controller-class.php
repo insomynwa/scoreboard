@@ -28,6 +28,9 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
     private $style_option_template_loc;
     private $style_option_json_key;
 
+    private $style_id;
+    private $bowstyle_id;
+
     /**
      * Class Constructor
      *
@@ -130,6 +133,26 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
             ];
             $this->model->create_default($default_data);
         }
+    }
+
+    /**
+     * Set Bowstyle ID
+     *
+     * @param integer $bowstyle_id Bowstyle ID
+     * @return void
+     */
+    public function set_bowstyle_id($bowstyle_id=0){
+        $this->bowstyle_id = $bowstyle_id;
+    }
+
+    /**
+     * Set Style ID
+     *
+     * @param integer $bowstyle_id Style ID
+     * @return void
+     */
+    public function set_style_id($style_id=0){
+        $this->style_id = $style_id;
     }
 
     /**
@@ -254,6 +277,7 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
     private function create_config($style_id = 0) {
         $config = [
             'activate_btn' => '',
+            'deactivate_btn' => 'hide',
             'save_btn' => 'hide',
             'cancel_btn' => 'hide',
             'new_btn' => '',
@@ -264,11 +288,23 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
 
             $config = [
                 'activate_btn' => 'hide',
+                'deactivate_btn' => 'hide',
                 'save_btn' => 'hide',
                 'cancel_btn' => 'hide',
                 'new_btn' => 'hide',
                 'edit_btn' => 'hide',
                 'delete_btn' => 'hide',
+            ];
+        }else{
+
+            $config = [
+                'activate_btn' => 'hide',
+                'deactivate_btn' => '',
+                'save_btn' => 'hide',
+                'cancel_btn' => 'hide',
+                'new_btn' => '',
+                'edit_btn' => '',
+                'delete_btn' => '',
             ];
         }
         return Tools::render_result($this->config_json_key, ['visibility_class' => $config], true)[$this->config_json_key];
@@ -412,6 +448,51 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
         return $result;
     }
 
+    /**
+     * Deactivate Style
+     *
+     * @param integer $style_id Selected Style ID
+     * @return boolean true | false
+     */
+    public function deactivate_style($style_id=0) {
+        $result = [ 'status' => false ];
+        $live_game_oc = new Live_Game_Controller_Class($this->connection);
+        if( $style_id > 0 && $style_id == $live_game_oc->style_id()) {
+            $result['status'] = $live_game_oc->set_style(0);
+        }
+        return $result;
+    }
+
+    /**
+     * Get Style Option Data
+     *
+     * @return array [ 'styles' ]
+     */
+    private function get_style_option_data(){
+        return $this->model->style_option_data($this->bowstyle_id, $this->style_id);
+    }
+
+    /**
+     * Get Data.
+     *
+     * @param array $data_arr [ 'option', 'bowstyle', 'info', 'preview', 'checkbox', 'config' ]
+     * @return array
+     */
+    public function get_data($data_arr=array( 'option', 'bowstyle', 'info', 'preview', 'checkbox', 'config' )){
+        $result = array();
+        $result[$this->json_key .'_test'] = array();
+
+        if( empty($data_arr) ){
+            return $result;
+        }
+
+        if(in_array($this->style_option_json_key,$data_arr)){
+            $result[$this->json_key .'_test'][$this->style_option_json_key] = $this->get_style_option_data();
+        }
+
+        return $result;
+    }
+
 }
 if (isset($_GET['scoreboard_style_get']) && $_GET['scoreboard_style_get'] != '') {
     $result = [
@@ -438,15 +519,18 @@ if (isset($_GET['scoreboard_style_get']) && $_GET['scoreboard_style_get'] != '')
         } else if ($request_value == 'single') {
             if (isset($_GET['id'])) {
                 $style_id = is_numeric($_GET['id']) ? $_GET['id'] : 0;
-
+                $live_game_oc = new Live_Game_Controller_Class($connection);
                 $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
                 $scoreboard_style_element = $scoreboard_style_oc->get_elements(['preview'],0,$style_id);
+                $scoreboard_style_element['is_live'] = $live_game_oc->style_id()==$style_id;
                 $result = array_merge(
                     $result,
                     $scoreboard_style_element
                 );
             }
-        } else if ($request_value == 'new_num') {}
+        }
+        else if ($request_value == 'new_num') {
+        }
         else if ($request_value == 'new_form_data') {
             if (isset($_GET['bowstyle_id'])) {
 
@@ -525,7 +609,10 @@ if (isset($_POST['scoreboard_style_action'])) {
     $request_value = $_POST[$request_name];
     if (Tools::is_valid_string_request($request_value)) {
 
-        $style_id = is_numeric($_POST['style']) ? $_POST['style'] : 0;
+        $style_id = 0;
+        if( isset($_POST['style'])) {
+            $style_id = is_numeric($_POST['style']) ? $_POST['style'] : 0;
+        }
         $style_config = null;
         $data = array();
 
@@ -643,6 +730,13 @@ if (isset($_POST['scoreboard_style_action'])) {
 
             $live_game_oc = new Live_Game_Controller_Class($connection);
             $result = $live_game_oc->set_live_style($style_id);
+        }
+        else if ($request_value == 'deactivate-style') {
+            if( isset($_POST['style_id'] ) ) {
+                $style_id = is_numeric($_POST['style_id']) ? $_POST['style_id'] : 0;
+                $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
+                $result = $scoreboard_style_oc->deactivate_style($style_id);
+            }
         }
         $database->conn->close();
     }

@@ -55,6 +55,8 @@ class Config_Controller_Class extends Controller_Class {
         $result = ['status'=>true];
 
         $live_game_oc = new Live_Game_Controller_Class($this->connection);
+
+        $live_style_id = $live_game_oc->style_id();
         $bowstyle_id = 0;
         $live_style_bowstyle_id = $live_game_oc->get_style_bowstyle_id();
         if($live_style_bowstyle_id > 0) {
@@ -65,7 +67,6 @@ class Config_Controller_Class extends Controller_Class {
                 $bowstyle_id = $live_game_bowstyle_id;
             }
         }
-        $live_style_id = $live_game_oc->style_id();
 
         // Scoreboard Form
         $score_oc = new Score_Controller_Class($this->connection);
@@ -84,6 +85,9 @@ class Config_Controller_Class extends Controller_Class {
         $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($this->connection);
         $elements = ['bowstyle','option','preview','info','config'];
         $scoreboard_style_element = $scoreboard_style_oc->get_elements($elements, $bowstyle_id, $live_style_id);
+        // $scoreboard_style_oc->set_bowstyle_id($bowstyle_id);
+        // $scoreboard_style_oc->set_style_id($live_style_id);
+        // $scoreboard_style_data = $scoreboard_style_oc->get_data(['option']);
         // Team
         $team_oc = new Team_Controller_Class($this->connection);
         $team_element = $team_oc->get_elements(['table','option'],'',0,true);
@@ -101,7 +105,7 @@ class Config_Controller_Class extends Controller_Class {
         $result = array_merge(
             $result,
             $score_element, $gamestatus_element, $gamemode_element, $bowstyle_element,
-            $scoreboard_style_element, $team_element, $player_element,$gamedraw_element,$gameset_element
+            $scoreboard_style_element/* , $scoreboard_style_data */, $team_element, $player_element,$gamedraw_element,$gameset_element
         );
         return $result;
     }

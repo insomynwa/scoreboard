@@ -1265,17 +1265,25 @@ $(document).ready(function() {
     };
 
     var GameDraw = {
+        btnCreate: $("#create-gamedraw-button"),
+        formGameDraw: $("#form-gamedraw"),
+
+        btnDeleteCls: ".gamedraw-delete-btn-cls",
+        btnUpdateCls: ".gamedraw-update-btn-cls",
+        btnViewCls: ".gamedraw-view-btn-cls",
+
+        btnPrintSummaryID: "#gamedraw-summary-print",
         init: function() {
-            GameDraw.bindEvents();
+            this.bindEvents();
         },
         bindEvents: function() {
-            $("#create-gamedraw-button").click(this.setupCreateForm);
-            $("#form-gamedraw").on("submit", this.submitForm);
+            this.btnCreate.click(this.setupCreateForm);
+            this.formGameDraw.on("submit", this.submitForm);
             $(document)
-                .on("click", ".gamedraw-delete-btn-cls", this.setupDeleteForm)
-                .on("click", ".gamedraw-update-btn-cls", this.setupUpdateForm)
-                .on("click", ".gamedraw-view-btn-cls", this.viewSummary)
-                .on("click", "#gamedraw-summary-print", this.printSummary)
+                .on("click", this.btnDeleteCls, this.setupDeleteForm)
+                .on("click", this.btnUpdateCls, this.setupUpdateForm)
+                .on("click", this.btnViewCls, this.viewSummary)
+                .on("click", this.btnPrintSummaryID, this.printSummary)
                 .on("change", ".gamedraw-gamemode-cls", this.setupOption)
                 .on("change", ".gamedraw-team-cls", this.filterTeamOption)
                 .on("change", ".gamedraw-player-cls", this.filterPlayerOption);
@@ -1338,7 +1346,7 @@ $(document).ready(function() {
                 url: "/scoreboard/controller.php?gamedraw_get=new_num",
                 success: function(data) {
                     if (data.status) {
-                        $("#gamedraw-num").val(data.new_num);
+                        $("#gamedraw-num").val(data.gamedraw['new_num']);
                     } else {
                         $("#gamedraw-num").val(1);
                     }
@@ -1367,8 +1375,58 @@ $(document).ready(function() {
                     gamedrawid,
                 success: function(data) {
                     if (data.status) {
-                        $("#gamedraw-summary").html(data.gamedraw["summary"]);
+                        var str = '';
+                        var summary = data.gamedraw['summary'];
+                        if(summary.length > 0){
+                            str = `<h5 class="text-light font-weight-light">${summary[0]['player_a']} vs ${summary[0]['player_b']}</h5>
+                            <p class="text-info">[<span class="small">${(summary[0]['style']).toUpperCase()}</span> - <span class="small">${(summary[0]['gamemode']).toLowerCase()}</span>]</p>
+                            <table class="table table-sm" id="gamedraw-info-modal-table">
+                                <thead>
+                                    <tr class="bg-gray-2">
+                                        <th class="text-gray-4 font-weight-normal border-0">Set</th>
+                                        <th class="text-gray-4 font-weight-normal border-0">${summary[0]['player_a']}</th>
+                                        <th class="text-gray-4 font-weight-normal border-0">${summary[0]['player_b']}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+                            var total_score_a = 0,
+                                total_score_b = 0,
+                                gameWinnerAClass = "text-gray-4",
+                                gameWinnerBClass = "text-gray-4";
+                            for(i=0; i<summary.length; i++){
+                                var winnerACSS = 'text-gray-4',
+                                winnerBCSS = winnerACSS,
+                                score_a = summary[i]['score_a'],
+                                score_b = summary[i]['score_b'];
+                                total_score_a += Helper.parseNum(summary[i]['score_a']);
+                                total_score_b += Helper.parseNum(summary[i]['score_b']);
+                                if (score_a > score_b) {
+                                    winnerACSS = 'text-success';
+                                } else if (score_a < score_b) {
+                                    winnerBCSS = 'text-success';
+                                }
+                                var item = `<tr>
+                                <td class="text-gray-4 font-weight-bold border-gray-2">${summary[i]['sets']}</td>
+                                <td class="font-weight-bold border-gray-2 ${winnerACSS}"><span>${summary[i]['score_a']}</span></td>
+                                <td class="font-weight-bold border-gray-2 ${winnerBCSS}"><span>${summary[i]['score_b']}</span></td>
+                                </tr>`;
+                                str += item;
+                            }
+                            if (total_score_a > total_score_b) {
+                                gameWinnerAClass = "text-success";
+                            } else if (total_score_a < total_score_b) {
+                                gameWinnerBClass = "text-success";
+                            }
+                            str += `<tr class='bg-gray-3'>
+                                <td class="text-warning font-weight-bold border-gray-3">TOTAL</td>
+                                <td class="font-weight-bold border-gray-3 bg-gray-3 ${gameWinnerAClass}"><span>${total_score_a}</span></td>
+                                <td class="font-weight-bold border-gray-3 bg-gray-3 ${gameWinnerBClass}"><span>${total_score_b}</span></td>
+                            </tr>`;
+                        }
+                        $("#gamedraw-summary").html(str);
                         $("#gamedraw-summary-print").removeAttr("disabled");
+                        // $("#gamedraw-summary").html(data.gamedraw["summary"]);
+                        // $("#gamedraw-summary-print").removeAttr("disabled");
                     } else {
                         $("#gamedraw-summary").html(
                             '<h3 class="text-center text-light">-</h3>'
@@ -1394,53 +1452,88 @@ $(document).ready(function() {
             });
         },
         loadTable: function(table) {
-            if (table != "") $("#gamedraw-table tbody").html(table);
+            var str = '';
+            if(table.length > 0){
+                for(i=0; i<table.length; i++){
+                    var item = `<tr>
+                    <td class="text-gray-4 border-gray-3 pl-0">
+                        <button data-gamedrawid="${table[i]['id']}" class="btn btn-sm btn-outline-danger border-0 rounded-circle font-weight-bolder gamedraw-delete-btn-cls">X</button>
+                        <button data-gamedrawid="${table[i]['id']}" class="btn btn-sm btn-outline-warning-2 border-0 rounded-circle gamedraw-update-btn-cls"><i class="fas fa-pen"></i></button>
+                    </td>
+                    <td class="text-info font-weight-light border-gray-3">
+                        [<span class="small">${(table[i]['bowstyle_name']).toUpperCase()}</span> - <span class="small">${(table[i]['gamemode_name']).toLowerCase()}</span>]
+                    </td>
+                    <td class="text-gray-4 font-weight-normal border-gray-3">${table[i]['num']}</td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">${table[i]['contestant_a_name']} vs ${table[i]['contestant_b_name']}</td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">
+                        <button data-gamedrawid="${table[i]['id']}" class="btn btn-sm btn-outline-success rounded-circle border-0 gamedraw-view-btn-cls mr-3"><i class="fas fa-eye"></i></button>
+                    </td>
+                    </tr>`;
+                    str += item;
+                }
+            }else{
+                str = `<td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>`;
+            }
+            $("#gamedraw-table tbody").html(str);
+            // if (table != "") $("#gamedraw-table tbody").html(table);
         },
         loadOption: function(options) {
-            if (options != "") $("#gameset-gamedraw").html(options);
+            var str = '<option value="0">Choose</option>';
+            if(options.length > 0){
+                for(i=0; i<options.length; i++){
+                    var item = `<option value="${options[i]['id']}">${options[i]['num']}. ${options[i]['contestant_a_name']} vs ${options[i]['contestant_b_name']}</option>`;
+                    str += item;
+                }
+            }
+            $("#gameset-gamedraw").html(str);
+            // if (options != "") $("#gameset-gamedraw").html(options);
         },
         loadForm: function(gamedrawdata, modeget) {
-            var modalTitle = "";
+            var modalTitle = "", modal_form = gamedrawdata['modal_form'];
             if (modeget == "update") {
                 modalTitle += "Update";
                 // $("#gamedraw-num").val(gamedrawdata.num).removeAttr("disabled");
                 $("#gamedraw-num")
-                    .val(gamedrawdata.num)
+                    .val(modal_form.num)
                     .removeAttr("disabled");
 
-                if (gamedrawdata.bowstyle_id == 1) {
+                if (modal_form.bowstyle_id == 1) {
                     $("#gamedraw-bowstyle-recurve").prop("checked", true);
-                } else if (gamedrawdata.bowstyle_id == 2) {
+                } else if (modal_form.bowstyle_id == 2) {
                     $("#gamedraw-bowstyle-compound").prop("checked", true);
                 }
                 $(".gamedraw-bowstyle-cls").attr("disabled", "disabled");
                 /*
                  * TO-DO: radio game mode dinamic
                  */
-                if (gamedrawdata.gamemode_id == 1) {
+                if (modal_form.gamemode_id == 1) {
                     $("#gamedraw-gamemode-beregu").prop("checked", true);
                     $(".gamedraw-player-opt-area-cls").addClass("hide");
                     $(".gamedraw-team-opt-area-cls").removeClass("hide");
-                    // $("#gamedraw-team-a").val(gamedrawdata.contestant_a_id).removeAttr("disabled");
-                    // $("#gamedraw-team-b").val(gamedrawdata.contestant_b_id).removeAttr("disabled");
-                    $("#gamedraw-team-a").val(gamedrawdata.contestant_a_id);
-                    $("#gamedraw-team-b").val(gamedrawdata.contestant_b_id);
+                    // $("#gamedraw-team-a").val(modal_form.contestant_a_id).removeAttr("disabled");
+                    // $("#gamedraw-team-b").val(modal_form.contestant_b_id).removeAttr("disabled");
+                    $("#gamedraw-team-a").val(modal_form.contestant_a_id);
+                    $("#gamedraw-team-b").val(modal_form.contestant_b_id);
                     // addAttribute($(".gamedraw-team-cls"), 'disabled', 'disabled');
-                    // } else if (gamedrawdata.gamemode['id'] == 2) {
-                } else if (gamedrawdata.gamemode_id == 2) {
+                    // } else if (modal_form.gamemode['id'] == 2) {
+                } else if (modal_form.gamemode_id == 2) {
                     $("#gamedraw-gamemode-individu").prop("checked", true);
                     $(".gamedraw-team-opt-area-cls").addClass("hide");
                     $(".gamedraw-player-opt-area-cls").removeClass("hide");
-                    // $("#gamedraw-player-a").val(gamedrawdata.contestant_a_id).removeAttr("disabled");
-                    // $("#gamedraw-player-b").val(gamedrawdata.contestant_b_id).removeAttr("disabled");
-                    $("#gamedraw-player-a").val(gamedrawdata.contestant_a_id);
-                    $("#gamedraw-player-b").val(gamedrawdata.contestant_b_id);
+                    // $("#gamedraw-player-a").val(modal_form.contestant_a_id).removeAttr("disabled");
+                    // $("#gamedraw-player-b").val(modal_form.contestant_b_id).removeAttr("disabled");
+                    $("#gamedraw-player-a").val(modal_form.contestant_a_id);
+                    $("#gamedraw-player-b").val(modal_form.contestant_b_id);
                     // addAttribute($(".gamedraw-player-cls"), 'disabled', 'disabled');
                 }
                 // $(".gamedraw-bowstyle-cls").removeAttr("disabled");
                 // $(".gamedraw-gamemode-cls").removeAttr("disabled");
                 // addAttribute($(".gamedraw-gamemode-cls"), 'disabled', 'disabled');
-                $("#gamedraw-id").val(gamedrawdata.id);
+                $("#gamedraw-id").val(modal_form.id);
                 $("#gamedraw-action").val("update");
                 $("#gamedraw-submit").val("Update");
             } else if (modeget == "create") {
@@ -1476,41 +1569,41 @@ $(document).ready(function() {
                 modalTitle += "Delete";
                 // $("#gamedraw-num").val(gamedrawdata.num).attr("disabled", "disabled");
                 $("#gamedraw-num")
-                    .val(gamedrawdata.num)
+                    .val(modal_form.num)
                     .attr("disabled", "disabled");
 
-                if (gamedrawdata.bowstyle_id == 1) {
+                if (modal_form.bowstyle_id == 1) {
                     $("#gamedraw-bowstyle-recurve").prop("checked", true);
-                } else if (gamedrawdata.bowstyle_id == 2) {
+                } else if (modal_form.bowstyle_id == 2) {
                     $("#gamedraw-bowstyle-compound").prop("checked", true);
                 }
                 /*
                  * TO-DO: radio game mode dinamic
                  */
-                if (gamedrawdata.gamemode_id == 1) {
+                if (modal_form.gamemode_id == 1) {
                     $("#gamedraw-gamemode-beregu").prop("checked", true);
                     $(".gamedraw-player-opt-area-cls").addClass("hide");
                     $(".gamedraw-team-opt-area-cls").removeClass("hide");
-                    // $("#gamedraw-team-a").val(gamedrawdata.contestant_a_id).attr("disabled", "disabled");
-                    // $("#gamedraw-team-b").val(gamedrawdata.contestant_b_id).attr("disabled", "disabled");
-                    $("#gamedraw-team-a").val(gamedrawdata.contestant_a_id);
-                    $("#gamedraw-team-b").val(gamedrawdata.contestant_b_id);
+                    // $("#gamedraw-team-a").val(modal_form.contestant_a_id).attr("disabled", "disabled");
+                    // $("#gamedraw-team-b").val(modal_form.contestant_b_id).attr("disabled", "disabled");
+                    $("#gamedraw-team-a").val(modal_form.contestant_a_id);
+                    $("#gamedraw-team-b").val(modal_form.contestant_b_id);
                     $(".gamedraw-team-cls").attr("disabled", "disabled");
-                } else if (gamedrawdata.gamemode_id == 2) {
+                } else if (modal_form.gamemode_id == 2) {
                     $("#gamedraw-gamemode-individu").prop("checked", true);
                     $(".gamedraw-team-opt-area-cls").addClass("hide");
                     $(".gamedraw-player-opt-area-cls").removeClass("hide");
-                    // $("#gamedraw-player-a").val(gamedrawdata.contestant_a_id).attr("disabled", "disabled");
-                    // $("#gamedraw-player-b").val(gamedrawdata.contestant_b_id).attr("disabled", "disabled");
-                    $("#gamedraw-player-a").val(gamedrawdata.contestant_a_id);
-                    $("#gamedraw-player-b").val(gamedrawdata.contestant_b_id);
+                    // $("#gamedraw-player-a").val(modal_form.contestant_a_id).attr("disabled", "disabled");
+                    // $("#gamedraw-player-b").val(modal_form.contestant_b_id).attr("disabled", "disabled");
+                    $("#gamedraw-player-a").val(modal_form.contestant_a_id);
+                    $("#gamedraw-player-b").val(modal_form.contestant_b_id);
                     $(".gamedraw-player-cls").attr("disabled", "disabled");
                 }
                 // $(".gamedraw-bowstyle-cls").attr("disabled", "disabled");
                 // $(".gamedraw-gamemode-cls").attr("disabled", "disabled");
                 $(".gamedraw-bowstyle-cls").attr("disabled", "disabled");
                 $(".gamedraw-gamemode-cls").attr("disabled", "disabled");
-                $("#gamedraw-id").val(gamedrawdata.id);
+                $("#gamedraw-id").val(modal_form.id);
                 $("#gamedraw-action").val("delete");
                 $("#gamedraw-submit").val("Delete");
             }

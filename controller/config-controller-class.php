@@ -96,7 +96,8 @@ class Config_Controller_Class extends Controller_Class {
         $player_element = $player_oc->get_elements(['table','option'],'',0,true);
         // Gamedraw
         $gamedraw_oc = new Gamedraw_Controller_Class($this->connection);
-        $gamedraw_element = $gamedraw_oc->get_elements(['table','option'],'',0,0,true);
+        $gamedraw_element = $gamedraw_oc->get_data(['table','option']);
+        // $gamedraw_element = $gamedraw_oc->get_elements(['table','option'],'',0,0,true);
 
         // Gameset
         $gameset_oc = new Gameset_Controller_Class($this->connection);

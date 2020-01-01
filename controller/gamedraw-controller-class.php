@@ -10,10 +10,11 @@ class Gamedraw_Controller_Class extends Controller_Class{
 
     private $model;
 
-    private $json_key;
-    private $option_json_key;
-    private $table_json_key;
-    private $summary_json_key;
+    private $root_key;
+    private $option_key;
+    private $table_key;
+    private $summary_key;
+    private $modal_form_key;
 
     private $option_template_name;
     private $option_template_loc;
@@ -26,6 +27,8 @@ class Gamedraw_Controller_Class extends Controller_Class{
 
     private $summary_template_name;
     private $summary_template_loc;
+
+    private $id;
 
     /**
      * Class Constructor
@@ -41,19 +44,23 @@ class Gamedraw_Controller_Class extends Controller_Class{
     }
 
     /**
-     * Do Request
+     * Init Json Key
      *
-     * @param string $request_value
-     * @return array
+     * @return void
      */
-
     private function init_json_key(){
-        $this->json_key = 'gamedraw';
-        $this->option_json_key = 'option';
-        $this->table_json_key = 'table';
-        $this->summary_json_key = 'summary';
+        $this->root_key = 'gamedraw';
+        $this->option_key = 'option';
+        $this->table_key = 'table';
+        $this->summary_key = 'summary';
+        $this->modal_form_key = 'modal_form';
     }
 
+    /**
+     * Init Templates
+     *
+     * @return void
+     */
     private function init_templates(){
         $template_loc = TEMPLATE_DIR . 'gamedraw/';
         $this->option_template_name = 'option';
@@ -67,6 +74,16 @@ class Gamedraw_Controller_Class extends Controller_Class{
 
         $this->summary_template_name = 'summary';
         $this->summary_template_loc = $template_loc . $this->summary_template_name . '.php';
+    }
+
+    /**
+     * Set Gamedraw ID
+     *
+     * @param integer $gamedraw_id Gamedraw ID
+     * @return void
+     */
+    public function set_id($gamedraw_id=0){
+        $this->id = $gamedraw_id;
     }
 
     /**
@@ -112,13 +129,10 @@ class Gamedraw_Controller_Class extends Controller_Class{
     /**
      * Get New Gamedraw Number
      *
-     * @return array [status,new_num]
+     * @return array integer
      */
-    public function get_new_number(){
-        return [
-            'status'  => true,
-            'new_num' => $this->model->new_number()
-        ];
+    private function get_new_number(){
+        return $this->model->new_number();
     }
 
     /**
@@ -139,26 +153,10 @@ class Gamedraw_Controller_Class extends Controller_Class{
     /**
      * Get Form Modal Data
      *
-     * @param integer $gamedraw_id Gamedraw ID
      * @return array empty | [ id, num, bowstyle_id, gamemode_id, contestant_a_id, contestant_b_id ]
      */
-    public function get_modal_form_data($gamedraw_id=0) {
-        $result = [
-            'status' => false
-        ];
-        if( $gamedraw_id == 0 ){
-            $result['message'] = 'ERROR: get_modal_form_data Gamedraw ID: 0';
-            return $result;
-        }
-        $data = $this->model->modal_form_data($gamedraw_id);
-        if(empty($data)){
-            $result['message'] = 'ERROR: get_modal_form_data modal_form_data';
-            return $result;
-        }
-        $result['status'] = true;
-        $result[$this->json_key] = $data;
-
-        return $result;
+    private function get_modal_form_data() {
+        return $this->model->modal_form_data($this->id);
     }
 
     /**
@@ -318,97 +316,77 @@ class Gamedraw_Controller_Class extends Controller_Class{
     }
 
     /**
-     * Get Elements
+     * Get Table Data
      *
-     * @param array $elements Element [ table, option ]
-     * @param string $custom_parent_key Custom Parent Key
-     * @param integer $flag_id Flag ID
-     * @param integer $selected_item Selected Item
-     * @param boolean $value_only If TRUE, return children
-     * @return array empty | string
+     * @return array
      */
-    public function get_elements($elements = array(), $custom_parent_key = '', $flag_id=0, $selected_item = 0, $value_only = false) {
+    private function get_table_data(){
+        return $this->model->table_data();
+    }
+
+    /**
+     * Get Option Data
+     *
+     * @return array empty | [ 'gamedraws' ]
+     */
+    private function get_option_data(){
+        return $this->model->option_data();
+    }
+
+    /**
+     * Get Summary Data
+     *
+     * @return null
+     */
+    private function get_summary_data(){
+        return $this->model->summary_data($this->id);
+    }
+
+    /**
+     * Get Data
+     *
+     * @param array $req_data [ 'option', 'table', 'summary', 'modal_form', 'new_num' ]
+     * @return array
+     */
+    public function get_data( $req_data = array( 'option', 'table', 'summary', 'modal_form', 'new_num' ) ) {
         $result = array();
-        if (empty($elements)) {
-            return $result;
+        $result[$this->root_key] = array();
+        $root_res = $result[$this->root_key];
+
+        $data = null;
+        if (in_array($this->table_key, $req_data)) {
+            // id, num, bowstyle_name, gamemode_name, contestant_a_name, contestant_b_name
+            $data = empty($data) ? $this->get_table_data() : $data;
+            $root_res[$this->table_key] = $data;
         }
 
-        $parent_key = '';
-        if ($custom_parent_key == '') {
-            $parent_key = $this->json_key;
-        } else {
-            $parent_key = $custom_parent_key;
+        if (in_array($this->option_key, $req_data)) {
+            // id, num, contestant_a_name, contestant_b_name
+            $data = empty($data) ? $this->get_option_data() : $data;
+            $root_res[$this->option_key] = $data;
         }
 
-        if (in_array($this->table_json_key, $elements)) {
-            $result[$parent_key][$this->table_json_key] = $this->render_loop_element($this->table_json_key, '', $selected_item, $value_only);
+        if (in_array($this->summary_key, $req_data)) {
+            $data = $this->get_summary_data();
+            $root_res[$this->summary_key] = $data;
         }
 
-        if (in_array($this->option_json_key, $elements)) {
-            // $result[$this->json_key]['radio'] = $this->get_radio('radio')['radio'];
-            $result[$parent_key][$this->option_json_key] = $this->render_loop_element($this->option_json_key, '', $selected_item, $value_only);
+        if (in_array($this->modal_form_key, $req_data)) {
+            $data = $this->get_modal_form_data();
+            $root_res[$this->modal_form_key] = $data;
         }
 
-        if (in_array($this->summary_json_key, $elements)) {
-            // $result[$this->json_key]['radio'] = $this->get_radio('radio')['radio'];
-            $result[$parent_key][$this->summary_json_key] = $this->render_summary_element($flag_id);
+        if (in_array('new_num', $req_data)) {
+            $data = $this->get_new_number();
+            $root_res['new_num'] = $data;
         }
+
+        $result[$this->root_key] = $root_res;
+
         return $result;
     }
-
-    /**
-     * Render Summary Element
-     *
-     * @param integer $gamedraw_id Gamedraw ID
-     * @return string
-     */
-    private function render_summary_element($gamedraw_id=0){
-        $summary_element = '';
-        $summary_data = $this->model->summary($gamedraw_id);
-        if(!empty($summary_data)){
-            $summary_element = Tools::template($this->summary_template_loc, $summary_data);
-        }
-        return $summary_element;
-    }
-
-    /**
-     * Render Element
-     *
-     * @param string $element_type Element Type
-     * @param string $custom_key Key for JSON
-     * @param integer $selected_item Selected Item
-     * @param boolean $value_only If it's TRUE, return string. Otherwise return Array[$key]
-     * @return mixed string | array
-     */
-    private function render_loop_element($element_type = '', $custom_key = '', $selected_item = 0, $value_only = false) {
-        $data_list = $this->model->list();
-        $key = '';
-        $element_pretext = '';
-        $template_loc = '';
-        if ($custom_key != '') {
-            $key = $custom_key;
-        } else {
-            if ($element_type == $this->option_json_key) {
-                $key = $this->option_json_key;
-                $element_pretext = '<option value="0">Choose</option>';
-                $template_loc = $this->option_template_loc;
-            } else if ($element_type == $this->table_json_key) {
-                $key = $this->table_json_key;
-                $template_loc = $this->item_template_loc;
-            }
-        }
-        $element_value = Tools::create_loop_element(
-            $data_list, 'gamedraws', $key, $template_loc, $element_pretext, $selected_item
-        );
-        if ($value_only) {
-            if($element_type == $this->table_json_key && $element_value[$key] == ''){
-                return Tools::template($this->no_item_template_loc, null);
-            }
-            return $element_value[$key];
-        }
-        return $element_value;
-    }
 }
+
 if ( isset( $_GET['gamedraw_get'])){
     $result = [
         'status' => true,
@@ -418,39 +396,37 @@ if ( isset( $_GET['gamedraw_get'])){
     if (Tools::is_valid_string_request($request_value)) {
         $database = new Database();
         $connection = $database->getConnection();
+        $gamedraw_oc = new Gamedraw_Controller_Class($connection);
+        $gamedraw_data = array();
 
         if ( $request_value == 'new_num'){
-            $gamedraw_oc = new Gamedraw_Controller_Class($connection);
-            $result = $gamedraw_oc->get_new_number();
+            $gamedraw_data = $gamedraw_oc->get_data(['new_num']);
 
         }
         else if ( $request_value == 'modal_data' ){
             if(isset($_GET['id'])){
-                $gamedraw_oc = new Gamedraw_Controller_Class($connection);
                 $gamedraw_id = is_numeric($_GET['id']) ? $_GET['id'] : 0;
 
-                $result = $gamedraw_oc->get_modal_form_data($gamedraw_id);
+                $gamedraw_oc->set_id($gamedraw_id);
+                $gamedraw_data = $gamedraw_oc->get_data(['modal_form']);
             }
         }
         else if( $request_value == 'summary' && isset( $_GET['id']) && is_numeric( $_GET['id']) && $_GET['id'] > 0){
             if(isset($_GET['id'])){
                 $gamedraw_id = is_numeric($_GET['id']) ? $_GET['id'] : 0;
 
-                $gamedraw_oc = new Gamedraw_Controller_Class($connection);
-                $gamedraw_element = $gamedraw_oc->get_elements(['summary'],'',$gamedraw_id,0,true);
-                $result = array_merge($result, $gamedraw_element);
+                $gamedraw_oc->set_id($gamedraw_id);
+                $gamedraw_data = $gamedraw_oc->get_data(['summary']);
             }
         }else if ($request_value == 'new') {
-            $gamedraw_oc = new Gamedraw_Controller_Class($connection);
-            $gamedraw_element = $gamedraw_oc->get_elements(['table','option'],'',0,0,true);
-            $result = array_merge($result, $gamedraw_element);
+            $gamedraw_data = $gamedraw_oc->get_data(['table','option']);
         }
+        $result = array_merge($result, $gamedraw_data);
         $database->conn->close();
     }
     echo json_encode($result);
 }
 
-// Action Game Draw
 if ( isset( $_POST['gamedraw_action']) ) {
     $result = [
         'status' => true,

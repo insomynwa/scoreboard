@@ -195,16 +195,15 @@ class Gameset_Model_Class {
     }
 
     /**
-     * Get Game Set List
+     * Table Data
      *
-     * return [status,gamesets]
      * @return array
      */
-    public function get_list() {
+    public function table_data() {
         $res = array();
-
+        // gamestatus_id, id, game_num, bowstyle_name, contestant_a_name, contestant_b_name, set_num, gamestatus_name
         $query =
-            "SELECT gs.gameset_id, gd.gamedraw_num, b.bowstyle_name, gm.gamemode_name, gs.gameset_num, s.gamestatus_id, s.gamestatus_name, tA.team_name as contestant_a_name, tB.team_name as contestant_b_name
+        "SELECT gs.gameset_id, gd.gamedraw_num, b.bowstyle_name, gs.gameset_num, s.gamestatus_id, s.gamestatus_name, tA.team_name as contestant_a_name, tB.team_name as contestant_b_name
         FROM {$this->table_name} gs
         LEFT JOIN gamestatus s ON gs.gameset_status = s.gamestatus_id
         LEFT JOIN gamedraw gd ON gs.gamedraw_id = gd.gamedraw_id
@@ -214,7 +213,7 @@ class Gameset_Model_Class {
         LEFT JOIN team tB ON gd.contestant_b_id = tB.team_id
         WHERE gd.gamemode_id = 1
         UNION
-        SELECT gs.gameset_id, gd.gamedraw_num, b.bowstyle_name, gm.gamemode_name, gs.gameset_num, s.gamestatus_id, s.gamestatus_name, pA.player_name as contestant_a_name, pB.player_name as contestant_b_name
+        SELECT gs.gameset_id, gd.gamedraw_num, b.bowstyle_name, gs.gameset_num, s.gamestatus_id, s.gamestatus_name, pA.player_name as contestant_a_name, pB.player_name as contestant_b_name
         FROM {$this->table_name} gs
         LEFT JOIN gamestatus s ON gs.gameset_status = s.gamestatus_id
         LEFT JOIN gamedraw gd ON gs.gamedraw_id = gd.gamedraw_id
@@ -227,73 +226,17 @@ class Gameset_Model_Class {
 
         if ($result = $this->connection->query($query)) {
             if ($result->num_rows > 0) {
-                $res['status'] = true;
 
                 $i = 0;
                 while ($row = $result->fetch_assoc()) {
-                    $res['gamesets'][$i]['id'] = $row['gameset_id'];
-                    $res['gamesets'][$i]['game_num'] = $row['gamedraw_num'];
-                    $res['gamesets'][$i]['set_num'] = $row['gameset_num'];
-                    $res['gamesets'][$i]['bowstyle_name'] = $row['bowstyle_name'];
-                    $res['gamesets'][$i]['gamemode_name'] = $row['gamemode_name'];
-                    $res['gamesets'][$i]['contestant_a_name'] = $row['contestant_a_name'];
-                    $res['gamesets'][$i]['contestant_b_name'] = $row['contestant_b_name'];
-                    $res['gamesets'][$i]['gamestatus_id'] = $row['gamestatus_id'];
-                    $res['gamesets'][$i]['gamestatus_name'] = $row['gamestatus_name'];
-
-                    $i++;
-                }
-            }
-        }
-
-        return $res;
-    }
-
-    /**
-     * Gameset List
-     *
-     * @return array empty | [ gamesets ]
-     */
-    public function list() {
-        $res = array();
-
-        $query =
-            "SELECT gs.gameset_id, gd.gamedraw_num, b.bowstyle_name, gm.gamemode_name, gs.gameset_num, s.gamestatus_id, s.gamestatus_name, tA.team_name as contestant_a_name, tB.team_name as contestant_b_name
-        FROM {$this->table_name} gs
-        LEFT JOIN gamestatus s ON gs.gameset_status = s.gamestatus_id
-        LEFT JOIN gamedraw gd ON gs.gamedraw_id = gd.gamedraw_id
-        LEFT JOIN bowstyles b ON gd.bowstyle_id = b.bowstyle_id
-        LEFT JOIN gamemode gm ON gd.gamemode_id = gm.gamemode_id
-        LEFT JOIN team tA ON gd.contestant_a_id = tA.team_id
-        LEFT JOIN team tB ON gd.contestant_b_id = tB.team_id
-        WHERE gd.gamemode_id = 1
-        UNION
-        SELECT gs.gameset_id, gd.gamedraw_num, b.bowstyle_name, gm.gamemode_name, gs.gameset_num, s.gamestatus_id, s.gamestatus_name, pA.player_name as contestant_a_name, pB.player_name as contestant_b_name
-        FROM {$this->table_name} gs
-        LEFT JOIN gamestatus s ON gs.gameset_status = s.gamestatus_id
-        LEFT JOIN gamedraw gd ON gs.gamedraw_id = gd.gamedraw_id
-        LEFT JOIN bowstyles b ON gd.bowstyle_id = b.bowstyle_id
-        LEFT JOIN gamemode gm ON gd.gamemode_id = gm.gamemode_id
-        LEFT JOIN player pA ON gd.contestant_a_id = pA.player_id
-        LEFT JOIN player pB ON gd.contestant_b_id = pB.player_id
-        WHERE gd.gamemode_id = 2
-        ORDER BY gamedraw_num DESC, gameset_num DESC";
-
-        if ($result = $this->connection->query($query)) {
-            if ($result->num_rows > 0) {
-                $res['status'] = true;
-
-                $i = 0;
-                while ($row = $result->fetch_assoc()) {
-                    $res['gamesets'][$i]['id'] = $row['gameset_id'];
-                    $res['gamesets'][$i]['game_num'] = $row['gamedraw_num'];
-                    $res['gamesets'][$i]['set_num'] = $row['gameset_num'];
-                    $res['gamesets'][$i]['bowstyle_name'] = $row['bowstyle_name'];
-                    $res['gamesets'][$i]['gamemode_name'] = $row['gamemode_name'];
-                    $res['gamesets'][$i]['contestant_a_name'] = $row['contestant_a_name'];
-                    $res['gamesets'][$i]['contestant_b_name'] = $row['contestant_b_name'];
-                    $res['gamesets'][$i]['gamestatus_id'] = $row['gamestatus_id'];
-                    $res['gamesets'][$i]['gamestatus_name'] = $row['gamestatus_name'];
+                    $res[$i]['id'] = $row['gameset_id'];
+                    $res[$i]['game_num'] = $row['gamedraw_num'];
+                    $res[$i]['set_num'] = $row['gameset_num'];
+                    $res[$i]['bowstyle_name'] = $row['bowstyle_name'];
+                    $res[$i]['contestant_a_name'] = $row['contestant_a_name'];
+                    $res[$i]['contestant_b_name'] = $row['contestant_b_name'];
+                    $res[$i]['gamestatus_id'] = $row['gamestatus_id'];
+                    $res[$i]['gamestatus_name'] = $row['gamestatus_name'];
 
                     $i++;
                 }
@@ -331,7 +274,7 @@ class Gameset_Model_Class {
      * Summary Data
      *
      * @param integer $gameset_id Gameset ID
-     * @return array empty | [ summary ]
+     * @return array
      */
     public function summary_data($gameset_id=0){
         $res = array();
@@ -360,12 +303,12 @@ class Gameset_Model_Class {
 
                 $i = 0;
                 while ($row = $result->fetch_assoc()) {
-                    $res['summary'][$i]['contestant_name'] = $row['contestant_name'];
-                    $res['summary'][$i]['score_1'] = $row['score_1'];
-                    $res['summary'][$i]['score_2'] = $row['score_2'];
-                    $res['summary'][$i]['score_3'] = $row['score_3'];
-                    $res['summary'][$i]['setscores'] = $row['setscores'];
-                    $res['summary'][$i]['setpoints'] = $row['setpoints'];
+                    $res[$i]['contestant_name'] = $row['contestant_name'];
+                    $res[$i]['score_1'] = $row['score_1'];
+                    $res[$i]['score_2'] = $row['score_2'];
+                    $res[$i]['score_3'] = $row['score_3'];
+                    $res[$i]['setscores'] = $row['setscores'];
+                    $res[$i]['setpoints'] = $row['setpoints'];
 
                     $i++;
                 }

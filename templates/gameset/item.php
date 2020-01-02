@@ -21,15 +21,6 @@
     </td>
     <td class='text-gray-4 font-weight-light border-gray-3'>
         <?php
-            // if ( $gamestatus_id < 3) {
-            //     if ($id == livegame) {
-            //         <td class='text-white font-weight-light border-secondary'><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-danger gameset-stoplive-btn-cls mr-3'><i class='fas fa-stop-circle'></i></button>
-            //     } else {
-            //         <td class='text-white font-weight-light border-secondary'><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-success gameset-live-btn-cls mr-3'><i class='fas fa-play-circle'></i></button>
-            //     }
-            // } else {
-            //     <td class='text-white font-weight-light border-secondary'><button data-gamedrawid='" + gamesetsdata[i].gamedraw['id'] + "' data-gamesetid='" + gamesetsdata[i].id + "' class='btn btn-sm btn-primary gameset-view-btn-cls mr-3'><i class='fas fa-eye'></i></button>
-            // }
             if ( $gamestatus_id < 3) {
                 if ($gamestatus_name == 'Live') { ?>
                     <button data-gamesetid='<?php echo $id; ?>' class='btn btn-sm btn-danger rounded-circle gameset-stoplive-btn-cls mr-3'><i class='fas fa-stop-circle'></i></button>

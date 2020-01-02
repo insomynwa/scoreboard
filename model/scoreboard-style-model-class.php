@@ -213,9 +213,9 @@ class Scoreboard_Style_Model_Class extends Model_Class {
      */
     public function style_option_data($bowstyle_id = 0, $style_id=0){
         $res = array();
-        $res['styles'][0]['id'] = 0;
-        $res['styles'][0]['name'] = 'Choose';
-        $res['styles'][0]['selected'] = '';
+        $res[0]['id'] = 0;
+        $res[0]['name'] = 'Choose';
+        $res[0]['selected'] = '';
 
         $query = "SELECT id, style_name FROM {$this->table_name} WHERE bowstyle_id={$bowstyle_id}";
 
@@ -223,12 +223,12 @@ class Scoreboard_Style_Model_Class extends Model_Class {
             if ($result->num_rows > 0) {
                 $i = 1;
                 while ($row = $result->fetch_assoc()) {
-                    $res['styles'][$i]['id'] = $row['id'];
-                    $res['styles'][$i]['name'] = $row['style_name'];
+                    $res[$i]['id'] = $row['id'];
+                    $res[$i]['name'] = $row['style_name'];
                     if($row['id'] == $style_id){
-                        $res['styles'][$i]['selected'] = 'selected="selected"';
+                        $res[$i]['selected'] = 'selected="selected"';
                     }else{
-                        $res['styles'][$i]['selected'] = '';
+                        $res[$i]['selected'] = '';
                     }
                     $i++;
                 }

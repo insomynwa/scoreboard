@@ -70,6 +70,31 @@ class Bowstyle_Controller_Class extends Controller_Class {
         }
     }
 
+    private function get_option_data(){
+        return $this->model->option_data();
+    }
+
+    public function get_data( $req_data=array( 'option', 'radio')){
+        $result = array();
+        $result[$this->root_key] = array();
+        $root_res = $result[$this->root_key];
+
+        if( empty($req_data) ){
+            return $result;
+        }
+
+        $data = null;
+
+        if(in_array($this->option_json_key,$req_data)){
+            $data = is_null($data) ? $this->get_option_data() : $data;
+            $root_res[$this->option_json_key] = $data;
+        }
+
+        $result[$this->root_key] = $root_res;
+
+        return $result;
+    }
+
     /**
      * Get Elements
      *

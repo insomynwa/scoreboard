@@ -35,14 +35,15 @@ $(document).ready(function() {
                                 BowStyle.loadRadio(data.bowstyle["radio"]);
 
                                 var scoreboard_styles = data.scoreboard_styles;
-                                ScoreboardStyle.setOption(
-                                    ScoreboardStyle.bowstyleSelect,
-                                    scoreboard_styles["bowstyle"]["option"]
-                                );
-                                ScoreboardStyle.setOption(
-                                    ScoreboardStyle.styleSelect,
-                                    scoreboard_styles["option"]
-                                );
+                                // ScoreboardStyle.setOption(
+                                //     ScoreboardStyle.bowstyleSelect,
+                                //     scoreboard_styles["bowstyle"]["option"]
+                                // );
+                                ScoreboardStyle.setStyleOption(scoreboard_styles["option"]);
+                                // ScoreboardStyle.setOption(
+                                //     ScoreboardStyle.styleSelect,
+                                //     scoreboard_styles["option"]
+                                // );
                                 ScoreboardStyle.setInfo(
                                     scoreboard_styles["info"]["bowstyle"],
                                     scoreboard_styles["info"]["style"]
@@ -389,6 +390,16 @@ $(document).ready(function() {
             } else {
                 Helper.setHide(ScoreboardStyle.previewWrapper, "");
             }
+        },
+        setStyleOption: function(options){
+            var str = '<option value="0">Choose</option>';
+            if(options.length > 0){
+                for(i=0; i<options.length; i++){
+                    var item = `<option value="${optons[i]['id']}" ${optons[i]['selected']}>${optons[i]['name']}</option>`;
+                    str += item;
+                }
+            }
+            ScoreboardStyle.styleSelect.html(str);
         },
         setOption: function(element, options) {
             element.html(options);
@@ -1763,7 +1774,7 @@ $(document).ready(function() {
                         gamedraw_id,
                     success: function(data) {
                         if (data.status) {
-                            $("#gameset-setnum").val(data.new_set);
+                            $("#gameset-setnum").val(data.gameset['new_num']);
                         } else {
                             $("#gameset-setnum").val(1);
                         }
@@ -1782,17 +1793,122 @@ $(document).ready(function() {
                     gamesetid,
                 success: function(data) {
                     if (data.status) {
-                        $("#gameset-info-modal-table").html(
-                            data.gameset["summary"]
-                        );
-                        $("#gameset-info-modal").modal();
+                        var str = '', summary = data.gameset['summary'];
+                        if(summary.length > 0){
+                            var contestant_a = summary[0], contestant_b = summary[1];
+                            str = `<thead class="bg-dark text-white">
+                            <tr class="bg-gray-2">
+                                <th class="text-gray-4 font-weight-normal border-0">Point</th>
+                                <th class="text-gray-4 font-weight-normal border-0">${contestant_a['contestant_name']}</th>
+                                <th class="text-gray-4 font-weight-normal border-0">${contestant_b['contestant_name']}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-gray-4 font-weight-bold border-0">1</td>
+                                <td class="text-gray-4 font-weight-normal border-0">${contestant_a['score_1']}</td>
+                                <td class="text-gray-4 font-weight-normal border-0">${contestant_b['score_1']}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-gray-4 font-weight-bold border-0">2</td>
+                                <td class="text-gray-4 font-weight-normal border-0">${contestant_a['score_2']}</td>
+                                <td class="text-gray-4 font-weight-normal border-0">${contestant_b['score_2']}</td>
+                            </tr>
+                            <tr class="text-gray-4 font-weight-normal border-0">
+                                <td class="text-gray-4 font-weight-bold border-0">3</td>
+                                <td class="text-gray-4 font-weight-normal border-0">${contestant_a['score_3']}</td>
+                                <td class="text-gray-4 font-weight-normal border-0">${contestant_b['score_3']}</td>
+                            </tr>
+                            <tr class="d-none">
+                                <td class="text-gray-4 font-weight-normal border-0">4</td>
+                                <td class="d-none"></td>
+                                <td class="d-none"></td>
+                            </tr>
+                            <tr class="d-none">
+                                <td class="text-gray-4 font-weight-normal border-0">5</td>
+                                <td class="d-none"></td>
+                                <td class="d-none"></td>
+                            </tr>
+                            <tr class="d-none">
+                                <td class="text-gray-4 font-weight-normal border-0">6</td>
+                                <td class="d-none"></td>
+                                <td class="d-none"></td>
+                            </tr>
+                            <tr class="bg-gray-3">
+                                <td class="text-warning font-weight-bold border-gray-3">Set Scores</td>
+                                <td class="text-warning font-weight-bold border-gray-3">${contestant_a['setscores']}</td>
+                                <td class="text-warning font-weight-bold border-gray-3">${contestant_b['setscores']}</td>
+                            </tr>
+                            <tr class="bg-gray-3">
+                                <td class="text-success font-weight-bold border-gray-3">Set Points</td>
+                                <td class="text-success font-weight-bold border-gray-3">${contestant_a['setpoints']}</td>
+                                <td class="text-success font-weight-bold border-gray-3">${contestant_b['setpoints']}</td>
+                            </tr>
+                            </tbody>`;
+                        }else{
+                            str = `<h3 class="text-center text-light">-</h3>`;
+                        }
+                    } else {
+                        str = `<h3 class="text-center text-light">-</h3>`;
                     }
+                    $("#gameset-info-modal-table").html(str);
+                    $("#gameset-info-modal").modal();
+                    // if (data.status) {
+                    //     $("#gameset-info-modal-table").html(
+                    //         data.gameset["summary"]
+                    //     );
+                    //     $("#gameset-info-modal").modal();
+                    // }
                 }
             });
         },
-        loadTable: function(gameset_table) {
-            if (gameset_table != "")
-                $("#gameset-table tbody").html(gameset_table);
+        loadTable: function(table) {
+            var str = '';
+            if(table.length > 0){
+                for(i=0; i<table.length; i++){
+                    var statusTxt = "", gamestatus_id = table[i]['gamestatus_id'];
+                    if (gamestatus_id == 2) {
+                        statusTxt += `disabled="disabled"`;
+                    }
+
+                    var item = `<tr>
+                    <td class="text-gray-4 border-gray-3 pl-0">
+                    <button data-gamesetid="${table[i]['id']}" ${statusTxt} class="btn btn-sm btn-outline-danger border-0 rounded-circle font-weight-bolder gameset-delete-btn-cls">X</button>
+                    <button data-gamesetid="${table[i]['id']}" ${statusTxt} class="btn btn-sm btn-outline-warning-2 border-0 rounded-circle gameset-update-btn-cls"><i class="fas fa-pen"></i></button>
+                    </td>
+                    <td class="text-info font-weight-light border-gray-3">
+                        ${table[i]['game_num']}. <span class="small">[${(table[i]['bowstyle_name']).toUpperCase()}]</span>
+                    </td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">
+                        ${table[i]['contestant_a_name']} vs ${table[i]['contestant_b_name']}
+                    </td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">${table[i]['set_num']}</td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">`;
+                    if ( gamestatus_id < 3) {
+                        if ( table[i]['gamestatus_name'] == "Live") {
+                            item += `<button data-gamesetid="${table[i]['id']}" class="btn btn-sm btn-danger rounded-circle gameset-stoplive-btn-cls mr-3"><i class="fas fa-stop-circle"></i></button>`;
+                        } else {
+                            item += `<button data-gamesetid="${table[i]['id']}" class="btn btn-sm btn-success rounded-circle gameset-live-btn-cls mr-3"><i class="fas fa-play-circle"></i></button>`;
+                        }
+                    } else {
+                        item += `<button data-gamesetid="${table[i]['id']}" class="btn btn-sm btn-primary rounded-circle gameset-view-btn-cls mr-3"><i class="fas fa-eye"></i></button>`;
+                    }
+                    item += `<span class="small">${table[i]['gamestatus_name']}</span>
+                    </td>
+                    </tr>`;
+
+                    str += item;
+                }
+            }else{
+                str = `<td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>
+                <td class="text-white font-weight-light border-info">-</td>`;
+            }
+            $("#gameset-table tbody").html(str);
+            // if (gameset_table != "")
+            //     $("#gameset-table tbody").html(gameset_table);
         },
         loadForm: function(gamesetdata, modeget) {
             var modalTitle = "";
@@ -1856,7 +1972,7 @@ $(document).ready(function() {
                     gamesetid,
                 success: function(data) {
                     if (data.status) {
-                        GameSet.loadForm(data.gameset, modeget);
+                        GameSet.loadForm(data.gameset['modal_form'], modeget);
                     }
                 }
             });

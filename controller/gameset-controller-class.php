@@ -10,9 +10,10 @@ class Gameset_Controller_Class extends Controller_Class {
 
     private $model;
 
-    private $json_key;
-    private $table_json_key;
-    private $summary_json_key;
+    private $root_key;
+    private $table_key;
+    private $summary_key;
+    private $modal_form_key;
 
     private $item_template_name;
     private $item_template_loc;
@@ -24,6 +25,7 @@ class Gameset_Controller_Class extends Controller_Class {
     private $summary_template_loc;
 
     private $id;
+    private $gamedraw_id;
 
     /**
      * Class Constructor
@@ -43,9 +45,10 @@ class Gameset_Controller_Class extends Controller_Class {
      * @return void
      */
     private function init_json_key() {
-        $this->json_key = 'gameset';
-        $this->table_json_key = 'table';
-        $this->summary_json_key = 'summary';
+        $this->root_key = 'gameset';
+        $this->table_key = 'table';
+        $this->summary_key = 'summary';
+        $this->modal_form_key = 'modal_form';
     }
 
     /**
@@ -67,11 +70,20 @@ class Gameset_Controller_Class extends Controller_Class {
      * Set ID
      *
      * @param integer $gameset_id Gameset ID
-     * @return instance
+     * @return void
      */
     public function set_id($gameset_id){
         $this->id = $gameset_id;
-        return $this;
+    }
+
+    /**
+     * Set Gamedraw ID
+     *
+     * @param integer $gamedraw_id Gamedraw ID
+     * @return void
+     */
+    public function set_gamedraw_id($gamedraw_id = 0){
+        $this->gamedraw_id = $gamedraw_id;
     }
 
     /**
@@ -206,76 +218,20 @@ class Gameset_Controller_Class extends Controller_Class {
      * @param integer $gameset_id Gameset ID
      * @return array status, gameset [ gameset_id, gamedraw_id, gameset_num, gameset_status ]
      */
-    public function get_modal_form_data($gameset_id=0) {
-        $result = [
-            'status' => false
-        ];
-        if( $gameset_id == 0 ){
-            $result['message'] = 'ERROR: get_modal_form_data Gameset ID: 0';
-            return $result;
-        }
-        $form_data = $this->model->modal_form_data($gameset_id);
-        if(empty($form_data)){
-            $result['message'] = 'ERROR: get_modal_form_data Empty Data';
-            return $result;
-        }
-        $result['status'] = true;
-        $result[$this->json_key] = $form_data;
+    public function get_modal_form_data() {
 
-        return $result;
-    }
-
-    /**
-     * Create Gameset Table
-     *
-     * @param array $list Gameset Data
-     * @param string $table_key JSON Key
-     * @return string
-     */
-    private function create_gameset_table($list = null, $table_key = '') {
-        $gameset_list = is_null($list) ? $this->model->get_list() : $list;
-        $key = $table_key != '' ? $table_key : $this->table_json_key;
-        return Tools::create_loop_element(
-            $gameset_list,
-            'gamesets',
-            $key,
-            $this->item_template_loc
-        );
-    }
-
-    /**
-     * Get Gameset Element
-     *
-     *
-     * @return array
-     */
-    public function get_gameset_elements() {
-        $result = [
-            'status' => true,
-        ];
-        $gameset_data = $this->model->get_list();
-        $result['gameset']['table'] = $this->create_gameset_table($gameset_data, 'table')['table'];
-        if ($result['gameset']['table'] == '') {
-            $result['gameset']['table'] = Tools::template($this->no_item_template_loc, null);
-        }
-        return $result;
+        return $this->model->modal_form_data($this->id);
     }
 
     /**
      * Get New Num
      *
-     * @param integer $gamedraw_id Gamedraw ID
-     * @return array result[]
+     *
+     * @return integer
      */
-    public function get_new_num($gamedraw_id=0){
-        $result = [
-            'status' => true
-        ];
-        if($gamedraw_id==0) return $result;
+    public function get_new_num(){
 
-        $result['new_set'] = $this->model->last_set($gamedraw_id) + 1;
-
-        return $result;
+        return $this->model->last_set($this->gamedraw_id) + 1;
     }
 
     /**
@@ -317,12 +273,6 @@ class Gameset_Controller_Class extends Controller_Class {
             'action' => $request_value
         ];
 
-        // $gameset_data = array(
-        //     'id' => $gameset_id,
-        //     'gamedraw_id' => 0,
-        //     'num' => 1,
-        //     'status_id' => 1,
-        // );
         if( $request_value == '' || is_null($data) ) return $result;
 
         if( $request_value == 'create' ) {
@@ -358,29 +308,10 @@ class Gameset_Controller_Class extends Controller_Class {
             $live_game_oc = new Live_Game_Controller_Class($this->connection);
             if( $data['status_id'] == 2) {
                 if (! $live_game_oc->is_gameset_live($data['id'])) {
-                    // $prev_live_game_id = $live_game_oc->get_live_gameset_id();
-                    // if( !$live_game_oc->set_live_game($data['id'])){
-                    //     $result['message'] = 'ERROR: form_action set_live_game';
-                    //     return $result;
-                    // }
-                    // if( $prev_live_game_id > 0){
-                    //     if( ! $this->set_update_status($prev_live_game_id, 1)) {
-                    //         $result['message'] = 'ERROR: form_action set_update_status';
-                    //         return $result;
-                    //     }
-                    // }
                     $live_game_oc->start_game($data['id']);
                 }
             }else{
                 if ( $live_game_oc->is_gameset_live($data['id'])) {
-                    // if( !$live_game_oc->set_live_game(0)){
-                    //     $result['message'] = 'ERROR: form_action set_live_game';
-                    //     return $result;
-                    // }
-                    // if( ! $this->set_update_status($data['id'], $data['status_id'])) {
-                    //     $result['message'] = 'ERROR: form_action set_update_status';
-                    //     return $result;
-                    // }
                     $live_game_oc->stop_game($data['id']);
                 }
             }
@@ -398,84 +329,57 @@ class Gameset_Controller_Class extends Controller_Class {
     }
 
     /**
-     * Render Summary Element
+     * Get Table Data
      *
-     * @return string
+     * @return array
      */
-    private function render_summary_element(){
-
-        // contestant name,score1-3,setpoint,setscore
-        $summary_element = '';
-        $summary_data = $this->model->summary_data($this->id);
-        if(!empty($summary_data)){
-            $summary_element = Tools::template($this->summary_template_loc, $summary_data);
-        }
-        return $summary_element;
+    private function get_table_data(){
+        return $this->model->table_data();
     }
 
     /**
-     * Get Elements
+     * Get Summary Data
      *
-     * @param array $elements Element [ table, option ]
-     * @param string $custom_parent_key Custom Parent Key
-     * @param integer $selected_item Selected Item
-     * @param boolean $value_only If TRUE, return children
-     * @return array empty | string
+     * @return null
      */
-    public function get_elements($elements = array(), $custom_parent_key = '', $selected_item = 0, $value_only = false) {
+    private function get_summary_data(){
+        return $this->model->summary_data($this->id);
+    }
+
+    /**
+     * Get Data
+     *
+     * @param array $req_data [ 'table', 'summary' ]
+     * @return array
+     */
+    public function get_data($req_data = array( 'table', 'summary', 'modal_form', 'new_num' )) {
         $result = array();
-        if (empty($elements)) {
-            return $result;
+        $result[$this->root_key] = array();
+        $root_res = $result[$this->root_key];
+
+        $data = null;
+
+        if (in_array($this->table_key, $req_data)) {
+            $data = is_null($data) ? $this->get_table_data() : $data;
+            $root_res[$this->table_key] = $data;
+        }
+        if (in_array($this->summary_key, $req_data)){
+            $data = $this->get_summary_data();
+            $root_res[$this->summary_key] = $data;
+        }
+        if (in_array('new_num', $req_data)) {
+            $data = $this->get_new_num();
+            $root_res['new_num'] = $data;
         }
 
-        $parent_key = '';
-        if ($custom_parent_key == '') {
-            $parent_key = $this->json_key;
-        } else {
-            $parent_key = $custom_parent_key;
+        if (in_array($this->modal_form_key, $req_data)) {
+            $data = $this->get_modal_form_data();
+            $root_res[$this->modal_form_key] = $data;
         }
 
-        if (in_array($this->table_json_key, $elements)) {
-            $result[$parent_key][$this->table_json_key] = $this->render_loop_element($this->table_json_key, '', $selected_item, $value_only);
-        }
-        if (in_array($this->summary_json_key, $elements)){
-            $result[$parent_key][$this->summary_json_key] = $this->render_summary_element();
-        }
+        $result[$this->root_key] = $root_res;
+
         return $result;
-    }
-
-    /**
-     * Render Element
-     *
-     * @param string $element_type Element Type
-     * @param string $custom_key Key for JSON
-     * @param integer $selected_item Selected Item
-     * @param boolean $value_only If it's TRUE, return string. Otherwise return Array[$key]
-     * @return mixed string | array
-     */
-    private function render_loop_element($element_type = '', $custom_key = '', $selected_item = 0, $value_only = false) {
-        $data_list = $this->model->list();
-        $key = '';
-        $element_pretext = '';
-        $template_loc = '';
-        if ($custom_key != '') {
-            $key = $custom_key;
-        } else {
-            if ($element_type == $this->table_json_key) {
-                $key = $this->table_json_key;
-                $template_loc = $this->item_template_loc;
-            }
-        }
-        $element_value = Tools::create_loop_element(
-            $data_list, 'gamesets', $key, $template_loc, $element_pretext, $selected_item
-        );
-        if ($value_only) {
-            if($element_type == $this->table_json_key && $element_value[$key] == ''){
-                return Tools::template($this->no_item_template_loc, null);
-            }
-            return $element_value[$key];
-        }
-        return $element_value;
     }
 
 }
@@ -489,37 +393,35 @@ if (isset($_GET['gameset_get'])) {
     if (Tools::is_valid_string_request($request_value)) {
         $database = new Database();
         $connection = $database->getConnection();
+        $gameset_oc = new Gameset_Controller_Class($connection);
+        $gameset_data = array();
 
         if ( $request_value == 'modal_data' ){
             if(isset($_GET['id'])){
                 $gameset_id = is_numeric($_GET['id']) ? $_GET['id'] : 0;
-                $gameset_oc = new Gameset_Controller_Class($connection);
-
-                $result = $gameset_oc->get_modal_form_data($gameset_id);
+                $gameset_oc->set_id($gameset_id);
+                $gameset_data = $gameset_oc->get_data(['modal_form']);
             }
         }else if ($request_value == 'new') {
-            $gameset_oc = new Gameset_Controller_Class($connection);
-            $gameset_element = $gameset_oc->get_elements(['table'],'',0,true);
-            $result = array_merge($result, $gameset_element);
+            $gameset_data = $gameset_oc->get_data(['table']);
         }
         else if ($request_value == 'new_num' ) {
 
             if(isset($_GET['gamedraw_id'])){
                 $gamedraw_id = is_numeric($_GET['gamedraw_id']) ? $_GET['gamedraw_id'] : 0;
-                $gameset_oc = new Gameset_Controller_Class($connection);
-                $result = $gameset_oc->get_new_num($gamedraw_id);
+                $gameset_oc->set_gamedraw_id($gamedraw_id);
+                $gameset_data = $gameset_oc->get_data(['new_num']);
             }
 
         }else if ($request_value == 'summary'){
 
             if(isset($_GET['id'])){
                 $gameset_id = is_numeric($_GET['id']) ? $_GET['id'] : 0;
-                $gameset_oc = new Gameset_Controller_Class($connection);
                 $gameset_oc->set_id($gameset_id);
-                $gameset_element = $gameset_oc->get_elements(['summary'],'','',true);
-                $result = array_merge($result, $gameset_element);
+                $gameset_data = $gameset_oc->get_data(['summary']);
             }
         }
+        $result = array_merge($result, $gameset_data);
         $database->conn->close();
     }
     echo json_encode($result);

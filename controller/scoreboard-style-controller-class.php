@@ -11,22 +11,22 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
 
     private $model = null;
 
-    private $json_key;
-    private $bowstyle_option_json_key;
-    private $info_json_key;
-    private $config_json_key;
+    private $root_key;
+    private $bowstyle_key;
+    private $info_key;
+    private $config_key;
 
     private $preview_template_name;
     private $preview_template_loc;
-    private $preview_json_key;
+    private $preview_key;
 
     private $checkbox_template_name;
     private $checkbox_template_loc;
-    private $checkboxes_json_key;
+    private $checkboxes_key;
 
     private $style_option_template_name;
     private $style_option_template_loc;
-    private $style_option_json_key;
+    private $style_key;
 
     private $style_id;
     private $bowstyle_id;
@@ -50,13 +50,13 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
      * @return void
      */
     private function init_json_key() {
-        $this->json_key = 'scoreboard_styles';
-        $this->preview_json_key = 'preview';
-        $this->bowstyle_option_json_key = 'bowstyle';
-        $this->info_json_key = 'info';
-        $this->style_option_json_key = 'option';
-        $this->checkboxes_json_key = 'checkbox';
-        $this->config_json_key = 'config';
+        $this->root_key = 'scoreboard_styles';
+        $this->preview_key = 'preview';
+        $this->bowstyle_key = 'bowstyle';
+        $this->info_key = 'info';
+        $this->style_key = 'option';
+        $this->checkboxes_key = 'checkbox';
+        $this->config_key = 'config';
     }
 
     /**
@@ -251,6 +251,12 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
         return $bowstyles_oc->get_elements(['option'],'',$selected_item, $value_only);
     }
 
+    private function get_bowstyle_option_data(){
+        $bowstyle_oc = new Bowstyle_Controller_Class($this->connection);
+
+        return $bowstyle_oc->get_data(['option']);
+    }
+
     /**
      * Create Style Info
      *
@@ -265,7 +271,7 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
             $bowstyle_name = $action_m['status'] ? $action_m['bowstyle_name'] : '';
             $style_name = $action_m['status'] ? $action_m['style_name'] : '';
         }
-        return Tools::render_result($this->info_json_key, ['bowstyle' => $bowstyle_name, 'style' => $style_name], true)[$this->info_json_key];
+        return Tools::render_result($this->info_key, ['bowstyle' => $bowstyle_name, 'style' => $style_name], true)[$this->info_key];
     }
 
     /**
@@ -307,7 +313,7 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
                 'delete_btn' => '',
             ];
         }
-        return Tools::render_result($this->config_json_key, ['visibility_class' => $config], true)[$this->config_json_key];
+        return Tools::render_result($this->config_key, ['visibility_class' => $config], true)[$this->config_key];
     }
 
     /**
@@ -319,7 +325,7 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
      */
     public function create_preview($style_id = 0, $custom_preview_key='', $default=false) {
 
-        $key = $this->preview_json_key;
+        $key = $this->preview_key;
         if( $custom_preview_key != '') $key = $custom_preview_key;
         $action_m = null;
         if( $default ) {
@@ -358,7 +364,7 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
      */
     public function create_checkboxes($style_id = 0, $checkbox_key='', $default=false){
 
-        $key = $this->checkboxes_json_key;
+        $key = $this->checkboxes_key;
         if( $checkbox_key != '') $key = $checkbox_key;
         $action_m = null;
         if( $default ) {
@@ -393,8 +399,8 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
         if ($custom_key != '') {
             $key = $custom_key;
         } else {
-            if ($element_type == $this->style_option_json_key) {
-                $key = $this->style_option_json_key;
+            if ($element_type == $this->style_key) {
+                $key = $this->style_key;
                 $element_pretext = '<option value="0">Choose</option>';
                 $template_loc = $this->style_option_template_loc;
 
@@ -421,29 +427,29 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
         $result = array();
 
         $live_game_oc = new Live_Game_Controller_Class($this->connection);
-        if(in_array($this->bowstyle_option_json_key,$elements)){
-            $result[$this->json_key] = $this->create_bowstyle_option($flag_id, true);
+        if(in_array($this->bowstyle_key,$elements)){
+            $result[$this->root_key] = $this->create_bowstyle_option($flag_id, true);
         }
-        if(in_array($this->style_option_json_key,$elements)){
-            $result[$this->json_key][$this->style_option_json_key] = $this->render_loop_element($this->style_option_json_key,'',$selected_item,true,$flag_id);
+        if(in_array($this->style_key,$elements)){
+            $result[$this->root_key][$this->style_key] = $this->render_loop_element($this->style_key,'',$selected_item,true,$flag_id);
         }
-        if(in_array($this->info_json_key,$elements)){
+        if(in_array($this->info_key,$elements)){
             $live_style_id = $live_game_oc->style_id();
-            $result[$this->json_key][$this->info_json_key] = $this->create_info($live_style_id);
+            $result[$this->root_key][$this->info_key] = $this->create_info($live_style_id);
         }
-        if(in_array($this->preview_json_key,$elements)){
+        if(in_array($this->preview_key,$elements)){
             $is_default = false;
             if($selected_item==0) $is_default = true;
-            $result[$this->json_key][$this->preview_json_key] = $this->create_preview($selected_item,'',$is_default);
+            $result[$this->root_key][$this->preview_key] = $this->create_preview($selected_item,'',$is_default);
         }
-        if(in_array($this->checkboxes_json_key,$elements)){
+        if(in_array($this->checkboxes_key,$elements)){
             $is_default = false;
             if($flag_id==0) $is_default = true;
-            $result[$this->json_key][$this->checkboxes_json_key] = $this->create_checkboxes($flag_id,'',$is_default);
+            $result[$this->root_key][$this->checkboxes_key] = $this->create_checkboxes($flag_id,'',$is_default);
         }
-        if(in_array($this->config_json_key,$elements)){
+        if(in_array($this->config_key,$elements)){
             $live_style_id = $live_game_oc->style_id();
-            $result[$this->json_key][$this->config_json_key] = $this->create_config($live_style_id);
+            $result[$this->root_key][$this->config_key] = $this->create_config($live_style_id);
         }
         return $result;
     }
@@ -475,20 +481,31 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
     /**
      * Get Data.
      *
-     * @param array $data_arr [ 'option', 'bowstyle', 'info', 'preview', 'checkbox', 'config' ]
+     * @param array $req_data [ 'option', 'bowstyle', 'info', 'preview', 'checkbox', 'config' ]
      * @return array
      */
-    public function get_data($data_arr=array( 'option', 'bowstyle', 'info', 'preview', 'checkbox', 'config' )){
+    public function get_data($req_data=array( 'option', 'bowstyle', 'info', 'preview', 'checkbox', 'config' )){
         $result = array();
-        $result[$this->json_key .'_test'] = array();
+        $result[$this->root_key] = array();
+        $root_res = $result[$this->root_key];
 
-        if( empty($data_arr) ){
+        if( empty($req_data) ){
             return $result;
         }
 
-        if(in_array($this->style_option_json_key,$data_arr)){
-            $result[$this->json_key .'_test'][$this->style_option_json_key] = $this->get_style_option_data();
+        $data = null;
+
+        if(in_array($this->style_key,$req_data)){
+            $data = is_null($data) ? $this->get_style_option_data() : $data;
+            $root_res[$this->style_key] = $data;
         }
+
+        if(in_array($this->bowstyle_key,$req_data)){
+            $data = is_null($data) ? $this->get_bowstyle_option_data() : $data;
+            $root_res[$this->bowstyle_key] = $data;
+        }
+
+        $result[$this->root_key] = $root_res;
 
         return $result;
     }

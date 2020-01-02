@@ -356,13 +356,13 @@ class Gamedraw_Controller_Class extends Controller_Class{
         $data = null;
         if (in_array($this->table_key, $req_data)) {
             // id, num, bowstyle_name, gamemode_name, contestant_a_name, contestant_b_name
-            $data = empty($data) ? $this->get_table_data() : $data;
+            $data = is_null($data) ? $this->get_table_data() : $data;
             $root_res[$this->table_key] = $data;
         }
 
         if (in_array($this->option_key, $req_data)) {
             // id, num, contestant_a_name, contestant_b_name
-            $data = empty($data) ? $this->get_option_data() : $data;
+            $data = is_null($data) ? $this->get_option_data() : $data;
             $root_res[$this->option_key] = $data;
         }
 

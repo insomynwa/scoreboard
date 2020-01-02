@@ -70,5 +70,39 @@ class Bowstyle_Model_Class extends Model_Class {
 
         return $res;
     }
+
+    /**
+     * Option Data
+     *
+     * @param integer $selected_id Selected ID
+     * @return array
+     */
+    public function option_data($selected_id = 0) {
+        $res = array();
+        $res[0]['id'] = 0;
+        $res[0]['name'] = 'Choose';
+        $res[0]['selected'] = '';
+
+        $query = "SELECT bowstyle_id, bowstyle_name FROM {$this->table_name}";
+
+        if ($result = $this->connection->query($query)) {
+            if ($result->num_rows > 0) {
+                $i = 0;
+                while ($row = $result->fetch_assoc()) {
+                    $res[$i]['id'] = $row['bowstyle_id'];
+                    $res[$i]['name'] = $row['bowstyle_name'];
+                    if($row['id'] == $selected_id){
+                        $res[$i]['selected'] = 'selected="selected"';
+                    }else{
+                        $res[$i]['selected'] = '';
+                    }
+
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
 }
 ?>

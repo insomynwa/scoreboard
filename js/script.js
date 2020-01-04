@@ -134,7 +134,131 @@ $(document).ready(function() {
             el_gamescores.val(game_total_points);
         },
         loadForm: function(scoreboard_form) {
-            $("#form-scoreboard-wrapper").html(scoreboard_form);
+            var form_data = scoreboard_form.form , str = '';
+            if( form_data.length != 0 ){
+                var data = form_data.data,
+                    cfg = form_data.config,
+                    sets = data.sets,
+                    cont_a = data.contestants[0],
+                    cont_b = data.contestants[1],
+                    set_str = 'Set X',
+                    set_str_helper = '';
+
+                if( data.bowstyle_id == 1 ) { // Recurve
+                    set_str = `Set ${sets.curr_set}`;
+                }else if( data.bowstyle_id == 2 ) { // Compound
+                    set_str = `Set ${sets.curr_set} of ${sets.end_set}`;
+                }
+                if( cfg.team_vc == '' ) {
+                    set_str_helper = 'hide';
+                }
+                str = `<form id="form-scoreboard-a" action="controller.php" method="post" class="form form-scoreboard">
+                <table class="table table-sm">
+                    <thead class="">
+                        <tr class="">
+                            <td class="form-scoreboard-logo text-light small ${cfg.logo_vc}"></td>
+                            <td class="td-w form-scoreboard-team ${cfg.team_vc}"><span>${set_str}</span></td>
+                            <td class="td-w form-scoreboard-player ${cfg.player_vc}"><span class="${set_str_helper}">${set_str}</span></td>
+                            <td class="form-scoreboard-timer ${cfg.timer_vc}">${cfg.timer_label}</td>
+                            <td class="form-scoreboard-score1 score-field ${cfg.score1_vc}">${cfg.score1_label}</td>
+                            <td class="form-scoreboard-score2 score-field ${cfg.score2_vc}">${cfg.score2_label}</td>
+                            <td class="form-scoreboard-score3 score-field ${cfg.score3_vc}">${cfg.score3_label}</td>
+                            <td class="form-scoreboard-score4 score-field ${cfg.score4_vc}">${cfg.score4_label}</td>
+                            <td class="form-scoreboard-score5 score-field ${cfg.score5_vc}">${cfg.score5_label}</td>
+                            <td class="form-scoreboard-score6 score-field ${cfg.score6_vc}">${cfg.score6_label}</td>
+                            <td class="form-scoreboard-setpoint ${cfg.setpoint_vc}">${cfg.setpoint_label}</td>
+                            <td class="form-scoreboard-setscore ${cfg.setscore_vc}">${cfg.setscore_label}</td>
+                            <td class="form-scoreboard-gamepoint ${cfg.gamepoint_vc}">${cfg.gamepoint_label}</td>
+                            <td class="form-scoreboard-gamescore ${cfg.gamescore_vc}">${cfg.gamescore_label}</td>
+                            <td class="td-w form-scoreboard-desc ${cfg.description_vc}">${cfg.description_label}</td>
+                            <th class=""></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="form-scoreboard-logo text-light small ${cfg.logo_vc}"><div><img src="${cont_a.logo}"></div></td>
+                            <td class="form-scoreboard-team ${cfg.team_vc}"><div><span>${cont_a.team}</span></div></td>
+                            <td class="form-scoreboard-player ${cfg.player_vc}"><div><span>${cont_a.player}</span></div></td>
+                            <td class="form-scoreboard-timer ${cfg.timer_vc}"><input type="text" readonly class="form-control font-italic " name="score_a_timer" id="score-a-timer" value="${cont_a.score_timer}">s</td>
+                            <td class="form-scoreboard-score1 score-field ${cfg.score1_vc}"><input type="text" class="form-control score-a-input-cls" name="score_a_score1" id="score-a-score1" value="${cont_a.score_1}"></td>
+                            <td class="form-scoreboard-score2 score-field ${cfg.score2_vc}"><input type="text" class="form-control score-a-input-cls" name="score_a_score2" id="score-a-score2" value="${cont_a.score_2}"></td>
+                            <td class="form-scoreboard-score3 score-field ${cfg.score3_vc}"><input type="text" class="form-control score-a-input-cls" name="score_a_score3" id="score-a-score3" value="${cont_a.score_3}"></td>
+                            <td class="form-scoreboard-score4 score-field ${cfg.score4_vc}"><input type="text" class="form-control score-a-input-cls" name="score_a_score4" id="score-a-score4" value="${cont_a.score_4}"></td>
+                            <td class="form-scoreboard-score5 score-field ${cfg.score5_vc}"><input type="text" class="form-control score-a-input-cls" name="score_a_score5" id="score-a-score5" value="${cont_a.score_5}"></td>
+                            <td class="form-scoreboard-score6 score-field ${cfg.score6_vc}"><input type="text" class="form-control score-a-input-cls" name="score_a_score6" id="score-a-score6" value="${cont_a.score_6}"></td>
+                            <td class="form-scoreboard-setpoint ${cfg.setpoint_vc}"><input type="text" class="form-control " name="score_a_setpoints" id="score-a-setpoints" data-setpoints="${cont_a.set_points}" value="${cont_a.set_points}"></td>
+                            <td class="form-scoreboard-setscore ${cfg.setscore_vc}"><input type="text" class="form-control " readonly name="score_a_setscores" id="score-a-setscores" value="${cont_a.set_scores}"></td>
+                            <td class="form-scoreboard-gamepoint ${cfg.gamepoint_vc}"><input type="text" class="form-control " readonly name="score_a_gamepoints" id="score-a-gamepoints" data-gamepoints="${cont_a.game_points}" value="${cont_a.game_points}"></td>
+                            <td class="form-scoreboard-gamescore ${cfg.gamescore_vc}"><input type="text" class="form-control " readonly name="score_a_gamescores" id="score-a-gamescores" value="${cont_a.game_scores}"></td>
+                            <td class="form-scoreboard-desc ${cfg.description_vc}"><input type="text" class="form-control " name="score_a_desc" id="score-a-desc" value="${cont_a.desc}"></td>
+                            <td class="pr-0 pt-0">
+                                <input type="hidden" name="score_a_gamedraw_id" id="score-a-gamedraw-id" value="${data.gamedraw_id}">
+                                <input type="hidden" name="score_a_gameset_id" id="score-a-gameset-id" value="${data.gameset_id}">
+                                <input type="hidden" name="score_a_id" id="score-a-id" value="${cont_a.score_id}">
+                                <input type="hidden" name="score_action" value="update-a">
+                                <input type="submit" value="UPDATE" id="score-a-submit" class="btn btn-primary no-boradius form-scoreboard-submit-btn">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </form>
+                <form id="form-scoreboard-b" action="controller.php" method="post" class="form form-scoreboard">
+                <table class="table table-sm">
+                    <thead class="">
+                        <tr class="">
+                            <td class="form-scoreboard-logo text-light small ${cfg.logo_vc}"></td>
+                            <td class="td-w form-scoreboard-team ${cfg.team_vc}"></td>
+                            <td class="td-w form-scoreboard-player ${cfg.player_vc}"></td>
+                            <td class="form-scoreboard-timer ${cfg.timer_vc}">${cfg.timer_label}</td>
+                            <td class="form-scoreboard-score1 score-field ${cfg.score1_vc}">${cfg.score1_label}</td>
+                            <td class="form-scoreboard-score2 score-field ${cfg.score2_vc}">${cfg.score2_label}</td>
+                            <td class="form-scoreboard-score3 score-field ${cfg.score3_vc}">${cfg.score3_label}</td>
+                            <td class="form-scoreboard-score4 score-field ${cfg.score4_vc}">${cfg.score4_label}</td>
+                            <td class="form-scoreboard-score5 score-field ${cfg.score5_vc}">${cfg.score5_label}</td>
+                            <td class="form-scoreboard-score6 score-field ${cfg.score6_vc}">${cfg.score6_label}</td>
+                            <td class="form-scoreboard-setpoint ${cfg.setpoint_vc}">${cfg.setpoint_label}</td>
+                            <td class="form-scoreboard-setscore ${cfg.setscore_vc}">${cfg.setscore_label}</td>
+                            <td class="form-scoreboard-gamepoint ${cfg.gamepoint_vc}">${cfg.gamepoint_label}</td>
+                            <td class="form-scoreboard-gamescore ${cfg.gamescore_vc}">${cfg.gamescore_label}</td>
+                            <td class="td-w form-scoreboard-desc ${cfg.description_vc}">${cfg.description_label}</td>
+                            <th class=""></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="form-scoreboard-logo text-light small ${cfg.logo_vc}"><div><img src="${cont_b.logo}"></div></td>
+                            <td class="form-scoreboard-team ${cfg.team_vc}"><div><span>${cont_b.team}</span></div></td>
+                            <td class="form-scoreboard-player ${cfg.player_vc}"><div><span>${cont_b.player}</span></div></td>
+                            <td class="form-scoreboard-timer ${cfg.timer_vc}"><input type="text" readonly class="form-control font-italic " name="score_b_timer" id="score-b-timer" value="${cont_b.score_timer}">s</td>
+                            <td class="form-scoreboard-score1 ${cfg.score1_vc}"><input type="text" class="form-control score-b-input-cls" name="score_b_score1" id="score-b-score1" value="${cont_b.score_1}"></td>
+                            <td class="form-scoreboard-score2 ${cfg.score2_vc}"><input type="text" class="form-control score-b-input-cls" name="score_b_score2" id="score-b-score2" value="${cont_b.score_2}"></td>
+                            <td class="form-scoreboard-score3 ${cfg.score3_vc}"><input type="text" class="form-control score-b-input-cls" name="score_b_score3" id="score-b-score3" value="${cont_b.score_3}"></td>
+                            <td class="form-scoreboard-score4 ${cfg.score4_vc}"><input type="text" class="form-control score-b-input-cls" name="score_b_score4" id="score-b-score4" value="${cont_b.score_4}"></td>
+                            <td class="form-scoreboard-score5 ${cfg.score5_vc}"><input type="text" class="form-control score-b-input-cls" name="score_b_score5" id="score-b-score5" value="${cont_b.score_5}"></td>
+                            <td class="form-scoreboard-score6 ${cfg.score6_vc}"><input type="text" class="form-control score-b-input-cls" name="score_b_score6" id="score-b-score6" value="${cont_b.score_6}"></td>
+                            <td class="form-scoreboard-setpoint ${cfg.setpoint_vc}"><input type="text" class="form-control " name="score_b_setpoints" id="score-b-setpoints" data-setpoints="${cont_b.set_points}" value="${cont_b.set_points}"></td>
+                            <td class="form-scoreboard-setscore ${cfg.setscore_vc}"><input type="text" class="form-control " readonly name="score_b_setscores" id="score-b-setscores" value="${cont_b.set_scores}"></td>
+                            <td class="form-scoreboard-gamepoint ${cfg.gamepoint_vc}"><input type="text" class="form-control " readonly name="score_b_gamepoints" id="score-b-gamepoints" data-gamepoints="${cont_b.game_points}" value="${cont_b.game_points}"></td>
+                            <td class="form-scoreboard-gamescore ${cfg.gamescore_vc}"><input type="text" class="form-control " readonly name="score_b_gamescores" id="score-b-gamescores" value="${cont_b.game_scores}"></td>
+                            <td class="form-scoreboard-desc ${cfg.description_vc}"><input type="text" class="form-control " name="score_b_desc" id="score-b-desc" value="${cont_b.desc}"></td>
+                            <td class="pr-0 pt-0">
+                                <input type="hidden" name="score_b_gamedraw_id" id="score-b-gamedraw-id" value="${data.gamedraw_id}">
+                                <input type="hidden" name="score_b_gameset_id" id="score-b-gameset-id" value="${data.gameset_id}">
+                                <input type="hidden" name="score_b_id" id="score-b-id" value="${cont_b.score_id}">
+                                <input type="hidden" name="score_action" value="update-b">
+                                <input type="submit" value="UPDATE" id="score-b-submit" class="btn btn-primary no-boradius form-scoreboard-submit-btn">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </form>`;
+            }else{
+                str = `<h4 class="text-gray-4 text-center font-weight-light">Start Game</h4>`;
+            }
+
+
+            $("#form-scoreboard-wrapper").html(str);
+            // $("#form-scoreboard-wrapper").html(scoreboard_form);
         },
         calculateGamePointsA: function() {
             FormScoreboard.setGamePoints(
@@ -431,38 +555,38 @@ $(document).ready(function() {
             </thead>
             <tbody>
             <tr>
-                <td class="scoreboard-style-preview-logo text-light small ${style_config.logo_vc}"><div><img src="${cont_a.logo}"></td>
-                <td class="scoreboard-style-preview-team ${style_config.team_vc}"><div><span>${cont_a.team}</span></div></td>
-                <td class="scoreboard-style-preview-player ${style_config.player_vc}"><div><span>${cont_a.player}</span></div></td>
-                <td class="scoreboard-style-preview-timer ${style_config.timer_vc}"><div><span>${cont_a.score_timer}s</span></div></td>
-                <td class="scoreboard-style-preview-score1 ${style_config.score1_vc}"><div><span>${cont_a.score_1}</span></div></td>
-                <td class="scoreboard-style-preview-score2 ${style_config.score2_vc}"><div><span>${cont_a.score_2}</span></div></td>
-                <td class="scoreboard-style-preview-score3 ${style_config.score3_vc}"><div><span>${cont_a.score_3}</span></div></td>
-                <td class="scoreboard-style-preview-score4 ${style_config.score4_vc}"><div><span>${cont_a.score_4}</span></div></td>
-                <td class="scoreboard-style-preview-score5 ${style_config.score5_vc}"><div><span>${cont_a.score_5}</span></div></td>
-                <td class="scoreboard-style-preview-score6 ${style_config.score6_vc}"><div><span>${cont_a.score_6}</span></div></td>
-                <td class="scoreboard-style-preview-setpoint ${style_config.setpoint_vc}"><div><span>${cont_a.set_points}</span></div></td>
-                <td class="scoreboard-style-preview-setscore ${style_config.setscore_vc}"><div><span>${cont_a.set_scores}</span></div></td>
-                <td class="scoreboard-style-preview-gamepoint ${style_config.gamepoint_vc}"><div><span>${cont_a.game_points}</span></div></td>
-                <td class="scoreboard-style-preview-gamescore ${style_config.gamescore_vc}>"><div><span>${cont_a.game_scores}</span></div></td>
-                <td class="scoreboard-style-preview-desc ${style_config.description_vc}"><div><span>${cont_a.desc}</span></div></td>
+                <td data-toggle="tooltip" title="logo" class="scoreboard-style-preview-logo text-light small ${style_config.logo_vc}"><div><img src="${cont_a.logo}" width="36"></td>
+                <td data-toggle="tooltip" title="team" class="scoreboard-style-preview-team ${style_config.team_vc}"><div><span>${cont_a.team}</span></div></td>
+                <td data-toggle="tooltip" title="player" class="scoreboard-style-preview-player ${style_config.player_vc}"><div><span>${cont_a.player}</span></div></td>
+                <td data-toggle="tooltip" title="timer" class="scoreboard-style-preview-timer ${style_config.timer_vc}"><div><span>${cont_a.score_timer}s</span></div></td>
+                <td data-toggle="tooltip" title="score 1" class="scoreboard-style-preview-score1 ${style_config.score1_vc}"><div><span>${cont_a.score_1}</span></div></td>
+                <td data-toggle="tooltip" title="score 2" class="scoreboard-style-preview-score2 ${style_config.score2_vc}"><div><span>${cont_a.score_2}</span></div></td>
+                <td data-toggle="tooltip" title="score 3" class="scoreboard-style-preview-score3 ${style_config.score3_vc}"><div><span>${cont_a.score_3}</span></div></td>
+                <td data-toggle="tooltip" title="score 4" class="scoreboard-style-preview-score4 ${style_config.score4_vc}"><div><span>${cont_a.score_4}</span></div></td>
+                <td data-toggle="tooltip" title="score 5" class="scoreboard-style-preview-score5 ${style_config.score5_vc}"><div><span>${cont_a.score_5}</span></div></td>
+                <td data-toggle="tooltip" title="score 6" class="scoreboard-style-preview-score6 ${style_config.score6_vc}"><div><span>${cont_a.score_6}</span></div></td>
+                <td data-toggle="tooltip" title="set point" class="scoreboard-style-preview-setpoint ${style_config.setpoint_vc}"><div><span>${cont_a.set_points}</span></div></td>
+                <td data-toggle="tooltip" title="set score" class="scoreboard-style-preview-setscore ${style_config.setscore_vc}"><div><span>${cont_a.set_scores}</span></div></td>
+                <td data-toggle="tooltip" title="game point" class="scoreboard-style-preview-gamepoint ${style_config.gamepoint_vc}"><div><span>${cont_a.game_points}</span></div></td>
+                <td data-toggle="tooltip" title="game score" class="scoreboard-style-preview-gamescore ${style_config.gamescore_vc}>"><div><span>${cont_a.game_scores}</span></div></td>
+                <td data-toggle="tooltip" title="description" class="scoreboard-style-preview-desc ${style_config.description_vc}"><div><span>${cont_a.desc}</span></div></td>
             </tr>
             <tr>
-                <td class="scoreboard-style-preview-logo text-light small ${style_config.logo_vc}"><div><img src="${cont_b.logo}"></div></td>
-                <td class="scoreboard-style-preview-team ${style_config.team_vc}"><div><span>${cont_b.team}</span></div></td>
-                <td class="scoreboard-style-preview-player ${style_config.player_vc}"><div><span>${cont_b.player}</span></div></td>
-                <td class="scoreboard-style-preview-timer ${style_config.timer_vc}"><div><span>${cont_b.score_timer}s</span></div></td>
-                <td class="scoreboard-style-preview-score1 ${style_config.score1_vc}"><div><span>${cont_b.score_1}</span></div></td>
-                <td class="scoreboard-style-preview-score2 ${style_config.score2_vc}"><div><span>${cont_b.score_2}</span></div></td>
-                <td class="scoreboard-style-preview-score3 ${style_config.score3_vc}"><div><span>${cont_b.score_3}</span></div></td>
-                <td class="scoreboard-style-preview-score4 ${style_config.score4_vc}"><div><span>${cont_b.score_4}</span></div></td>
-                <td class="scoreboard-style-preview-score5 ${style_config.score5_vc}"><div><span>${cont_b.score_5}</span></div></td>
-                <td class="scoreboard-style-preview-score6 ${style_config.score6_vc}"><div><span>${cont_b.score_6}</span></div></td>
-                <td class="scoreboard-style-preview-setpoint ${style_config.setpoint_vc}"><div><span>${cont_b.set_points}</span></div></td>
-                <td class="scoreboard-style-preview-setscore ${style_config.setscore_vc}"><div><span>${cont_b.set_scores}</span></div></td>
-                <td class="scoreboard-style-preview-gamepoint ${style_config.gamepoint_vc}"><div><span>${cont_b.game_points}</span></div></td>
-                <td class="scoreboard-style-preview-gamescore ${style_config.gamescore_vc}>"><div><span>${cont_b.game_scores}</span></div></td>
-                <td class="scoreboard-style-preview-desc ${style_config.description_vc}"><div><span>${cont_b.desc}</span></div></td>
+                <td data-toggle="tooltip" title="logo" class="scoreboard-style-preview-logo text-light small ${style_config.logo_vc}"><div><img src="${cont_b.logo}" width="36"></div></td>
+                <td data-toggle="tooltip" title="team" class="scoreboard-style-preview-team ${style_config.team_vc}"><div><span>${cont_b.team}</span></div></td>
+                <td data-toggle="tooltip" title="player" class="scoreboard-style-preview-player ${style_config.player_vc}"><div><span>${cont_b.player}</span></div></td>
+                <td data-toggle="tooltip" title="timer" class="scoreboard-style-preview-timer ${style_config.timer_vc}"><div><span>${cont_b.score_timer}s</span></div></td>
+                <td data-toggle="tooltip" title="score 1" class="scoreboard-style-preview-score1 ${style_config.score1_vc}"><div><span>${cont_b.score_1}</span></div></td>
+                <td data-toggle="tooltip" title="score 2" class="scoreboard-style-preview-score2 ${style_config.score2_vc}"><div><span>${cont_b.score_2}</span></div></td>
+                <td data-toggle="tooltip" title="score 3" class="scoreboard-style-preview-score3 ${style_config.score3_vc}"><div><span>${cont_b.score_3}</span></div></td>
+                <td data-toggle="tooltip" title="score 4" class="scoreboard-style-preview-score4 ${style_config.score4_vc}"><div><span>${cont_b.score_4}</span></div></td>
+                <td data-toggle="tooltip" title="score 5" class="scoreboard-style-preview-score5 ${style_config.score5_vc}"><div><span>${cont_b.score_5}</span></div></td>
+                <td data-toggle="tooltip" title="score 6" class="scoreboard-style-preview-score6 ${style_config.score6_vc}"><div><span>${cont_b.score_6}</span></div></td>
+                <td data-toggle="tooltip" title="set point" class="scoreboard-style-preview-setpoint ${style_config.setpoint_vc}"><div><span>${cont_b.set_points}</span></div></td>
+                <td data-toggle="tooltip" title="set score" class="scoreboard-style-preview-setscore ${style_config.setscore_vc}"><div><span>${cont_b.set_scores}</span></div></td>
+                <td data-toggle="tooltip" title="game point" class="scoreboard-style-preview-gamepoint ${style_config.gamepoint_vc}"><div><span>${cont_b.game_points}</span></div></td>
+                <td data-toggle="tooltip" title="game score" class="scoreboard-style-preview-gamescore ${style_config.gamescore_vc}>"><div><span>${cont_b.game_scores}</span></div></td>
+                <td data-toggle="tooltip" title="description" class="scoreboard-style-preview-desc ${style_config.description_vc}"><div><span>${cont_b.desc}</span></div></td>
             </tr>
             </tbody>`;
             ScoreboardStyle.previewTable.html(str);
@@ -508,7 +632,7 @@ $(document).ready(function() {
             <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score1" class="ssv-cb" ${cb.score1_checked} name="score1" id="ssv-score1-cb"> score 1</td>
             <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score4" class="ssv-cb" ${cb.score4_checked} name="score4" id="ssv-score4-cb"> score 4</td>
             <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setpoint" class="ssv-cb" ${cb.setpoint_checked} name="setpoint" id="ssv-setpoint-cb"> set point</td>
-            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamepoint" class="ssv-cb" ${cb.gamepoint_checked} name="gamepoint" id="ssv-gamepoint-cb"> game point</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamepoint" class="ssv-cb" ${cb.gamepoint_checked} name="gamepoint" id="ssv-gamepoint-cb"> game point (Set pts)</td>
             </tr>
             <tr>
             <td></td>
@@ -516,7 +640,7 @@ $(document).ready(function() {
             <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score2" class="ssv-cb" ${cb.score2_checked} name="score2" id="ssv-score2-cb"> score 2</td>
             <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score5" class="ssv-cb" ${cb.score5_checked} name="score5" id="ssv-score5-cb"> score 5</td>
             <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setscore" class="ssv-cb" ${cb.setscore_checked} name="setscore" id="ssv-setscore-cb"> set score</td>
-            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamescore" class="ssv-cb" ${cb.gamescore_checked} name="gamescore" id="ssv-gamescore-cb"> game score</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamescore" class="ssv-cb" ${cb.gamescore_checked} name="gamescore" id="ssv-gamescore-cb"> game score (Total)</td>
             </tr>
             <tr>
             <td></td>

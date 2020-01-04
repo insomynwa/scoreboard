@@ -72,7 +72,7 @@ class Config_Controller_Class extends Controller_Class {
 
         // Scoreboard Form
         $score_oc = new Score_Controller_Class($this->connection);
-        $score_element = $score_oc->get_elements(['scoreboard_form']);
+        $score_element = $score_oc->get_data(['form']);
 
         // Game Status
         $gamestatus_oc = new Gamestatus_Controller_Class($this->connection);

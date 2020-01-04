@@ -14,7 +14,8 @@ class Score_Controller_Class extends Controller_Class {
     private $scoreboard_form_name;
     private $scoreboard_form_template_loc;
 
-    private $json_key;
+    private $root_key;
+    private $form_key;
 
     /**
      * Class Constructor
@@ -24,7 +25,9 @@ class Score_Controller_Class extends Controller_Class {
     public function __construct($connection = null) {
         $this->connection = $connection;
         $this->model = new Score_Model_Class($connection);
-        $this->json_key = 'scoreboard_form';
+        $this->root_key = 'scoreboard_form';
+        $this->form_key = 'form';
+
         $this->init_templates();
     }
 
@@ -40,50 +43,6 @@ class Score_Controller_Class extends Controller_Class {
     }
 
     /**
-     * Get Scoreboard Data
-     *
-     * @param integer $game_bowstyle_id
-     * @return mixed null | array
-     */
-    public function get_scoreboard_form_data($game_bowstyle_id=0){
-        $data = $this->model->scoreboard_form_data();
-        $livegame_data = null;
-        if ($data) {
-            $scores = $data['scores'];
-            $livegame_data = array();
-            $contestant_oc = null;
-            if($scores['gamemode_id'] == 1){
-                $contestant_oc = new Team_Controller_Class($this->connection);
-            }else if($scores['gamemode_id'] == 2){
-                $contestant_oc = new Player_Controller_Class($this->connection);
-            }
-
-            for ($i = 0; $i < sizeof($scores['contestants']); $i++) {
-                $scores['contestants'][$i]['logo'] = 'uploads/no-image.png';
-                $scores['contestants'][$i]['team'] = '';
-                $scores['contestants'][$i]['player'] = '';
-                $scoreboard_form_data = $contestant_oc->get_scoreboard_form_data($scores['contestants'][$i]['id']);
-                if( $scoreboard_form_data ){
-                    $scores['contestants'][$i]['logo'] = 'uploads/' . $scoreboard_form_data['team_logo'];
-                    $scores['contestants'][$i]['team'] = $scoreboard_form_data['team_name'];
-                    if( $scores['gamemode_id'] == 1 ){
-                        $scores['contestants'][$i]['player'] = '';
-                    }else if( $scores['gamemode_id'] == 2){
-                        $scores['contestants'][$i]['player'] = $scoreboard_form_data['player_name'];
-                    }
-                }
-            }
-            $livegame_data['gamedraw_id'] = $scores['gamedraw_id'];
-            $livegame_data['gameset_id'] = $scores['gameset_id'];
-            $livegame_data['gamemode_id'] = $scores['gamemode_id'];
-            $livegame_data['sets'] = $scores['sets'];
-            $livegame_data['contestants'] = $scores['contestants'];
-            $livegame_data['bowstyle_id'] = $game_bowstyle_id;
-        }
-        return $livegame_data;
-    }
-
-    /**
      * Get Scoreboard Preview Data
      *
      * @param integer $gamemode_id Gamemode ID
@@ -94,6 +53,16 @@ class Score_Controller_Class extends Controller_Class {
             return $this->scoreboard_preview_data_default();
         }
         return $this->model->scoreboard_preview_data($gamemode_id);
+    }
+
+    /**
+     * Get Form Data
+     *
+     * @param integer $gamemode_id Gamemode ID
+     * @return array
+     */
+    public function get_form_data($gamemode_id=0){
+        return $this->model->form_data($gamemode_id);
     }
 
     /**
@@ -156,37 +125,53 @@ class Score_Controller_Class extends Controller_Class {
      * @return array
      */
     private function get_form(){
-        $form = '<h4 class="text-gray-4 text-center font-weight-light">Start Game</h4>';
+        $res = array();
+
         $live_game_oc = new Live_Game_Controller_Class($this->connection);
-        if( ! $live_game_oc->has_live_game() ){
-            return $form;
+        $live_game_data = $live_game_oc->get_game_data_bm_id();
+        if(! empty($live_game_data)){
+            $live_gamemode_id = $live_game_data['gamemode_id'];
+            $live_game_bowstyle_id = $live_game_data['bowstyle_id'];
+            $res['data'] = $this->get_form_data($live_gamemode_id);
+
+            $config_oc = new Config_Controller_Class($this->connection);
+            $form_config = $config_oc->get_scoreboard_form_config($live_game_bowstyle_id);
+            $formatted_config = array();
+            foreach ($form_config as $key => $value) {
+                foreach($value as $vkey => $vval ){
+                    if($vkey == 'visibility_class' ){
+                        $formatted_config[$key . '_vc' ] = $vval;
+                    }
+                    if($vkey == 'label' ){
+                        $formatted_config[$key . '_label' ] = $vval;
+                    }
+                }
+            }
+            $res['config'] = $formatted_config;
         }
 
-        $live_game_bowstyle_id = $live_game_oc->get_game_bowstyle_id();
-        $data = $this->get_scoreboard_form_data($live_game_bowstyle_id);
-        if(is_null($data)){
-            return $form;
-        }
-        $config_oc = new Config_Controller_Class($this->connection);
-        $data['style_config'] = $config_oc->get_scoreboard_form_config($live_game_bowstyle_id);
-
-        $form = Tools::template( $this->scoreboard_form_template_loc, $data );
-
-        return $form;
+        return $res;
     }
 
     /**
-     * Get Elements
-     * 'scoreboard_form'
+     * Get Data
      *
-     * @param array $elements Array Element
+     * @param array $req_data
      * @return array
      */
-    public function get_elements($elements=array()){
+    public function get_data($req_data = array( 'form' )){
         $result = array();
-        if(in_array('scoreboard_form',$elements)){
-            $result['scoreboard_form'] = $this->get_form();
+        $result[$this->root_key] = array();
+        $root_res = $result[$this->root_key];
+
+        $data = null;
+        if(in_array($this->form_key,$req_data)){
+            $data = $this->get_form();
+            $root_res[$this->form_key] = $data;
         }
+
+        $result[$this->root_key] = $root_res;
+
         return $result;
     }
 

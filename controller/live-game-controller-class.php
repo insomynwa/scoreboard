@@ -68,6 +68,15 @@ class Live_Game_Controller_Class extends Controller_Class {
     }
 
     /**
+     * Get Game Data (Bowstyle ID & Gamemode ID)
+     *
+     * @return array
+     */
+    public function get_game_data_bm_id(){
+        return $this->model->game_data_bm_id();
+    }
+
+    /**
      * Get Live Style Bowstyle ID
      *
      * @return integer bowstyle ID

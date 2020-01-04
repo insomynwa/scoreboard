@@ -84,6 +84,43 @@ class Score_Controller_Class extends Controller_Class {
     }
 
     /**
+     * Get Scoreboard Preview Data
+     *
+     * @param integer $gamemode_id Gamemode ID
+     * @return array
+     */
+    public function get_scoreboard_preview_data($gamemode_id=0){
+        if( $gamemode_id==0){
+            return $this->scoreboard_preview_data_default();
+        }
+        return $this->model->scoreboard_preview_data($gamemode_id);
+    }
+
+    /**
+     * Scoreboard Preview Default Data
+     *
+     * @return array
+     */
+    private function scoreboard_preview_data_default(){
+        return [
+            'gamedraw_id' => 0, 'gameset_id' => 0, 'gamemode_id' => 0, 'bowstyle_id' => 0,
+            'sets' => [ 'curr_set' => 'X', 'end_set' => 'Y' ],
+            'contestants' => [
+                0 => [
+                    'logo' => 'uploads/no-image.png', 'team' => 'Team A', 'player' => 'Player A', 'score_timer' => 120,
+                    'score_1' => 0, 'score_2' => 0, 'score_3' => 0, 'score_4' => 0, 'score_5' => 0, 'score_6' => 0,
+                    'set_scores' => 0, 'game_scores' => 0, 'set_points' => 0, 'game_points' => 0, 'desc' => 'Description A'
+                ],
+                1 => [
+                    'logo' => 'uploads/no-image.png', 'team' => 'Team B', 'player' => 'Player B', 'score_timer' => 120,
+                    'score_1' => 0, 'score_2' => 0, 'score_3' => 0, 'score_4' => 0, 'score_5' => 0, 'score_6' => 0,
+                    'set_scores' => 0, 'game_scores' => 0, 'set_points' => 0, 'game_points' => 0, 'desc' => 'Description B'
+                ]
+            ]
+        ];
+    }
+
+    /**
      * Get Team Scores ID
      *
      * @param integer $team_id Team ID
@@ -245,12 +282,13 @@ class Score_Controller_Class extends Controller_Class {
             return $result;
         }
 
-        $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($this->connection);
         $live_game_oc = new Live_Game_Controller_Class($this->connection);
+        $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($this->connection);
+        $scoreboard_style_oc->set_style_id($live_game_oc->style_id());
 
-        $scoreboard_style_element = $scoreboard_style_oc->get_elements(['preview'],0,$live_game_oc->style_id());
+        $scoreboard_style_data = $scoreboard_style_oc->get_data(['preview']);
         $result['status'] = true;
-        $result = array_merge($result, $scoreboard_style_element);
+        $result = array_merge($result, $scoreboard_style_data);
 
         // $score_data = [
         //     'gamedraw_id'   => Tools::post_int($_POST[ "{$owner}gamedraw_id" ]),

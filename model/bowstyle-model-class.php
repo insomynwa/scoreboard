@@ -87,11 +87,11 @@ class Bowstyle_Model_Class extends Model_Class {
 
         if ($result = $this->connection->query($query)) {
             if ($result->num_rows > 0) {
-                $i = 0;
+                $i = 1;
                 while ($row = $result->fetch_assoc()) {
                     $res[$i]['id'] = $row['bowstyle_id'];
                     $res[$i]['name'] = $row['bowstyle_name'];
-                    if($row['id'] == $selected_id){
+                    if($row['bowstyle_id'] == $selected_id){
                         $res[$i]['selected'] = 'selected="selected"';
                     }else{
                         $res[$i]['selected'] = '';

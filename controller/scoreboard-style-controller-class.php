@@ -22,7 +22,7 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
 
     private $checkbox_template_name;
     private $checkbox_template_loc;
-    private $checkboxes_key;
+    private $checkbox_key;
 
     private $style_option_template_name;
     private $style_option_template_loc;
@@ -55,7 +55,7 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
         $this->bowstyle_key = 'bowstyle';
         $this->info_key = 'info';
         $this->style_key = 'option';
-        $this->checkboxes_key = 'checkbox';
+        $this->checkbox_key = 'checkbox';
         $this->config_key = 'config';
     }
 
@@ -241,217 +241,15 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
     }
 
     /**
-     * Create Bowstyle Options
+     * Get Bowstyle Option Data
      *
-     * @param integer $selected_item Live Style
-     * @return array
+     * @return void
      */
-    private function create_bowstyle_option($selected_item = 0, $value_only = false) {
-        $bowstyles_oc = new Bowstyle_Controller_Class($this->connection);
-        return $bowstyles_oc->get_elements(['option'],'',$selected_item, $value_only);
-    }
-
     private function get_bowstyle_option_data(){
         $bowstyle_oc = new Bowstyle_Controller_Class($this->connection);
+        $bowstyle_oc->set_id($this->bowstyle_id);
 
-        return $bowstyle_oc->get_data(['option']);
-    }
-
-    /**
-     * Create Style Info
-     *
-     * @param integer $style_id
-     * @return array
-     */
-    private function create_info($style_id = 0) {
-        $bowstyle_name = '';
-        $style_name = '';
-        if ($style_id > 0) {
-            $action_m = $this->model->get_info($style_id);
-            $bowstyle_name = $action_m['status'] ? $action_m['bowstyle_name'] : '';
-            $style_name = $action_m['status'] ? $action_m['style_name'] : '';
-        }
-        return Tools::render_result($this->info_key, ['bowstyle' => $bowstyle_name, 'style' => $style_name], true)[$this->info_key];
-    }
-
-    /**
-     * Create Config
-     *
-     * @param integer $style_id
-     * @return array
-     */
-    private function create_config($style_id = 0) {
-        $config = [
-            'activate_btn' => '',
-            'deactivate_btn' => 'hide',
-            'save_btn' => 'hide',
-            'cancel_btn' => 'hide',
-            'new_btn' => '',
-            'edit_btn' => '',
-            'delete_btn' => '',
-        ];
-        if ($style_id == 0) {
-
-            $config = [
-                'activate_btn' => 'hide',
-                'deactivate_btn' => 'hide',
-                'save_btn' => 'hide',
-                'cancel_btn' => 'hide',
-                'new_btn' => 'hide',
-                'edit_btn' => 'hide',
-                'delete_btn' => 'hide',
-            ];
-        }else{
-
-            $config = [
-                'activate_btn' => 'hide',
-                'deactivate_btn' => '',
-                'save_btn' => 'hide',
-                'cancel_btn' => 'hide',
-                'new_btn' => '',
-                'edit_btn' => '',
-                'delete_btn' => '',
-            ];
-        }
-        return Tools::render_result($this->config_key, ['visibility_class' => $config], true)[$this->config_key];
-    }
-
-    /**
-     * Create Preview Scoreboard
-     *
-     * @param integer $style_id Style ID
-     * @param string $preview_key
-     * @return array
-     */
-    public function create_preview($style_id = 0, $custom_preview_key='', $default=false) {
-
-        $key = $this->preview_key;
-        if( $custom_preview_key != '') $key = $custom_preview_key;
-        $action_m = null;
-        if( $default ) {
-            $action_m = [ 'status'=>true, 'style_config' => Tools::get_default_style_config()];
-        }else{
-            $action_m = $this->model->get_config($style_id);
-        }
-        // $action_m = $this->model->get_config($style_id);
-        $style_preview = '';
-        if ($action_m['status']) {
-            $preview_data = array();
-            $preview_data['game_data'] = NULL;
-            $preview_data['style_config'] = ! $default ? json_decode($action_m['style_config'], true) : $action_m['style_config']; //var_dump($style_config);
-
-            $live_game_oc = new Live_Game_Controller_Class($this->connection);
-            $live_game_bowstyle_id = $live_game_oc->get_game_bowstyle_id();
-
-            if ($live_game_oc->has_live_game()) {
-                $score_oc = new Score_Controller_Class($this->connection);
-                $live_game_data = $score_oc->get_scoreboard_form_data($live_game_bowstyle_id);
-                $preview_data['game_data'] = is_null($live_game_data) ? NULL : $live_game_data;
-            }
-
-            $style_preview = Tools::template($this->preview_template_loc, $preview_data);
-        }
-        return Tools::render_result($key, $style_preview, true)[$key];
-    }
-
-    /**
-     * Create Checkboxes
-     *
-     * @param integer $style_id Style ID
-     * @param string $checkbox_key
-     * @param boolean $default
-     * @return array
-     */
-    public function create_checkboxes($style_id = 0, $checkbox_key='', $default=false){
-
-        $key = $this->checkboxes_key;
-        if( $checkbox_key != '') $key = $checkbox_key;
-        $action_m = null;
-        if( $default ) {
-            $action_m = [ 'status'=>true, 'style_config' => Tools::get_default_style_config()];
-        }else{
-            $action_m = $this->model->get_config($style_id);
-        }
-        // $action_m = $this->model->get_config($style_id);
-        $checkboxes = '';
-        if ($action_m['status']) {
-            $style_config = ! $default ? json_decode($action_m['style_config'], true) : $action_m['style_config'];
-
-            $checkboxes = Tools::template($this->checkbox_template_loc, [ 'config' => $style_config]);
-        }
-        return Tools::render_result($key, $checkboxes, true)[$key];
-    }
-
-    /**
-     * Render Element
-     *
-     * @param string $element_type Element Type
-     * @param string $custom_key Key for JSON
-     * @param integer $selected_item Selected Item
-     * @param boolean $value_only If it's TRUE, return string. Otherwise return Array[$key]
-     * @return mixed string | array
-     */
-    private function render_loop_element($element_type = '', $custom_key = '', $selected_item = 0, $value_only = false, $bowstyle_id=0) {
-        $data_list = $this->model->list($bowstyle_id);
-        $key = '';
-        $element_pretext = '';
-        $template_loc = '';
-        if ($custom_key != '') {
-            $key = $custom_key;
-        } else {
-            if ($element_type == $this->style_key) {
-                $key = $this->style_key;
-                $element_pretext = '<option value="0">Choose</option>';
-                $template_loc = $this->style_option_template_loc;
-
-                if(empty($data_list)) return $element_pretext;
-            }
-        }
-        $element_value = Tools::create_loop_element(
-            $data_list, 'styles', $key, $template_loc, $element_pretext, $selected_item
-        );
-        if ($value_only) {
-            return $element_value[$key];
-        }
-        return $element_value;
-    }
-
-    /**
-     * Get Elements
-     * 'radio'
-     *
-     * @param array $elements Array Element
-     * @return array
-     */
-    public function get_elements($elements=array(),$flag_id=0,$selected_item=0){
-        $result = array();
-
-        $live_game_oc = new Live_Game_Controller_Class($this->connection);
-        if(in_array($this->bowstyle_key,$elements)){
-            $result[$this->root_key] = $this->create_bowstyle_option($flag_id, true);
-        }
-        if(in_array($this->style_key,$elements)){
-            $result[$this->root_key][$this->style_key] = $this->render_loop_element($this->style_key,'',$selected_item,true,$flag_id);
-        }
-        if(in_array($this->info_key,$elements)){
-            $live_style_id = $live_game_oc->style_id();
-            $result[$this->root_key][$this->info_key] = $this->create_info($live_style_id);
-        }
-        if(in_array($this->preview_key,$elements)){
-            $is_default = false;
-            if($selected_item==0) $is_default = true;
-            $result[$this->root_key][$this->preview_key] = $this->create_preview($selected_item,'',$is_default);
-        }
-        if(in_array($this->checkboxes_key,$elements)){
-            $is_default = false;
-            if($flag_id==0) $is_default = true;
-            $result[$this->root_key][$this->checkboxes_key] = $this->create_checkboxes($flag_id,'',$is_default);
-        }
-        if(in_array($this->config_key,$elements)){
-            $live_style_id = $live_game_oc->style_id();
-            $result[$this->root_key][$this->config_key] = $this->create_config($live_style_id);
-        }
-        return $result;
+        return $bowstyle_oc->get_data(['option'])['bowstyle'];
     }
 
     /**
@@ -479,6 +277,135 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
     }
 
     /**
+     * Get Style Config
+     *
+     * @return array
+     */
+    private function get_style_config(){
+        $style_config = array();
+        if($this->style_id==0){ // default style config
+            $style_config = Tools::get_default_style_config();
+        }else{
+            $style_config = json_decode($this->model->style_config($this->style_id),true);
+        }
+        return $style_config;
+
+    }
+
+    /**
+     * Get Score Data
+     *
+     * @return array
+     */
+    private function get_score_data(){
+        $res = array();
+
+        $live_game_oc = new Live_Game_Controller_Class($this->connection);
+        $game_data = $live_game_oc->get_game_data_bm_id();
+        $score_oc = new Score_Controller_Class($this->connection);
+        $gamemode_id = 0;
+        if(! empty($game_data)){
+            $gamemode_id = $game_data['gamemode_id'];
+        }
+        $res =  $score_oc->get_scoreboard_preview_data($gamemode_id);
+
+        return $res;
+    }
+
+    /**
+     * Get Preview Data
+     *
+     * @return array
+     */
+    private function get_preview_data(){
+        $style_config = $this->get_style_config();
+
+        $formatted_style_config = array();
+        foreach ($style_config as $key => $value) {
+            foreach($value as $vkey => $vval ){
+                if($vkey == 'visibility_class' ){
+                    $formatted_style_config[$key . '_vc' ] = $vval;
+                }
+            }
+        }
+
+        $score_data = $this->get_score_data();
+
+        return [ 'style_config' => $formatted_style_config, 'score_data' => $score_data ];
+    }
+
+    /**
+     * Form Config
+     *
+     * @return array
+     */
+    private function form_config(){
+        $config = array();
+        if ($this->style_id == 0) {
+
+            $config = [
+                'activate_btn' => 'hide',
+                'deactivate_btn' => 'hide',
+                'save_btn' => 'hide',
+                'cancel_btn' => 'hide',
+                'new_btn' => 'hide',
+                'edit_btn' => 'hide',
+                'delete_btn' => 'hide',
+            ];
+        }else{
+
+            $config = [
+                'activate_btn' => 'hide',
+                'deactivate_btn' => '',
+                'save_btn' => 'hide',
+                'cancel_btn' => 'hide',
+                'new_btn' => '',
+                'edit_btn' => '',
+                'delete_btn' => '',
+            ];
+        }
+
+        return $config;
+    }
+
+    /**
+     * Get Active Style Info
+     *
+     * @return array
+     */
+    private function get_active_style_info(){
+        $res = array( 'bowstyle_name' => '', 'style_name' => '');
+        if ($this->style_id > 0) {
+            $res = $this->model->active_style_info($this->style_id);
+        }
+        return $res;
+    }
+
+    /**
+     * Get Checkbox Data
+     *
+     * @return array
+     */
+    private function get_checkbox_data(){
+        $res = array();
+        if( $this->style_id == 0 ) {
+            $style_config = Tools::get_default_style_config();
+        }else{
+            $style_config = $this->get_style_config();
+        }
+        foreach ($style_config as $key => $value) {
+            foreach($value as $vkey => $vval ){
+                $val = $vval;
+                if($vkey == 'visibility') {
+                    $val = $vval ? 'checked value="true"': 'value="false"';
+                    $res[$key . '_checked'] = $val;
+                }
+            }
+        }
+        return $res;
+    }
+
+    /**
      * Get Data.
      *
      * @param array $req_data [ 'option', 'bowstyle', 'info', 'preview', 'checkbox', 'config' ]
@@ -495,14 +422,36 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
 
         $data = null;
 
+        if(in_array($this->preview_key,$req_data)){
+            $data = is_null($data) ? $this->get_preview_data() : $data;
+            $root_res[$this->preview_key] = $data;
+        }
+
         if(in_array($this->style_key,$req_data)){
-            $data = is_null($data) ? $this->get_style_option_data() : $data;
+            // [ 'id', 'name', 'selected' ]
+            $data = $this->get_style_option_data();
             $root_res[$this->style_key] = $data;
         }
 
         if(in_array($this->bowstyle_key,$req_data)){
-            $data = is_null($data) ? $this->get_bowstyle_option_data() : $data;
+            // [ 'id', 'name', 'selected' ]
+            $data = $this->get_bowstyle_option_data();
             $root_res[$this->bowstyle_key] = $data;
+        }
+
+        if(in_array($this->checkbox_key,$req_data)){
+            $data = $this->get_checkbox_data();
+            $root_res[$this->checkbox_key] = $data;
+        }
+
+        if(in_array($this->config_key,$req_data)){
+            $data = $this->form_config();
+            $root_res[$this->config_key] = $data;
+        }
+
+        if(in_array($this->info_key,$req_data)){
+            $data = $this->get_active_style_info();
+            $root_res[$this->info_key] = $data;
         }
 
         $result[$this->root_key] = $root_res;
@@ -521,42 +470,30 @@ if (isset($_GET['scoreboard_style_get']) && $_GET['scoreboard_style_get'] != '')
 
         $database = new Database();
         $connection = $database->getConnection();
+        $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
 
         if ($request_value == 'group') {
             if (isset($_GET['bowstyle_id'])) {
                 $bowstyle_id = is_numeric($_GET['bowstyle_id']) ? $_GET['bowstyle_id'] : 0;
 
-                $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
-                $scoreboard_style_element = $scoreboard_style_oc->get_elements(['option'],$bowstyle_id);
-                $result = array_merge(
-                    $result,
-                    $scoreboard_style_element
-                );
+                $scoreboard_style_oc->set_bowstyle_id($bowstyle_id);
+                $scoreboard_style_data = $scoreboard_style_oc->get_data(['option']);
             }
         } else if ($request_value == 'single') {
             if (isset($_GET['id'])) {
                 $style_id = is_numeric($_GET['id']) ? $_GET['id'] : 0;
                 $live_game_oc = new Live_Game_Controller_Class($connection);
-                $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
-                $scoreboard_style_element = $scoreboard_style_oc->get_elements(['preview'],0,$style_id);
-                $scoreboard_style_element['is_live'] = $live_game_oc->style_id()==$style_id;
-                $result = array_merge(
-                    $result,
-                    $scoreboard_style_element
-                );
+                $scoreboard_style_oc->set_style_id($style_id);
+                $scoreboard_style_data = $scoreboard_style_oc->get_data(['preview']);
+                $scoreboard_style_data['is_live'] = $live_game_oc->style_id()==$style_id;
             }
-        }
-        else if ($request_value == 'new_num') {
         }
         else if ($request_value == 'new_form_data') {
             if (isset($_GET['bowstyle_id'])) {
+                $bowstyle_id = is_numeric($_GET['bowstyle_id']) ? $_GET['bowstyle_id'] : 0;
 
-                $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
-                $scoreboard_style_element = $scoreboard_style_oc->get_elements(['preview','checkbox']);
-                $result = array_merge(
-                    $result,
-                    $scoreboard_style_element
-                );
+                $scoreboard_style_oc->set_bowstyle_id($bowstyle_id);
+                $scoreboard_style_data = $scoreboard_style_oc->get_data(['preview','checkbox']);
             }
         }
         else if ($request_value == 'cancel_form') {
@@ -564,25 +501,20 @@ if (isset($_GET['scoreboard_style_get']) && $_GET['scoreboard_style_get'] != '')
                 $style_id = is_numeric($_GET['style_id']) ? $_GET['style_id'] : 0;
                 $bowstyle_id = is_numeric($_GET['bowstyle_id']) ? $_GET['bowstyle_id'] : 0;
 
-                $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
-                $scoreboard_style_element = $scoreboard_style_oc->get_elements(['preview','option'],$bowstyle_id,$style_id);
-                $result = array_merge(
-                    $result,
-                    $scoreboard_style_element
-                );
+                $scoreboard_style_oc->set_style_id($style_id);
+                $scoreboard_style_oc->set_bowstyle_id($bowstyle_id);
+                $scoreboard_style_data = $scoreboard_style_oc->get_data(['preview','option']);
             }
         }
         else if ($request_value == 'live') {
-            $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
             $live_game_oc = new Live_Game_Controller_Class($connection);
             $style_id = $live_game_oc->style_id();
-            $scoreboard_style_element = $scoreboard_style_oc->get_elements(['preview','option'],$live_game_oc->style_bowstyle_id(),$style_id);
-            $result = array_merge(
-                $result,
-                $scoreboard_style_element,
-                ['live_style' => $style_id]
-            );
+            $scoreboard_style_oc->set_style_id($style_id);
+            $scoreboard_style_oc->set_bowstyle_id($live_game_oc->style_bowstyle_id());
+            $scoreboard_style_data = $scoreboard_style_oc->get_data(['preview','option']);
+            $result['live_style'] = $style_id;
         }
+        $result = array_merge($result,$scoreboard_style_data);
         $database->conn->close();
     }
     echo json_encode($result);
@@ -604,12 +536,13 @@ if (isset($_GET['style_config_get']) && $_GET['style_config_get'] != '') {
                 $style_id = is_numeric($_GET['style_id']) ? $_GET['style_id'] : 0;
 
                 $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($connection);
+                $scoreboard_style_oc->set_style_id($style_id);
                 // $key = 'checkbox';
                 // $result[$key] = $scoreboard_style_oc->create_checkboxes($style_id, $key)[$key];
-                $scoreboard_style_element = $scoreboard_style_oc->get_elements(['checkbox'],$style_id);
+                $scoreboard_style_data = $scoreboard_style_oc->get_data(['checkbox']);
                 $result = array_merge(
                     $result,
-                    $scoreboard_style_element
+                    $scoreboard_style_data
                 );
             }
         }

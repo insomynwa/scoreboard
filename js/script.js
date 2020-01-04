@@ -34,26 +34,19 @@ $(document).ready(function() {
                                 GameMode.loadRadio(data.game_mode["radio"]);
                                 BowStyle.loadRadio(data.bowstyle["radio"]);
 
-                                var scoreboard_styles = data.scoreboard_styles;
-                                // ScoreboardStyle.setOption(
-                                //     ScoreboardStyle.bowstyleSelect,
-                                //     scoreboard_styles["bowstyle"]["option"]
-                                // );
+                                var scoreboard_styles = data.scoreboard_styles,
+                                bowstyle_name = scoreboard_styles.info['bowstyle_name'],
+                                style_name = scoreboard_styles.info['style_name'];
+                                ScoreboardStyle.setBowstyleOption(scoreboard_styles["bowstyle"]['option']);
                                 ScoreboardStyle.setStyleOption(scoreboard_styles["option"]);
-                                // ScoreboardStyle.setOption(
-                                //     ScoreboardStyle.styleSelect,
-                                //     scoreboard_styles["option"]
-                                // );
-                                ScoreboardStyle.setInfo(
-                                    scoreboard_styles["info"]["bowstyle"],
-                                    scoreboard_styles["info"]["style"]
-                                );
+                                ScoreboardStyle.setInfo(bowstyle_name,style_name);
                                 ScoreboardStyle.loadPreview(
                                     scoreboard_styles["preview"]
                                 );
                                 ScoreboardStyle.configBtn(
                                     scoreboard_styles["config"]
                                 );
+                                ScoreboardStyle.live_style = data.live_style;
 
                                 Team.loadTable(data.team["table"]);
                                 Team.loadOption(data.team["option"]);
@@ -292,6 +285,7 @@ $(document).ready(function() {
 
         selectedBowstyle: 0,
         selectedStyle: 0,
+        live_style: 0,
 
         init: function() {
             this.bindEvents();
@@ -313,40 +307,46 @@ $(document).ready(function() {
         configBtn: function(cfg) {
             Helper.setHide(
                 ScoreboardStyle.activateBtn,
-                cfg["visibility_class"]["activate_btn"]
+                cfg.activate_btn
             );
             Helper.setHide(
                 ScoreboardStyle.deactivateBtn,
-                cfg["visibility_class"]["deactivate_btn"]
+                cfg.deactivate_btn
             );
             Helper.setHide(
                 ScoreboardStyle.saveBtn,
-                cfg["visibility_class"]["save_btn"]
+                cfg.save_btn
             );
             Helper.setHide(
                 ScoreboardStyle.cancelBtn,
-                cfg["visibility_class"]["cancel_btn"]
+                cfg.cancel_btn
             );
             Helper.setHide(
                 ScoreboardStyle.createBtn,
-                cfg["visibility_class"]["new_btn"]
+                cfg.new_btn
             );
             Helper.setHide(
                 ScoreboardStyle.editBtn,
-                cfg["visibility_class"]["edit_btn"]
+                cfg.edit_btn
             );
             Helper.setHide(
                 ScoreboardStyle.deleteBtn,
-                cfg["visibility_class"]["delete_btn"]
+                cfg.delete_btn
             );
         },
         toggleColumn: function() {
             var cls = $(this).attr("data-class");
             var status = $(this).prop("checked");
             if (status) {
+                if( cls == 'scoreboard-style-preview-team') {
+                    Helper.setHide($("#preview-set-info"),'hide');
+                }
                 $("." + cls).removeClass("hide");
                 $(this).val(true);
             } else {
+                if( cls == 'scoreboard-style-preview-team') {
+                    Helper.setHide($("#preview-set-info"),'');
+                }
                 $("." + cls).addClass("hide");
                 $(this).val(false);
                 ScoreboardStyle.markCBox.prop("checked", false);
@@ -384,18 +384,115 @@ $(document).ready(function() {
             Helper.setHide(ScoreboardStyle.styleNameInputWrapper, contra_class);
         },
         loadPreview: function(preview) {
-            ScoreboardStyle.previewTable.html(preview);
-            if (preview == "") {
+            var style_config = preview.style_config,
+                score_data = preview.score_data,
+                sets = score_data.sets,
+                cont_a = score_data.contestants[0],
+                cont_b = score_data.contestants[1],
+                set_str = 'Set X',
+                set_str_helper = '';
+
+            if( score_data.bowstyle_id == 1 ) { // Recurve
+                set_str = `Set ${sets.curr_set}`;
+            }else if( score_data.bowstyle_id == 2 ) { // Compound
+                set_str = `Set ${sets.curr_set} of ${sets.end_set}`;
+            }
+            // if( ( cont_a.player == '' | cont_b.player == '' ) && score_data.gamemode_id == 1 ) {
+            //     style_config.player_vc = 'hide';
+            // }
+            // if( ( cont_a.team == '' | cont_b.team == '' ) && score_data.gamemode_id == 2 ) {
+            //     style_config.team_vc = 'hide';
+            // }
+            // if( cont_a.team['visibility_class'] == '' && cont_b.team['visibility_class'] == '' ) {
+            //     style_config.team_vc = 'hide';
+            // }
+            if( style_config.team_vc == '' ) {
+                set_str_helper = 'hide';
+            }
+
+            var str = `<thead>
+            <tr>
+                <td class="scoreboard-style-preview-logo text-light small ${style_config.logo_vc}"></td>
+                <td class="td-w scoreboard-style-preview-team ${style_config.team_vc}"><span>${set_str}</span></td>
+                <td class="td-w scoreboard-style-preview-player ${style_config.player_vc}"><span id="preview-set-info" class="${set_str_helper}">${set_str}</span></td>
+                <td class="scoreboard-style-preview-timer ${style_config.timer_vc}"></td>
+                <td class="scoreboard-style-preview-score1 ${style_config.score1_vc}"></td>
+                <td class="scoreboard-style-preview-score2 ${style_config.score2_vc}"></td>
+                <td class="scoreboard-style-preview-score3 ${style_config.score3_vc}"></td>
+                <td class="scoreboard-style-preview-score4 ${style_config.score4_vc}"></td>
+                <td class="scoreboard-style-preview-score5 ${style_config.score5_vc}"></td>
+                <td class="scoreboard-style-preview-score6 ${style_config.score6_vc}"></td>
+                <td class="scoreboard-style-preview-setpoint ${style_config.setpoint_vc}"></td>
+                <td class="scoreboard-style-preview-setscore ${style_config.setscore_vc}"></td>
+                <td class="scoreboard-style-preview-gamepoint ${style_config.gamepoint_vc}"><span>Set pts</span></td>
+                <td class="scoreboard-style-preview-gamescore ${style_config.gamescore_vc}>"><span>Total</span></td>
+                <td class="td-w scoreboard-style-preview-desc ${style_config.description_vc}"></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="scoreboard-style-preview-logo text-light small ${style_config.logo_vc}"><div><img src="${cont_a.logo}"></td>
+                <td class="scoreboard-style-preview-team ${style_config.team_vc}"><div><span>${cont_a.team}</span></div></td>
+                <td class="scoreboard-style-preview-player ${style_config.player_vc}"><div><span>${cont_a.player}</span></div></td>
+                <td class="scoreboard-style-preview-timer ${style_config.timer_vc}"><div><span>${cont_a.score_timer}s</span></div></td>
+                <td class="scoreboard-style-preview-score1 ${style_config.score1_vc}"><div><span>${cont_a.score_1}</span></div></td>
+                <td class="scoreboard-style-preview-score2 ${style_config.score2_vc}"><div><span>${cont_a.score_2}</span></div></td>
+                <td class="scoreboard-style-preview-score3 ${style_config.score3_vc}"><div><span>${cont_a.score_3}</span></div></td>
+                <td class="scoreboard-style-preview-score4 ${style_config.score4_vc}"><div><span>${cont_a.score_4}</span></div></td>
+                <td class="scoreboard-style-preview-score5 ${style_config.score5_vc}"><div><span>${cont_a.score_5}</span></div></td>
+                <td class="scoreboard-style-preview-score6 ${style_config.score6_vc}"><div><span>${cont_a.score_6}</span></div></td>
+                <td class="scoreboard-style-preview-setpoint ${style_config.setpoint_vc}"><div><span>${cont_a.set_points}</span></div></td>
+                <td class="scoreboard-style-preview-setscore ${style_config.setscore_vc}"><div><span>${cont_a.set_scores}</span></div></td>
+                <td class="scoreboard-style-preview-gamepoint ${style_config.gamepoint_vc}"><div><span>${cont_a.game_points}</span></div></td>
+                <td class="scoreboard-style-preview-gamescore ${style_config.gamescore_vc}>"><div><span>${cont_a.game_scores}</span></div></td>
+                <td class="scoreboard-style-preview-desc ${style_config.description_vc}"><div><span>${cont_a.desc}</span></div></td>
+            </tr>
+            <tr>
+                <td class="scoreboard-style-preview-logo text-light small ${style_config.logo_vc}"><div><img src="${cont_b.logo}"></div></td>
+                <td class="scoreboard-style-preview-team ${style_config.team_vc}"><div><span>${cont_b.team}</span></div></td>
+                <td class="scoreboard-style-preview-player ${style_config.player_vc}"><div><span>${cont_b.player}</span></div></td>
+                <td class="scoreboard-style-preview-timer ${style_config.timer_vc}"><div><span>${cont_b.score_timer}s</span></div></td>
+                <td class="scoreboard-style-preview-score1 ${style_config.score1_vc}"><div><span>${cont_b.score_1}</span></div></td>
+                <td class="scoreboard-style-preview-score2 ${style_config.score2_vc}"><div><span>${cont_b.score_2}</span></div></td>
+                <td class="scoreboard-style-preview-score3 ${style_config.score3_vc}"><div><span>${cont_b.score_3}</span></div></td>
+                <td class="scoreboard-style-preview-score4 ${style_config.score4_vc}"><div><span>${cont_b.score_4}</span></div></td>
+                <td class="scoreboard-style-preview-score5 ${style_config.score5_vc}"><div><span>${cont_b.score_5}</span></div></td>
+                <td class="scoreboard-style-preview-score6 ${style_config.score6_vc}"><div><span>${cont_b.score_6}</span></div></td>
+                <td class="scoreboard-style-preview-setpoint ${style_config.setpoint_vc}"><div><span>${cont_b.set_points}</span></div></td>
+                <td class="scoreboard-style-preview-setscore ${style_config.setscore_vc}"><div><span>${cont_b.set_scores}</span></div></td>
+                <td class="scoreboard-style-preview-gamepoint ${style_config.gamepoint_vc}"><div><span>${cont_b.game_points}</span></div></td>
+                <td class="scoreboard-style-preview-gamescore ${style_config.gamescore_vc}>"><div><span>${cont_b.game_scores}</span></div></td>
+                <td class="scoreboard-style-preview-desc ${style_config.description_vc}"><div><span>${cont_b.desc}</span></div></td>
+            </tr>
+            </tbody>`;
+            ScoreboardStyle.previewTable.html(str);
+            if (str == "") {
                 Helper.setHide(ScoreboardStyle.previewWrapper, "hide");
             } else {
                 Helper.setHide(ScoreboardStyle.previewWrapper, "");
             }
+            // ScoreboardStyle.previewTable.html(preview);
+            // if (preview == "") {
+            //     Helper.setHide(ScoreboardStyle.previewWrapper, "hide");
+            // } else {
+            //     Helper.setHide(ScoreboardStyle.previewWrapper, "");
+            // }
         },
-        setStyleOption: function(options){
-            var str = '<option value="0">Choose</option>';
+        setBowstyleOption: function(options){
+            var str = '';
             if(options.length > 0){
                 for(i=0; i<options.length; i++){
-                    var item = `<option value="${optons[i]['id']}" ${optons[i]['selected']}>${optons[i]['name']}</option>`;
+                    var item = `<option value="${options[i]['id']}" ${options[i]['selected']}>${options[i]['name']}</option>`;
+                    str += item;
+                }
+            }
+            ScoreboardStyle.bowstyleSelect.html(str);
+        },
+        setStyleOption: function(options){
+            var str = '';
+            if(options.length > 0){
+                for(i=0; i<options.length; i++){
+                    var item = `<option value="${options[i]['id']}" ${options[i]['selected']}>${options[i]['name']}</option>`;
                     str += item;
                 }
             }
@@ -404,8 +501,32 @@ $(document).ready(function() {
         setOption: function(element, options) {
             element.html(options);
         },
-        setOptionValue: function(element, val) {
-            element.val(val);
+        setCheckboxes: function(cb){
+            var str = `<tr>
+            <td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-logo" class="ssv-cb" ${cb.logo_checked} name="logo" id="ssv-logo-cb"> logo</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score1" class="ssv-cb" ${cb.score1_checked} name="score1" id="ssv-score1-cb"> score 1</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score4" class="ssv-cb" ${cb.score4_checked} name="score4" id="ssv-score4-cb"> score 4</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setpoint" class="ssv-cb" ${cb.setpoint_checked} name="setpoint" id="ssv-setpoint-cb"> set point</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamepoint" class="ssv-cb" ${cb.gamepoint_checked} name="gamepoint" id="ssv-gamepoint-cb"> game point</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-team" class="ssv-cb" ${cb.team_checked} name="team" id="ssv-team-cb"> team</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score2" class="ssv-cb" ${cb.score2_checked} name="score2" id="ssv-score2-cb"> score 2</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score5" class="ssv-cb" ${cb.score5_checked} name="score5" id="ssv-score5-cb"> score 5</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-setscore" class="ssv-cb" ${cb.setscore_checked} name="setscore" id="ssv-setscore-cb"> set score</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-gamescore" class="ssv-cb" ${cb.gamescore_checked} name="gamescore" id="ssv-gamescore-cb"> game score</td>
+            </tr>
+            <tr>
+            <td></td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-player" class="ssv-cb" ${cb.player_checked} name="player" id="ssv-player-cb"> player</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score3" class="ssv-cb" ${cb.score3_checked} name="score3" id="ssv-score3-cb"> score 3</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-score6" class="ssv-cb" ${cb.score6_checked} name="score6" id="ssv-score6-cb"> score 6</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-timer" class="ssv-cb" ${cb.timer_checked} name="timer" id="ssv-timer-cb"> timer</td>
+            <td class="text-light"><input type="checkbox" data-class="scoreboard-style-preview-desc" class="ssv-cb" ${cb.description_checked} name="description" id="ssv-description-cb"> description</td>
+            </tr>`;
+            ScoreboardStyle.visibilityTable.html(str);
         },
         setInfo: function(bowstyle_info, style_info) {
             if (bowstyle_info != "") {
@@ -437,6 +558,7 @@ $(document).ready(function() {
                         ).text();
 
                         ScoreboardStyle.setInfo(bowstyle_info, style_info);
+                        ScoreboardStyle.live_style = ScoreboardStyle.styleSelect.val();
                         Helper.setHide(ScoreboardStyle.activateBtn, 'hide');
                         Helper.setHide(ScoreboardStyle.deactivateBtn, '');
                     }else{
@@ -457,6 +579,7 @@ $(document).ready(function() {
                 function(data, status) {
                     var result = $.parseJSON(data);
                     if (result.status) {
+                        ScoreboardStyle.live_style = 0;
                         Helper.setHide(ScoreboardStyle.activateBtn, '');
                         Helper.setHide(ScoreboardStyle.deactivateBtn, 'hide');
                         ScoreboardStyle.setInfo('','');
@@ -474,12 +597,19 @@ $(document).ready(function() {
                 Helper.setHide(ScoreboardStyle.styleNameInputWrapper, "hide");
                 Helper.setHide(ScoreboardStyle.styleSelectWrapper, "");
                 if (ScoreboardStyle.styleSelect.val() > 0) {
-                    Helper.setHide(ScoreboardStyle.activateBtn, "");
+                    if( ScoreboardStyle.styleSelect.val() == ScoreboardStyle.live_style ){
+                        Helper.setHide(ScoreboardStyle.activateBtn, "hide");
+                        Helper.setHide(ScoreboardStyle.deactivateBtn, '');
+                    }else{
+                        Helper.setHide(ScoreboardStyle.activateBtn, "");
+                        Helper.setHide(ScoreboardStyle.deactivateBtn, 'hide');
+                    }
                     Helper.setHide(ScoreboardStyle.editBtn, "");
                     Helper.setHide(ScoreboardStyle.deleteBtn, "");
                     Helper.setHide(ScoreboardStyle.previewWrapper, "");
                 } else {
                     Helper.setHide(ScoreboardStyle.activateBtn, "hide");
+                    Helper.setHide(ScoreboardStyle.deactivateBtn, 'hide');
                     Helper.setHide(ScoreboardStyle.editBtn, "hide");
                     Helper.setHide(ScoreboardStyle.deleteBtn, "hide");
                     Helper.setHide(ScoreboardStyle.previewWrapper, "hide");
@@ -496,6 +626,7 @@ $(document).ready(function() {
                 Helper.setHide(ScoreboardStyle.styleNameInputWrapper, "");
                 Helper.setHide(ScoreboardStyle.styleSelectWrapper, "hide");
                 Helper.setHide(ScoreboardStyle.activateBtn, "hide");
+                Helper.setHide(ScoreboardStyle.deactivateBtn, 'hide');
                 Helper.setHide(ScoreboardStyle.saveBtn, "");
                 Helper.setHide(ScoreboardStyle.cancelBtn, "");
                 Helper.setHide(ScoreboardStyle.createBtn, "hide");
@@ -508,6 +639,7 @@ $(document).ready(function() {
                 Helper.setHide(ScoreboardStyle.styleNameInputWrapper, "");
                 Helper.setHide(ScoreboardStyle.styleSelectWrapper, "hide");
                 Helper.setHide(ScoreboardStyle.activateBtn, "hide");
+                Helper.setHide(ScoreboardStyle.deactivateBtn, 'hide');
                 Helper.setHide(ScoreboardStyle.saveBtn, "");
                 Helper.setHide(ScoreboardStyle.cancelBtn, "");
                 Helper.setHide(ScoreboardStyle.createBtn, "hide");
@@ -520,6 +652,7 @@ $(document).ready(function() {
                 Helper.setHide(ScoreboardStyle.styleNameInputWrapper, "");
                 Helper.setHide(ScoreboardStyle.styleSelectWrapper, "hide");
                 Helper.setHide(ScoreboardStyle.activateBtn, "hide");
+                Helper.setHide(ScoreboardStyle.deactivateBtn, 'hide');
                 Helper.setHide(ScoreboardStyle.saveBtn, "");
                 Helper.setHide(ScoreboardStyle.cancelBtn, "");
                 Helper.setHide(ScoreboardStyle.createBtn, "hide");
@@ -544,7 +677,9 @@ $(document).ready(function() {
                     ScoreboardStyle.bowstyleSelect.val(),
                 success: function(data) {
                     if (data.status) {
-                        var ss = ScoreboardStyle;
+                        var ss = ScoreboardStyle,
+                        preview = data.scoreboard_styles['preview'],
+                        checkboxes = data.scoreboard_styles['checkbox'];
                         ss.markCBox.prop("checked", true).val(true);
 
                         ss.styleNameInput.val("My Custom Style");
@@ -554,10 +689,13 @@ $(document).ready(function() {
                             .removeClass("btn-danger")
                             .addClass("btn-primary");
 
-                        ss.visibilityTable.html(
-                            data.scoreboard_styles["checkbox"]
-                        );
-                        ss.previewTable.html(data.scoreboard_styles["preview"]);
+                        ss.setCheckboxes(checkboxes);
+
+                        // ss.visibilityTable.html(
+                        //     data.scoreboard_styles["checkbox"]
+                        // );
+                        ss.loadPreview(preview);
+                        // ss.previewTable.html(data.scoreboard_styles["preview"]);
                         ss.setFormView("create");
                     }
                 }
@@ -577,9 +715,10 @@ $(document).ready(function() {
                 success: function(data) {
                     if (data.status) {
                         var ss = ScoreboardStyle;
-                        ss.visibilityTable.html(
-                            data.scoreboard_styles["checkbox"]
-                        );
+                        ss.setCheckboxes(data.scoreboard_styles['checkbox']);
+                        // ss.visibilityTable.html(
+                        //     data.scoreboard_styles["checkbox"]
+                        // );
 
                         ss.styleNameInput.val(
                             $(ss.styleSelectID + " option:selected").text()
@@ -633,13 +772,15 @@ $(document).ready(function() {
                             if (data.status) {
                                 var ss = ScoreboardStyle;
 
-                                ss.styleSelect
-                                    .removeAttr("disabled")
-                                    .html(data.scoreboard_styles["option"]);
+                                ss.loadStyleOption(data.scoreboard_styles['option']);
+                                ss.styleSelect.removeAttr('disabled').val(ss.selectedStyle);
+                                // ss.styleSelect
+                                //     .removeAttr("disabled")
+                                //     .html(data.scoreboard_styles["option"]);
 
-                                ss.styleSelect.val(
-                                    ScoreboardStyle.selectedStyle
-                                );
+                                // ss.styleSelect.val(
+                                //     ScoreboardStyle.selectedStyle
+                                // );
 
                                 ss.loadPreview(
                                     data.scoreboard_styles["preview"]
@@ -665,11 +806,14 @@ $(document).ready(function() {
                     success: function(data) {
                         if (data.status) {
                             var ss = ScoreboardStyle;
-                            ss.styleSelect
-                                .removeAttr("disabled")
-                                .html(data.scoreboard_styles["option"]);
 
-                            ss.styleSelect.val(ScoreboardStyle.selectedStyle);
+                            ss.loadStyleOption(data.scoreboard_styles['option']);
+                            ss.styleSelect.removeAttr('disabled').val(ss.selectedStyle);
+                            // ss.styleSelect
+                            //     .removeAttr("disabled")
+                            //     .html(data.scoreboard_styles["option"]);
+
+                            // ss.styleSelect.val(ScoreboardStyle.selectedStyle);
 
                             ss.loadPreview(data.scoreboard_styles["preview"]);
                             ss.setFormView("view");
@@ -696,10 +840,12 @@ $(document).ready(function() {
                             ss.bowstyleSelect.val(),
                         success: function(data) {
                             if (data.status) {
-                                ss.styleSelect
-                                    .removeAttr("disabled")
-                                    .html(data.scoreboard_styles["option"])
-                                    .val(0);
+                                ss.setStyleOption(data.scoreboard_styles["option"]);
+                                ss.styleSelect.removeAttr("disabled");
+                                // ss.styleSelect
+                                //     .removeAttr("disabled")
+                                //     .html(data.scoreboard_styles["option"])
+                                //     .val(0);
 
                                 ss.setFormView("view");
                             }
@@ -742,9 +888,10 @@ $(document).ready(function() {
                                 // ScoreboardStyle.visibilityTable.html(
                                 //     data.style_preview_checkbox
                                 // );
-                                ScoreboardStyle.previewTable.html(
-                                    data.scoreboard_styles["preview"]
-                                );
+                                ScoreboardStyle.loadPreview(data.scoreboard_styles['preview']);
+                                // ScoreboardStyle.previewTable.html(
+                                //     data.scoreboard_styles["preview"]
+                                // );
                                 Helper.setHide(
                                     ScoreboardStyle.previewWrapper,
                                     ""
@@ -803,9 +950,12 @@ $(document).ready(function() {
                                 ScoreboardStyle.bowstyleSelect.val(),
                             success: function(data2) {
                                 if (data2.status) {
-                                    ScoreboardStyle.styleSelect
-                                        .html(data2.scoreboard_styles["option"])
-                                        .val(data.latest_id);
+
+                                    ScoreboardStyle.setStyleOption(data2.scoreboard_styles["option"]);
+                                    ScoreboardStyle.styleSelect.val(data.latest_id);
+                                    // ScoreboardStyle.styleSelect
+                                    //     .html(data2.scoreboard_styles["option"])
+                                    //     .val(data.latest_id);
 
                                     ScoreboardStyle.setFormView("view");
                                 }
@@ -820,12 +970,14 @@ $(document).ready(function() {
                                 ScoreboardStyle.bowstyleSelect.val(),
                             success: function(data2) {
                                 if (data2.status) {
-                                    ScoreboardStyle.styleSelect.html(
-                                        data2.scoreboard_styles["option"]
-                                    );
-                                    ScoreboardStyle.styleSelect.val(
-                                        ScoreboardStyle.selectedStyle
-                                    );
+                                    ScoreboardStyle.setStyleOption(data2.scoreboard_styles["option"]);
+                                    ScoreboardStyle.styleSelect.val(ScoreboardStyle.selectedStyle);
+                                    // ScoreboardStyle.styleSelect.html(
+                                    //     data2.scoreboard_styles["option"]
+                                    // );
+                                    // ScoreboardStyle.styleSelect.val(
+                                    //     ScoreboardStyle.selectedStyle
+                                    // );
 
                                     ScoreboardStyle.setFormView("view");
                                 }
@@ -840,17 +992,14 @@ $(document).ready(function() {
                                     "/scoreboard/controller.php?scoreboard_style_get=live",
                                 success: function(data2) {
                                     if (data2.status) {
-                                        ScoreboardStyle.styleSelect
-                                            .removeAttr("disabled")
-                                            .html(
-                                                data2.scoreboard_styles[
-                                                    "option"
-                                                ]
-                                            );
+                                        ScoreboardStyle.loadStyleOption(data2.scoreboard_styles['option']);
+
+                                        ScoreboardStyle.styleSelect.removeAttr("disabled");
 
                                         ScoreboardStyle.styleSelect.val(
                                             data2.live_style
                                         );
+                                        ScoreboardStyle.live_style = data2.live_style;
 
                                         ScoreboardStyle.loadPreview(
                                             data2.scoreboard_styles["preview"]
@@ -868,13 +1017,15 @@ $(document).ready(function() {
                                     ScoreboardStyle.bowstyleSelect.val(),
                                 success: function(data2) {
                                     if (data2.status) {
-                                        ScoreboardStyle.styleSelect
-                                            .html(
-                                                data2.scoreboard_styles[
-                                                    "option"
-                                                ]
-                                            )
-                                            .val(0);
+                                        ScoreboardStyle.setStyleOption(data2.scoreboard_styles["option"]);
+                                        ScoreboardStyle.styleSelect.val(0);
+                                        // ScoreboardStyle.styleSelect
+                                        //     .html(
+                                        //         data2.scoreboard_styles[
+                                        //             "option"
+                                        //         ]
+                                        //     )
+                                        //     .val(0);
 
                                         ScoreboardStyle.setInfo("", "");
 
@@ -1041,23 +1192,22 @@ $(document).ready(function() {
                                         );
 
                                         var scoreboard_styles =
-                                            data.scoreboard_styles;
-                                        ScoreboardStyle.setOption(
-                                            ScoreboardStyle.bowstyleSelect,
-                                            scoreboard_styles["bowstyle"][
-                                                "option"
-                                            ]
-                                        );
-                                        ScoreboardStyle.setOption(
-                                            ScoreboardStyle.styleSelect,
-                                            scoreboard_styles["option"]
-                                        );
-                                        ScoreboardStyle.setInfo(
-                                            scoreboard_styles["info"][
-                                                "bowstyle"
-                                            ],
-                                            scoreboard_styles["info"]["style"]
-                                        );
+                                            data.scoreboard_styles,
+                                            bowstyle_name = scoreboard_styles.info['bowstyle_name'],
+                                            style_name = scoreboard_styles.info['style_name'];
+                                        // ScoreboardStyle.setOption(
+                                        //     ScoreboardStyle.bowstyleSelect,
+                                        //     scoreboard_styles["bowstyle"][
+                                        //         "option"
+                                        //     ]
+                                        // );
+                                        // ScoreboardStyle.setOption(
+                                        //     ScoreboardStyle.styleSelect,
+                                        //     scoreboard_styles["option"]
+                                        // );
+                                        ScoreboardStyle.setBowstyleOption(scoreboard_styles.bowstyle['option']);
+                                        ScoreboardStyle.setStyleOption(scoreboard_styles.option);
+                                        ScoreboardStyle.setInfo(bowstyle_name,style_name);
                                         ScoreboardStyle.loadPreview(
                                             scoreboard_styles["preview"]
                                         );
@@ -1238,19 +1388,20 @@ $(document).ready(function() {
                                     );
 
                                     var scoreboard_styles =
-                                        data.scoreboard_styles;
-                                    ScoreboardStyle.setOption(
-                                        ScoreboardStyle.bowstyleSelect,
-                                        scoreboard_styles["bowstyle"]["option"]
-                                    );
-                                    ScoreboardStyle.setOption(
-                                        ScoreboardStyle.styleSelect,
-                                        scoreboard_styles["option"]
-                                    );
-                                    ScoreboardStyle.setInfo(
-                                        scoreboard_styles["info"]["bowstyle"],
-                                        scoreboard_styles["info"]["style"]
-                                    );
+                                        data.scoreboard_styles,
+                                        bowstyle_name = scoreboard_styles.info['bowstyle_name'],
+                                        style_name = scoreboard_styles.info['style_name'];
+                                    // ScoreboardStyle.setOption(
+                                    //     ScoreboardStyle.bowstyleSelect,
+                                    //     scoreboard_styles["bowstyle"]["option"]
+                                    // );
+                                    // ScoreboardStyle.setOption(
+                                    //     ScoreboardStyle.styleSelect,
+                                    //     scoreboard_styles["option"]
+                                    // );
+                                    ScoreboardStyle.setBowstyleOption(scoreboard_styles.bowstyle['option']);
+                                    ScoreboardStyle.setStyleOption(scoreboard_styles.option);
+                                    ScoreboardStyle.setInfo(bowstyle_name,style_name);
                                     ScoreboardStyle.loadPreview(
                                         scoreboard_styles["preview"]
                                     );
@@ -1697,19 +1848,20 @@ $(document).ready(function() {
                                     );
 
                                     var scoreboard_styles =
-                                        data.scoreboard_styles;
-                                    ScoreboardStyle.setOption(
-                                        ScoreboardStyle.bowstyleSelect,
-                                        scoreboard_styles["bowstyle"]["option"]
-                                    );
-                                    ScoreboardStyle.setOption(
-                                        ScoreboardStyle.styleSelect,
-                                        scoreboard_styles["option"]
-                                    );
-                                    ScoreboardStyle.setInfo(
-                                        scoreboard_styles["info"]["bowstyle"],
-                                        scoreboard_styles["info"]["style"]
-                                    );
+                                        data.scoreboard_styles,
+                                        bowstyle_name = scoreboard_styles.info['bowstyle_name'],
+                                        style_name = scoreboard_styles.info['style_name'];
+                                    // ScoreboardStyle.setOption(
+                                    //     ScoreboardStyle.bowstyleSelect,
+                                    //     scoreboard_styles["bowstyle"]["option"]
+                                    // );
+                                    // ScoreboardStyle.setOption(
+                                    //     ScoreboardStyle.styleSelect,
+                                    //     scoreboard_styles["option"]
+                                    // );
+                                        ScoreboardStyle.setBowstyleOption(scoreboard_styles.bowstyle['option']);
+                                        ScoreboardStyle.setStyleOption(scoreboard_styles.option);
+                                    ScoreboardStyle.setInfo(bowstyle_name,style_name);
                                     ScoreboardStyle.loadPreview(
                                         scoreboard_styles["preview"]
                                     );
@@ -2018,23 +2170,22 @@ $(document).ready(function() {
                                         );
 
                                         var scoreboard_styles =
-                                            data.scoreboard_styles;
-                                        ScoreboardStyle.setOption(
-                                            ScoreboardStyle.bowstyleSelect,
-                                            scoreboard_styles["bowstyle"][
-                                                "option"
-                                            ]
-                                        );
-                                        ScoreboardStyle.setOption(
-                                            ScoreboardStyle.styleSelect,
-                                            scoreboard_styles["option"]
-                                        );
-                                        ScoreboardStyle.setInfo(
-                                            scoreboard_styles["info"][
-                                                "bowstyle"
-                                            ],
-                                            scoreboard_styles["info"]["style"]
-                                        );
+                                            data.scoreboard_styles,
+                                            bowstyle_name = scoreboard_styles.info['bowstyle_name'],
+                                            style_name = scoreboard_styles.info['style_name'];
+                                        // ScoreboardStyle.setOption(
+                                        //     ScoreboardStyle.bowstyleSelect,
+                                        //     scoreboard_styles["bowstyle"][
+                                        //         "option"
+                                        //     ]
+                                        // );
+                                        ScoreboardStyle.setBowstyleOption(scoreboard_styles.bowstyle['option']);
+                                        ScoreboardStyle.setStyleOption(scoreboard_styles.option);
+                                        // ScoreboardStyle.setOption(
+                                        //     ScoreboardStyle.styleSelect,
+                                        //     scoreboard_styles["option"]
+                                        // );
+                                        ScoreboardStyle.setInfo(bowstyle_name,style_name);
                                         ScoreboardStyle.loadPreview(
                                             scoreboard_styles["preview"]
                                         );
@@ -2082,23 +2233,22 @@ $(document).ready(function() {
                                         );
 
                                         var scoreboard_styles =
-                                            data.scoreboard_styles;
-                                        ScoreboardStyle.setOption(
-                                            ScoreboardStyle.bowstyleSelect,
-                                            scoreboard_styles["bowstyle"][
-                                                "option"
-                                            ]
-                                        );
-                                        ScoreboardStyle.setOption(
-                                            ScoreboardStyle.styleSelect,
-                                            scoreboard_styles["option"]
-                                        );
-                                        ScoreboardStyle.setInfo(
-                                            scoreboard_styles["info"][
-                                                "bowstyle"
-                                            ],
-                                            scoreboard_styles["info"]["style"]
-                                        );
+                                            data.scoreboard_styles,
+                                            bowstyle_name = scoreboard_styles.info['bowstyle_name'],
+                                            style_name = scoreboard_styles.info['style_name'];
+                                        // ScoreboardStyle.setOption(
+                                        //     ScoreboardStyle.bowstyleSelect,
+                                        //     scoreboard_styles["bowstyle"][
+                                        //         "option"
+                                        //     ]
+                                        // );
+                                        // ScoreboardStyle.setOption(
+                                        //     ScoreboardStyle.styleSelect,
+                                        //     scoreboard_styles["option"]
+                                        // );
+                                        ScoreboardStyle.setBowstyleOption(scoreboard_styles.bowstyle['option']);
+                                        ScoreboardStyle.setStyleOption(scoreboard_styles.option);
+                                        ScoreboardStyle.setInfo(bowstyle_name,style_name);
                                         ScoreboardStyle.loadPreview(
                                             scoreboard_styles["preview"]
                                         );
@@ -2170,19 +2320,20 @@ $(document).ready(function() {
                                     );
 
                                     var scoreboard_styles =
-                                        data.scoreboard_styles;
-                                    ScoreboardStyle.setOption(
-                                        ScoreboardStyle.bowstyleSelect,
-                                        scoreboard_styles["bowstyle"]["option"]
-                                    );
-                                    ScoreboardStyle.setOption(
-                                        ScoreboardStyle.styleSelect,
-                                        scoreboard_styles["option"]
-                                    );
-                                    ScoreboardStyle.setInfo(
-                                        scoreboard_styles["info"]["bowstyle"],
-                                        scoreboard_styles["info"]["style"]
-                                    );
+                                        data.scoreboard_styles,
+                                        bowstyle_name = scoreboard_styles.info['bowstyle_name'],
+                                        style_name = scoreboard_styles.info['style_name'];
+                                    // ScoreboardStyle.setOption(
+                                    //     ScoreboardStyle.bowstyleSelect,
+                                    //     scoreboard_styles["bowstyle"]["option"]
+                                    // );
+                                    // ScoreboardStyle.setOption(
+                                    //     ScoreboardStyle.styleSelect,
+                                    //     scoreboard_styles["option"]
+                                    // );
+                                    ScoreboardStyle.setBowstyleOption(scoreboard_styles.bowstyle['option']);
+                                    ScoreboardStyle.setStyleOption(scoreboard_styles.option);
+                                    ScoreboardStyle.setInfo(bowstyle_name,style_name);
                                     ScoreboardStyle.loadPreview(
                                         scoreboard_styles["preview"]
                                     );

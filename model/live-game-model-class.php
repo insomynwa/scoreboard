@@ -152,6 +152,31 @@ class Live_Game_Model_Class extends Model_Class {
     }
 
     /**
+     * Game Data BM (Bowstyle ID & )
+     *
+     * @return array [ 'bowstyle_id', 'gamemode_id' ]
+     */
+    public function game_data_bm_id() {
+        $res = array();
+        $query =
+        "SELECT gd.bowstyle_id, gd.gamemode_id
+        FROM {$this->table_name} l
+        LEFT JOIN gameset gs
+        ON l.gameset_id = gs.gameset_id
+        LEFT JOIN gamedraw gd
+        ON gs.gamedraw_id = gd.gamedraw_id";
+
+        if ($result = $this->connection->query($query)) {
+            $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+            if ($row['bowstyle_id'] != NULL && $row['gamemode_id'] != NULL) {
+                $res['bowstyle_id'] = $row['bowstyle_id'];
+                $res['gamemode_id'] = $row['gamemode_id'];
+            }
+        }
+        return $res;
+    }
+
+    /**
      * Get Style Bowstyle ID
      *
      *

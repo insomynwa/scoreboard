@@ -55,13 +55,13 @@ class Scoreboard_Style_Model_Class extends Model_Class {
     }
 
     /**
-     * Get Style Info
+     * Active Style Info
      *
      * @param integer $style_id
-     * @return array [status,bowstyle_name,style_name]
+     * @return array [ 'bowstyle_name', 'style_name' ]
      */
-    public function get_info( $style_id = 0) {
-        $res = [ 'status' => false];
+    public function active_style_info( $style_id = 0) {
+        $res = array();
         $sql =
         "SELECT bs.bowstyle_name, ss.style_name
         FROM {$this->table_name} ss
@@ -69,8 +69,7 @@ class Scoreboard_Style_Model_Class extends Model_Class {
         WHERE ss.id = {$style_id}";
 
         if ($result = $this->connection->query( $sql )) {
-            $res['status'] = $result->num_rows == 1;
-            if($res['status']){
+            if($result->num_rows == 1){
                 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
                 $res['bowstyle_name'] = $row['bowstyle_name'];
                 $res['style_name'] = $row['style_name'];
@@ -80,47 +79,21 @@ class Scoreboard_Style_Model_Class extends Model_Class {
     }
 
     /**
-     * Get Style List By Bowstyle ID
+     * Style Config by ID
      *
-     * return [ status, styles]
-     * @return array
+     *
+     * @param int $style_id Style ID
+     * @return array [style_config]
      */
-    public function list($bowstyle_id) {
+    public function style_config($style_id=0) {
         $res = array();
-
-        $query = "SELECT id, style_name FROM {$this->table_name} WHERE bowstyle_id={$bowstyle_id}";
-
-        if ($result = $this->connection->query($query)) {
-            if ($result->num_rows > 0) {
-                $i = 0;
-                while ($row = $result->fetch_assoc()) {
-                    $res['styles'][$i]['id'] = $row['id'];
-                    $res['styles'][$i]['name'] = $row['style_name'];
-                    $i++;
-                }
-            }
-        }
-
-        return $res;
-    }
-
-    /**
-     * Get Style Config by ID
-     *
-     *
-     * @param int $style_id
-     * @return array [status,style_config]
-     */
-    public function get_config($style_id=0) {
-        $res = array('status' => false);
 
         $query = "SELECT style_config FROM {$this->table_name} WHERE id={$style_id}";
 
         if ($result = $this->connection->query($query)) {
-            $res['status'] = $result->num_rows == 1;
-            if ($res['status']) {
+            if ( $result->num_rows == 1 ) {
                 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-                $res['style_config'] = $row['style_config'];
+                return $row['style_config'];
             }
         }
 
@@ -209,7 +182,7 @@ class Scoreboard_Style_Model_Class extends Model_Class {
      *
      * @param integer $bowstyle_id Bowstyle ID
      * @param integer $style_id Bowstyle ID
-     * @return array [ 'styles' ]
+     * @return array [ 'id', 'name', 'selected' ]
      */
     public function style_option_data($bowstyle_id = 0, $style_id=0){
         $res = array();

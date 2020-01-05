@@ -1,5 +1,5 @@
 
-6.5.0 24-Dec-2019
+6.5.0 5-Jan-2020
     [+] Deactivate Style
     [+] Tooltips
     [*] Live Scoreboard

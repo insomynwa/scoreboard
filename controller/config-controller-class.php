@@ -86,7 +86,6 @@ class Config_Controller_Class extends Controller_Class {
         // Scoreboard Style
         $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($this->connection);
         // $elements = ['bowstyle'/* ,'option' */,'preview','info','config'];
-        // $scoreboard_style_element = $scoreboard_style_oc->get_elements($elements, $bowstyle_id, $live_style_id);
         $scoreboard_style_oc->set_bowstyle_id($bowstyle_id);
         $scoreboard_style_oc->set_style_id($live_style_id);
         $scoreboard_style_data = $scoreboard_style_oc->get_data(['option','bowstyle','preview', 'config', 'info']);
@@ -99,11 +98,9 @@ class Config_Controller_Class extends Controller_Class {
         // Gamedraw
         $gamedraw_oc = new Gamedraw_Controller_Class($this->connection);
         $gamedraw_element = $gamedraw_oc->get_data(['table','option']);
-        // $gamedraw_element = $gamedraw_oc->get_elements(['table','option'],'',0,0,true);
 
         // Gameset
         $gameset_oc = new Gameset_Controller_Class($this->connection);
-        // $gameset_element = $gameset_oc->get_elements(['table'],'',0,true);
         $gameset_element = $gameset_oc->get_data(['table']);
 
         $result = array_merge(

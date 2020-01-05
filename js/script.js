@@ -355,20 +355,45 @@ $(document).ready(function() {
     };
 
     var GameStatus = {
-        loadOption: function(gamestatus_options) {
-            $("#gameset-status").html(gamestatus_options);
+        loadOption: function(opt) {
+            var str = ``;
+            if(opt.length != 0){
+                for(i=0; i<opt.length; i++){
+                    str += `<option value="${opt[i]['id']}">${opt[i]['name']}</option>`;
+                }
+            }
+            $("#gameset-status").html(str);
+            // $("#gameset-status").html(gamestatus_options);
         }
     };
 
     var GameMode = {
-        loadRadio: function(gamemode_radios) {
-            $("#gamedraw-radio-area").html(gamemode_radios);
+        loadRadio: function(radios) {
+            var str = ``;
+            if(radios.length != 0){
+                for(i=0; i<radios.length; i++){
+                    str += `<div class="form-check form-check-inline">
+                    <input type="radio" name="gamedraw_gamemode" class="gamedraw-gamemode-cls form-check-input" value="${radios[i]['id']}" id="gamedraw-gamemode-${(radios[i]['name']).toLowerCase()}"><label for="gamedraw-gamemode-${(radios[i]['name']).toLowerCase()}" class="form-check-label text-gray-4">${radios[i]['name']}</label>
+                    </div>`;
+                }
+            }
+            $("#gamedraw-radio-area").html(str);
+            // $("#gamedraw-radio-area").html(gamemode_radios);
         }
     };
 
     var BowStyle = {
-        loadRadio: function(bowstyle_radios) {
-            $("#gamedraw-radio-bowstyle-area").html(bowstyle_radios);
+        loadRadio: function(radios) {
+            var str = ``;
+            if(radios.length != 0){
+                for(i=0; i<radios.length; i++){
+                    str += `<div class="form-check form-check-inline">
+                    <input type="radio" name="gamedraw_bowstyle" class="gamedraw-bowstyle-cls form-check-input" value="${radios[i]['id']}" id="gamedraw-bowstyle-${(radios[i]['name']).toLowerCase()}"><label for="gamedraw-bowstyle-${(radios[i]['name']).toLowerCase()}" class="form-check-label text-gray-4">${radios[i]['name']}</label>
+                    </div>`;
+                }
+            }
+            $("#gamedraw-radio-bowstyle-area").html(str);
+            // $("#gamedraw-radio-bowstyle-area").html(bowstyle_radios);
         }
     };
 
@@ -1168,7 +1193,7 @@ $(document).ready(function() {
 
     var Team = {
         init: function() {
-            Team.bindEvents();
+            this.bindEvents();
         },
         bindEvents: function() {
             $("#create-team-button").click(this.setupCreateForm);
@@ -1177,15 +1202,46 @@ $(document).ready(function() {
                 .on("click", ".team-delete-btn-cls", this.setupDeleteForm)
                 .on("click", ".team-update-btn-cls", this.setupUpdateForm);
         },
-        loadTable: function(team_table) {
-            if (team_table != "") $("#team-table tbody").html(team_table);
-        },
-        loadOption: function(options) {
-            if (options != "") {
-                $("#player-team").html(options);
-                $("#gamedraw-team-a").html(options);
-                $("#gamedraw-team-b").html(options);
+        loadTable: function(table) {
+            var str = `<td class="text-white font-weight-light border-info">-</td>
+            <td class="text-white font-weight-light border-info">-</td>
+            <td class="text-white font-weight-light border-info">-</td>`;
+            if(table.length != 0){
+                str = '';
+                for(i=0; i<table.length; i++){
+                    str += `<tr>
+                    <td class="text-gray-4 border-gray-3 pl-0">
+                        <button data-teamid="${table[i]['id']}" class="btn btn-sm btn-outline-danger border-0 rounded-circle font-weight-bolder team-delete-btn-cls">X</button>
+                        <button data-teamid="${table[i]['id']}" class="btn btn-sm btn-outline-warning-2 border-0 rounded-circle team-update-btn-cls"><i class="fas fa-pen"></i></button>
+                    </td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">
+                        <img style="max-height:24px;" src="uploads/${table[i]['logo']}">
+                    </td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">
+                        <span>${table[i]['name']}</span>
+                    </td>
+                    </tr>`;
+                }
+
             }
+            $("#team-table tbody").html(str);
+            // if (table != "") $("#team-table tbody").html(table);
+        },
+        loadOption: function(teams) {
+            var str = `<option value="0">Choose</option>`;
+            if(teams.length != 0){
+                for(i=0; i<teams.length; i++){
+                    str += `<option value="${teams[i]['id']}">${teams[i]['name']}</option>`;
+                }
+            }
+            $("#player-team").html(str);
+            $("#gamedraw-team-a").html(str);
+            $("#gamedraw-team-b").html(str);
+            // if (options != "") {
+            //     $("#player-team").html(options);
+            //     $("#gamedraw-team-a").html(options);
+            //     $("#gamedraw-team-b").html(options);
+            // }
         },
         loadForm: function(teamdata, modeget) {
             var modalTitle = "";
@@ -1200,8 +1256,7 @@ $(document).ready(function() {
                 $("#team-desc")
                     .val(teamdata.desc)
                     .removeAttr("disabled");
-                $("#team-logo").val("");
-                $("#team-logo").removeAttr("disabled");
+                $("#team-logo").val("").removeAttr("disabled");
                 $("#team-id").val(teamdata.id);
                 $("#team-action").val("update");
                 $("#team-submit").val("Save");
@@ -1216,8 +1271,7 @@ $(document).ready(function() {
                 $("#team-desc")
                     .val("")
                     .removeAttr("disabled");
-                $("#team-logo").val("");
-                $("#team-logo").removeAttr("disabled");
+                $("#team-logo").val("").removeAttr("disabled");
                 $("#team-id").val(0);
                 $("#team-action").val("create");
                 $("#team-submit").val("Create");
@@ -1261,7 +1315,7 @@ $(document).ready(function() {
                 url: "/scoreboard/controller.php?team_get=single&id=" + teamid,
                 success: function(data) {
                     if (data.status) {
-                        Team.loadForm(data.team, modeget);
+                        Team.loadForm(data.team['modal_form'], modeget);
                     }
                 }
             });
@@ -1292,7 +1346,7 @@ $(document).ready(function() {
                             $.ajax({
                                 type: "GET",
                                 dataType: "json",
-                                url: "/scoreboard/controller.php?team_get=new",
+                                url: "/scoreboard/controller.php?team_get=new_list",
                                 success: function(data) {
                                     if (data.status) {
                                         Team.loadTable(data.team["table"]);
@@ -1373,7 +1427,7 @@ $(document).ready(function() {
 
     var Player = {
         init: function() {
-            Player.bindEvents();
+            this.bindEvents();
         },
         bindEvents: function() {
             $("#create-player-button").click(this.setupCreateForm);
@@ -1395,14 +1449,44 @@ $(document).ready(function() {
             var playerid = $(this).attr("data-playerid");
             Player.ajaxSetupForm(playerid, "update");
         },
-        loadTable: function(player_table) {
-            if (player_table != "") $("#player-table tbody").html(player_table);
-        },
-        loadOption: function(options) {
-            if (options != "") {
-                $("#gamedraw-player-a").html(options);
-                $("#gamedraw-player-b").html(options);
+        loadTable: function(table) {
+            var str = `<td class="text-white font-weight-light border-info">-</td>
+            <td class="text-white font-weight-light border-info">-</td>
+            <td class="text-white font-weight-light border-info">-</td>`;
+            if(table.length != 0){
+                str = '';
+                for(i=0; i<table.length; i++){
+                    str += `<tr>
+                    <td class="text-gray-4 border-gray-3 pl-0">
+                        <button data-playerid="${table[i]['id']}" class="btn btn-sm btn-outline-danger border-0 rounded-circle font-weight-bolder player-delete-btn-cls">X</button>
+                        <button data-playerid="${table[i]['id']}" class="btn btn-sm btn-outline-warning-2 border-0 rounded-circle player-update-btn-cls"><i class="fas fa-pen"></i></button>
+                    </td>
+                    <td class="text-info font-weight-light border-gray-3">
+                        <span>${table[i]['team_name']}</span>
+                    </td>
+                    <td class="text-gray-4 font-weight-light border-gray-3">
+                        <span>${table[i]['name']}</span>
+                    </td>
+                    </tr>`;
+                }
+
             }
+            $("#player-table tbody").html(str);
+            // if (player_table != "") $("#player-table tbody").html(player_table);
+        },
+        loadOption: function(players) {
+            var str = `<option value="0">Choose</option>`;
+            if(players.length != 0){
+                for(i=0; i<players.length; i++){
+                    str += `<option value="${players[i]['id']}">${players[i]['name']}</option>`;
+                }
+            }
+            $("#gamedraw-player-a").html(str);
+            $("#gamedraw-player-b").html(str);
+            // if (options != "") {
+            //     $("#gamedraw-player-a").html(options);
+            //     $("#gamedraw-player-b").html(options);
+            // }
         },
         loadForm: function(playerdata, modeget) {
             var modalTitle = "";
@@ -1453,7 +1537,7 @@ $(document).ready(function() {
                     playerid,
                 success: function(data) {
                     if (data.status) {
-                        Player.loadForm(data.player, modeget);
+                        Player.loadForm(data.player['modal_form'], modeget);
                     }
                 }
             });
@@ -1489,7 +1573,7 @@ $(document).ready(function() {
                         $.ajax({
                             type: "GET",
                             dataType: "json",
-                            url: "/scoreboard/controller.php?player_get=new",
+                            url: "/scoreboard/controller.php?player_get=new_list",
                             success: function(data) {
                                 if (data.status) {
                                     Player.loadTable(data.player["table"]);

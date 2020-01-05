@@ -33,25 +33,23 @@ class Bowstyle_Model_Class extends Model_Class {
     /**
      * Create Default Bowstyle
      *
-     * @param array $default_data Bowstyle Default Data
      * @return boolean
      */
-    public function create_default($default_data) {
-        $data = $this->merge_data($default_data);
+    public function create_default() {
 
         $sql =
             "INSERT INTO {$this->table_name} (bowstyle_id,bowstyle_name)
-        VALUES (" . $data['id'] . ",'" . $data['name'] . "')";
+        VALUES (1,'Recurve'),(2,'Compound')";
 
         return ($this->connection->query($sql) === TRUE);
     }
 
     /**
-     * Bowstyle List
+     * Radio Data
      *
-     * @return array empty | array[ bowstyles[] ]
+     * @return array empty | [ id, name ]
      */
-    public function list() {
+    public function radio_data() {
         $res = array();
 
         $query = "SELECT bowstyle_id, bowstyle_name FROM {$this->table_name}";
@@ -60,8 +58,8 @@ class Bowstyle_Model_Class extends Model_Class {
             if ($result->num_rows > 0) {
                 $i = 0;
                 while ($row = $result->fetch_assoc()) {
-                    $res['bowstyles'][$i]['id'] = $row['bowstyle_id'];
-                    $res['bowstyles'][$i]['name'] = $row['bowstyle_name'];
+                    $res[$i]['id'] = $row['bowstyle_id'];
+                    $res[$i]['name'] = $row['bowstyle_name'];
 
                     $i++;
                 }

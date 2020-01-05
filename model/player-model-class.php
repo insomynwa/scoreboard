@@ -93,12 +93,12 @@ class Player_Model_Class {
     }
 
     /**
-     * Get Player List
+     * Table Data
      *
      *
-     * @return array [status,players]
+     * @return array [ id, name, team_name ]
      */
-    public function list() {
+    public function table_data() {
         $res = array();
 
         $query = "SELECT p.player_id, p.player_name, t.team_name
@@ -111,12 +111,46 @@ class Player_Model_Class {
 
                 $i = 0;
                 while ($row = $result->fetch_assoc()) {
-                    $res['players'][$i]['id'] = $row['player_id'];
-                    $res['players'][$i]['name'] = $row['player_name'];
+                    $res[$i]['id'] = $row['player_id'];
+                    $res[$i]['name'] = $row['player_name'];
                     if ($row['team_name'] == NULL) {
-                        $res['players'][$i]['team_name'] = 'INDIVIDU';
+                        $res[$i]['team_name'] = 'INDIVIDU';
                     } else {
-                        $res['players'][$i]['team_name'] = $row['team_name'];
+                        $res[$i]['team_name'] = $row['team_name'];
+                    }
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * Option Data
+     *
+     *
+     * @return array [ id, name, team_name ]
+     */
+    public function option_data() {
+        $res = array();
+
+        $query = "SELECT p.player_id, p.player_name, t.team_name
+        FROM {$this->table_name} p
+        LEFT JOIN team t ON p.team_id = t.team_id
+        ORDER BY t.team_name ASC";
+
+        if ($result = $this->connection->query($query)) {
+            if ($result->num_rows > 0) {
+
+                $i = 0;
+                while ($row = $result->fetch_assoc()) {
+                    $res[$i]['id'] = $row['player_id'];
+                    $res[$i]['name'] = $row['player_name'];
+                    if ($row['team_name'] == NULL) {
+                        $res[$i]['team_name'] = 'INDIVIDU';
+                    } else {
+                        $res[$i]['team_name'] = $row['team_name'];
                     }
                     $i++;
                 }

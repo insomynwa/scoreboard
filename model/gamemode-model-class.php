@@ -15,57 +15,23 @@ class Gamemode_Model_Class extends Model_Class {
     }
 
     /**
-     * Get Game Mode List
+     * Radio Data
      *
-     * return [ status, gamemodes ]
+     * return [ id, name ]
      * @return array
      */
-    public function get_gamemode_list() {
-        $query = "SELECT gamemode_id, gamemode_name, gamemode_desc FROM " . $this->table_name;
-
-        $result = $this->connection->query($query);
-
-        $res = array('gamemodes' => array(), 'status' => $result->num_rows > 0);
-
-        if ($res['status']) {
-            $i = 0;
-            $gamemodes = null;
-            while ($row = $result->fetch_assoc()) {
-                $gamemodes[$i]['id'] = $row['gamemode_id'];
-                $gamemodes[$i]['name'] = $row['gamemode_name'];
-                $gamemodes[$i]['desc'] = $row['gamemode_desc'];
-
-                $i++;
-            }
-
-            $res = array(
-                'gamemodes' => $gamemodes,
-                'status' => true,
-            );
-        }
-
-        return $res;
-    }
-
-    /**
-     * Get Game Mode List
-     *
-     * return [status,gamemodes]
-     * @return array
-     */
-    public function get_list() {
+    public function radio_data() {
         $res = array();
 
         $query = "SELECT gamemode_id, gamemode_name FROM {$this->table_name}";
 
         if ($result = $this->connection->query($query)) {
             if ($result->num_rows > 0) {
-                $res['status'] = true;
 
                 $i = 0;
                 while ($row = $result->fetch_assoc()) {
-                    $res['gamemodes'][$i]['id'] = $row['gamemode_id'];
-                    $res['gamemodes'][$i]['name'] = $row['gamemode_name'];
+                    $res[$i]['id'] = $row['gamemode_id'];
+                    $res[$i]['name'] = $row['gamemode_name'];
 
                     $i++;
                 }

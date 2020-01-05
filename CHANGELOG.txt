@@ -1,11 +1,7 @@
 
 6.5.0 24-Dec-2019
-    [*] General
-        - OOP
-    [*] Scoreboard Form
-        - Style
-        - Fix Game Scores & Set Scores
-        - Fix New Style
+    [+] Deactivate Style
+    [+] Tooltips
     [*] Live Scoreboard
         - Fix Background
     [*] Drop Dashboard

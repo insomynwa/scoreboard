@@ -10,11 +10,10 @@ class Team_Controller_Class {
     private $connection;
     private $model;
 
-    private $gamemode_id;
-
-    private $json_key;
-    private $table_json_key;
-    private $option_json_key;
+    private $root_key;
+    private $table_key;
+    private $option_key;
+    private $modal_form_key;
 
     private $item_template_name;
     private $item_template_loc;
@@ -24,6 +23,9 @@ class Team_Controller_Class {
 
     private $option_template_name;
     private $option_template_loc;
+
+    private $id;
+    private $gamemode_id;
 
     /**
      * Class Constructor
@@ -36,9 +38,10 @@ class Team_Controller_Class {
 
         $this->gamemode_id = 1;
 
-        $this->json_key = 'team';
-        $this->table_json_key = 'table';
-        $this->option_json_key = 'option';
+        $this->root_key = 'team';
+        $this->table_key = 'table';
+        $this->option_key = 'option';
+        $this->modal_form_key = 'modal_form';
 
         $this->init_templates();
     }
@@ -60,75 +63,79 @@ class Team_Controller_Class {
     }
 
     /**
-     * Get Elements
+     * Set ID
      *
-     * @param array $elements Element [ table, option ]
-     * @param string $custom_parent_key Custom Parent Key
-     * @param integer $selected_item Selected Item
-     * @param boolean $value_only If TRUE, return children
-     * @return array empty | string
+     * @param integer $team_id Team ID
+     * @return void
      */
-    public function get_elements($elements = array(), $custom_parent_key = '', $selected_item = 0, $value_only = false) {
-        $result = array();
-        if (empty($elements)) {
-            return $result;
-        }
-
-        $parent_key = '';
-        if ($custom_parent_key == '') {
-            $parent_key = $this->json_key;
-        } else {
-            $parent_key = $custom_parent_key;
-        }
-
-        if (in_array($this->table_json_key, $elements)) {
-            // $result[$this->json_key]['radio'] = $this->get_radio('radio')['radio'];
-            $result[$parent_key][$this->table_json_key] = $this->render_loop_element($this->table_json_key, '', $selected_item, $value_only);
-        }
-
-        if (in_array($this->option_json_key, $elements)) {
-            // $result[$this->json_key]['radio'] = $this->get_radio('radio')['radio'];
-            $result[$parent_key][$this->option_json_key] = $this->render_loop_element($this->option_json_key, '', $selected_item, $value_only);
-        }
-        return $result;
+    public function set_id($team_id=0){
+        $this->id = $team_id;
     }
 
     /**
-     * Render Element
+     * Get Table Data
      *
-     * @param string $element_type Element Type
-     * @param string $custom_key Key for JSON
-     * @param integer $selected_item Selected Item
-     * @param boolean $value_only If it's TRUE, return string. Otherwise return Array[$key]
-     * @return mixed string | array
+     * @return array
      */
-    private function render_loop_element($element_type = '', $custom_key = '', $selected_item = 0, $value_only = false) {
-        $data_list = $this->model->list();
-        $key = '';
-        $element_pretext = '';
-        $template_loc = '';
-        if ($custom_key != '') {
-            $key = $custom_key;
-        } else {
-            if ($element_type == $this->option_json_key) {
-                $key = $this->option_json_key;
-                $element_pretext = '<option value="0">Choose</option>';
-                $template_loc = $this->option_template_loc;
-            } else if ($element_type == $this->table_json_key) {
-                $key = $this->table_json_key;
-                $template_loc = $this->item_template_loc;
-            }
+    private function get_table_data(){
+        return $this->model->table_data();
+    }
+
+    /**
+     * Get Option Data
+     *
+     * @return array
+     */
+    private function get_option_data(){
+        return $this->model->option_data();
+    }
+
+    /**
+     * Get Model Form Data
+     *
+     * @param integer $team_id Team ID
+     * @return array result
+     */
+    private function get_modal_form_data(){
+        return $this->model->modal_form_data($this->id);
+    }
+
+    /**
+     * Get Data
+     *
+     * @param array $req_data Requested Data
+     * @return array
+     */
+    public function get_data( $req_data=array( 'option', 'table', 'modal_form')){
+        $result = array();
+        $result[$this->root_key] = array();
+        $root_res = $result[$this->root_key];
+
+        if( empty($req_data) ){
+            return $result;
         }
-        $element_value = Tools::create_loop_element(
-            $data_list, 'teams', $key, $template_loc, $element_pretext, $selected_item
-        );
-        if ($value_only) {
-            if($element_type == $this->table_json_key && $element_value[$key] == ''){
-                return Tools::template($this->no_item_template_loc, null);
-            }
-            return $element_value[$key];
+
+        $data = null;
+        $table_data = null;
+
+        if(in_array($this->table_key,$req_data)){
+            $table_data = $this->get_table_data();
+            $root_res[$this->table_key] = $table_data;
         }
-        return $element_value;
+
+        if(in_array($this->option_key,$req_data)){
+            $data = is_null($table_data) ? $this->get_option_data() : $table_data;
+            $root_res[$this->option_key] = $data;
+        }
+
+        if (in_array($this->modal_form_key, $req_data)) {
+            $data = $this->get_modal_form_data();
+            $root_res[$this->modal_form_key] = $data;
+        }
+
+        $result[$this->root_key] = $root_res;
+
+        return $result;
     }
 
     /**
@@ -465,29 +472,6 @@ class Team_Controller_Class {
     }
 
     /**
-     * Get Model Form Data
-     *
-     * @param integer $team_id Team ID
-     * @return array result
-     */
-    public function get_modal_form_data($team_id=0){
-        $result = [ 'status' => false ];
-        if($team_id==0){
-            $result['message'] = 'ERROR: get_modal_form_data Team ID:0';
-            return $result;
-        }
-        $data = $this->model->modal_form_data($team_id);
-        if(empty($data)){
-            $result['message'] = 'ERROR: get_modal_form_data Empty Data';
-            return $result;
-        }
-        $result['status'] = true;
-        $result[$this->json_key] = $data;
-
-        return $result;
-    }
-
-    /**
      * Get Scoreboard Form Data
      *
      * @param integer $team_id Team ID
@@ -552,99 +536,20 @@ if (isset($_GET['team_get'])) {
     if (Tools::is_valid_string_request($request_value)) {
         $database = new Database();
         $connection = $database->getConnection();
+        $team_oc = new Team_Controller_Class($connection);
         if ($request_value == 'single') {
             if( isset($_GET['id'])) {
-                $team_oc = new Team_Controller_Class($connection);
                 $team_id = is_numeric($_GET['id']) ? $_GET['id'] : 0;
-                $result = $team_oc->get_modal_form_data($team_id);
+                $team_oc->set_id($team_id);
+                $team_data = $team_oc->get_data(['modal_form']);
             }
-            // $teamid = isset($_GET['id']) ? $_GET['id'] : 0;
-            // if (is_numeric($teamid) > 0) {
-
-            //     $obj_team = new Team_Model_Class($connection);
-            //     $response = $obj_team->get_by_id($teamid);
-
-            //     if ($response['status']) {
-            //         $result['status'] = $response['status'];
-            //         $result['team'] = $response['team'];
-            //     } else {
-            //         $result['message'] = "ERROR: Load Team";
-            //     }
-
-            // } else {
-            //     $result['message'] = "ERROR: id must be numeric";
-            // }
-        } else if ($request_value == 'new') {
-            /*
-            load table
-            load options
-             */
-            // $result = $team_oc->get_team_elements(true, true);
-            $team_oc = new Team_Controller_Class($connection);
-            $team_element = $team_oc->get_elements(['table','option'],'',0,true);
-            $result = array_merge($result, $team_element);
+        } else if ($request_value == 'new_list') {
+            $team_data = $team_oc->get_data(['table','option']);
         }
-        // else if ($request_value == 'list') {
-
-        //     $team = new Team_Model_Class($connection);
-        //     $result_query = $team->get_team_list();
-        //     if ($result_query['status']) {
-        //         $result['status'] = true;
-        //         $result['has_value'] = $result_query['has_value'];
-        //         if ($result['has_value']) {
-        //             $item_template = TEMPLATE_DIR . 'team/item.php';
-        //             $team_option_template = TEMPLATE_DIR . 'team/option.php';
-        //             $render_item = '';
-        //             $render_option = '<option value="0">Select a team</option>';
-        //             foreach ($result_query['teams'] as $item) {
-        //                 $render_item .= Tools::template($item_template, $item);
-        //                 $render_option .= Tools::template($team_option_template, $item);
-        //             }
-        //             $result['teams'] = $render_item;
-        //             $result['team_option'] = $render_option;
-        //         } else {
-        //             $item_template = TEMPLATE_DIR . 'team/no-item.php';
-        //             $render_item = '';
-        //             $render_option = '<option value="0">Select a team</option>';
-        //             $render_item .= Tools::template($item_template, null);
-        //             $result['teams'] = $render_item;
-        //             $result['team_option'] = $render_option;
-        //             $result['message'] = "has no value";
-        //         }
-        //     } else {
-        //         $result['message'] = "ERROR: status 0";
-        //     }
-        // }
+        $result = array_merge($result, $team_data);
         $database->conn->close();
     }
     echo json_encode($result);
-
-    /* else if( $_GET['team_get'] == 'option') {
-$database = new Database();
-$db = $database->getConnection();
-
-$team = new Team_Model_Class($db);
-$result_query = $team->get_team_option();
-if( $result_query['status'] ){
-$result['status'] = true;
-$result['has_value'] = $result_query['has_value'];
-if($result['has_value']){
-$item_template = TEMPLATE_DIR . 'team/option.php';
-$render_item = '<option value="0">Select a team</option>';
-foreach( $result_query['teams'] as $item){
-$render_item .= Tools::template( $item_template, $item);
-}
-$result['teams'] = $render_item;
-}else{
-$render_item = '<option value="0">Select a team</option>';
-$result['teams'] = $render_item;
-$result['message'] = "has no value";
-}
-}else{
-$result['message'] = "ERROR: status 0";
-}
-}
-echo json_encode($result); */
 }
 
 ?>

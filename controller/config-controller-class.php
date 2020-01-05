@@ -76,13 +76,13 @@ class Config_Controller_Class extends Controller_Class {
 
         // Game Status
         $gamestatus_oc = new Gamestatus_Controller_Class($this->connection);
-        $gamestatus_element = $gamestatus_oc->get_elements(['option']);
+        $gamestatus_element = $gamestatus_oc->get_data(['option']);
         // // Game Mode
         $gamemode_oc = new Gamemode_Controller_Class($this->connection);
-        $gamemode_element = $gamemode_oc->get_elements(['radio']);
+        $gamemode_element = $gamemode_oc->get_data(['radio']);
         // Bowstyle
         $bowstyle_oc = new Bowstyle_Controller_Class($this->connection);
-        $bowstyle_element = $bowstyle_oc->get_elements(['radio'],'',0,true);
+        $bowstyle_element = $bowstyle_oc->get_data(['radio']);
         // Scoreboard Style
         $scoreboard_style_oc = new Scoreboard_Style_Controller_Class($this->connection);
         // $elements = ['bowstyle'/* ,'option' */,'preview','info','config'];
@@ -92,10 +92,10 @@ class Config_Controller_Class extends Controller_Class {
         $scoreboard_style_data = $scoreboard_style_oc->get_data(['option','bowstyle','preview', 'config', 'info']);
         // Team
         $team_oc = new Team_Controller_Class($this->connection);
-        $team_element = $team_oc->get_elements(['table','option'],'',0,true);
+        $team_element = $team_oc->get_data(['table','option']);
         // Player
         $player_oc = new Player_Controller_Class($this->connection);
-        $player_element = $player_oc->get_elements(['table','option'],'',0,true);
+        $player_element = $player_oc->get_data(['table','option']);
         // Gamedraw
         $gamedraw_oc = new Gamedraw_Controller_Class($this->connection);
         $gamedraw_element = $gamedraw_oc->get_data(['table','option']);

@@ -41,12 +41,12 @@ class Team_Model_Class {
     }
 
     /**
-     * Team List
+     * Table Data
      *
      *
-     * @return array [teams]
+     * @return array [ 'id, logo, name ]
      */
-    public function list() {
+    public function table_data() {
         $res = array();
 
         $query = "SELECT team_id, team_logo, team_name
@@ -58,9 +58,38 @@ class Team_Model_Class {
 
                 $i = 0;
                 while ($row = $result->fetch_assoc()) {
-                    $res['teams'][$i]['id'] = $row['team_id'];
-                    $res['teams'][$i]['logo'] = $row['team_logo'] == '' ? 'no-image.png' : $row['team_logo'];
-                    $res['teams'][$i]['name'] = $row['team_name'];
+                    $res[$i]['id'] = $row['team_id'];
+                    $res[$i]['logo'] = $row['team_logo'] == '' ? 'no-image.png' : $row['team_logo'];
+                    $res[$i]['name'] = $row['team_name'];
+
+                    $i++;
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * Option Data
+     *
+     *
+     * @return array [ 'id, name ]
+     */
+    public function option_data() {
+        $res = array();
+
+        $query = "SELECT team_id, team_name
+        FROM {$this->table_name}
+        ORDER BY team_name ASC";
+
+        if ($result = $this->connection->query($query)) {
+            if ($result->num_rows > 0) {
+
+                $i = 0;
+                while ($row = $result->fetch_assoc()) {
+                    $res[$i]['id'] = $row['team_id'];
+                    $res[$i]['name'] = $row['team_name'];
 
                     $i++;
                 }

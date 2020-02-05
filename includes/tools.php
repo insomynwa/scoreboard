@@ -35,6 +35,22 @@ class Tools {
     }
 
     /**
+     * Format Score
+     *
+     * @param mixed $post_input
+     * @return mixed
+     */
+    public static function format_score($post_input) {
+        $val = '';
+        if(isset($post_input)) {
+            if( strlen($post_input) < 4 && strlen($post_input) > 0) {
+                $val = $post_input;
+            }
+        }
+        return $val;
+    }
+
+    /**
      * Get Default Scoreboard Form Style Config
      *
      * @return array
@@ -93,7 +109,7 @@ class Tools {
         }
 
         $score_config['0']['setscore']['label'] = "";
-        $score_config['1']['setscore']['label'] = "Total";
+        $score_config['1']['setscore']['label'] = "";
         $score_config['2']['setscore']['label'] = "";
 
         $score_config['0']['gamescore']['label'] = "Total";
@@ -102,10 +118,10 @@ class Tools {
 
         $score_config['0']['logo']['visibility'] = true; //false
         $score_config['0']['logo']['visibility_class'] = '';
-        $score_config['1']['logo']['visibility'] = false; //false
-        $score_config['1']['logo']['visibility_class'] = 'hide';
-        $score_config['2']['logo']['visibility'] = false; //false
-        $score_config['2']['logo']['visibility_class'] = 'hide';
+        $score_config['1']['logo']['visibility'] = true; //false
+        $score_config['1']['logo']['visibility_class'] = '';
+        $score_config['2']['logo']['visibility'] = true; //false
+        $score_config['2']['logo']['visibility_class'] = '';
 
         $score_config['0']['timer']['visibility'] = true; //false
         $score_config['0']['timer']['visibility_class'] = '';
@@ -116,24 +132,24 @@ class Tools {
 
         $score_config['0']['score4']['visibility'] = true; //false
         $score_config['0']['score4']['visibility_class'] = '';
-        $score_config['1']['score4']['visibility'] = false; //false
-        $score_config['1']['score4']['visibility_class'] = 'hide';
-        $score_config['2']['score4']['visibility'] = false; //false
-        $score_config['2']['score4']['visibility_class'] = 'hide';
+        $score_config['1']['score4']['visibility'] = true; //false
+        $score_config['1']['score4']['visibility_class'] = '';
+        $score_config['2']['score4']['visibility'] = true; //false
+        $score_config['2']['score4']['visibility_class'] = '';
 
         $score_config['0']['score5']['visibility'] = true; //false
         $score_config['0']['score5']['visibility_class'] = '';
-        $score_config['1']['score5']['visibility'] = false; //false
-        $score_config['1']['score5']['visibility_class'] = 'hide';
-        $score_config['2']['score5']['visibility'] = false; //false
-        $score_config['2']['score5']['visibility_class'] = 'hide';
+        $score_config['1']['score5']['visibility'] = true; //false
+        $score_config['1']['score5']['visibility_class'] = '';
+        $score_config['2']['score5']['visibility'] = true; //false
+        $score_config['2']['score5']['visibility_class'] = '';
 
         $score_config['0']['score6']['visibility'] = true; //false
         $score_config['0']['score6']['visibility_class'] = '';
-        $score_config['1']['score6']['visibility'] = false; //false
-        $score_config['1']['score6']['visibility_class'] = 'hide';
-        $score_config['2']['score6']['visibility'] = false; //false
-        $score_config['2']['score6']['visibility_class'] = 'hide';
+        $score_config['1']['score6']['visibility'] = true; //false
+        $score_config['1']['score6']['visibility_class'] = '';
+        $score_config['2']['score6']['visibility'] = true; //false
+        $score_config['2']['score6']['visibility_class'] = '';
 
         $score_config['0']['gamescore']['visibility'] = true; //false
         $score_config['0']['gamescore']['visibility_class'] = '';
@@ -158,10 +174,10 @@ class Tools {
 
         $score_config['0']['description']['visibility'] = true;
         $score_config['0']['description']['visibility_class'] = '';
-        $score_config['1']['description']['visibility'] = false; //false
-        $score_config['1']['description']['visibility_class'] = 'hide';
-        $score_config['2']['description']['visibility'] = false; //false
-        $score_config['2']['description']['visibility_class'] = 'hide';
+        $score_config['1']['description']['visibility'] = true; //false
+        $score_config['1']['description']['visibility_class'] = '';
+        $score_config['2']['description']['visibility'] = true; //false
+        $score_config['2']['description']['visibility_class'] = '';
 
         return $score_config;
     }

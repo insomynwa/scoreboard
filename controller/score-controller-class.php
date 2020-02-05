@@ -242,8 +242,7 @@ class Score_Controller_Class extends Controller_Class {
      * @return boolean
      */
     public function create_scores($gameset_id=0, $contestants=null){
-        $action_om =  $this->model->create_score($gameset_id, $contestants['contestant_a_id']);
-        $action_om =  $this->model->create_score($gameset_id, $contestants['contestant_b_id']) && $action_om;
+        $action_om =  $this->model->create_score($gameset_id, $contestants);
         return $action_om;
     }
 
@@ -316,14 +315,14 @@ if (isset($_POST['score_action'])) {
             'gameset_id'    => Tools::post_int($_POST[ "{$owner}gameset_id" ]),
             'score_id'      => Tools::post_int($_POST[ "{$owner}id" ]),
             'timer'         => isset($_POST[ "{$owner}timer" ]) ? str_replace("s", "", $_POST[ "{$owner}timer" ]) : 0,
-            'score_1'       => Tools::post_int($_POST[ "{$owner}score1" ]),
-            'score_2'       => Tools::post_int($_POST[ "{$owner}score2" ]),
-            'score_3'       => Tools::post_int($_POST[ "{$owner}score3" ]),
-            'score_4'       => Tools::post_int($_POST[ "{$owner}score4" ]),
-            'score_5'       => Tools::post_int($_POST[ "{$owner}score5" ]),
-            'score_6'       => Tools::post_int($_POST[ "{$owner}score6" ]),
+            'score_1'       => Tools::format_score($_POST[ "{$owner}score1" ]),
+            'score_2'       => Tools::format_score($_POST[ "{$owner}score2" ]),
+            'score_3'       => Tools::format_score($_POST[ "{$owner}score3" ]),
+            'score_4'       => Tools::format_score($_POST[ "{$owner}score4" ]),
+            'score_5'       => Tools::format_score($_POST[ "{$owner}score5" ]),
+            'score_6'       => Tools::format_score($_POST[ "{$owner}score6" ]),
             'setpoints'     => Tools::post_int($_POST[ "{$owner}setpoints" ]),
-            'score_desc'          => isset($_POST[ "{$owner}desc" ]) ? $_POST[ "{$owner}desc" ] : ''
+            'score_desc'    => isset($_POST[ "{$owner}desc" ]) ? $_POST[ "{$owner}desc" ] : ''
         ];
 
         $score_oc = new Score_Controller_Class($connection);

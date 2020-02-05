@@ -76,6 +76,10 @@ body{
     padding-left:20px;
 }
 
+#live-scoreboard img {
+    max-width: 48px;
+}
+
 .live-scoreboard-timer div{
     font-family: "Roboto Italic", sans-serif;
 }

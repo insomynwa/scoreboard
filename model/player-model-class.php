@@ -176,7 +176,7 @@ class Player_Model_Class {
             $res = array();
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
             $res['player_name'] = $row['player_name'];
-            $res['team_name'] = is_null($row['team_name']) ? '' : $row['team_name'];
+            $res['team_name'] = is_null($row['team_name']) ? '-' : $row['team_name'];
             $res['team_logo'] = is_null($row['team_logo']) ? 'no-image.png' : $row['team_logo'];
             return $res;
         }

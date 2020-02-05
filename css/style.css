@@ -94,45 +94,76 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+.form-scoreboard-logo{
+	width:40px;
+}
+
+.form-scoreboard-logo img {
+	width:36px;
+}
+
+.form-scoreboard-team,
+.form-scoreboard-player{
+	width:150px;
+}
+
+.score-field,
+.form-scoreboard-setpoint
+{
+	width:50px;
+}
+
+.form-scoreboard-setscore,
+.form-scoreboard-gamepoint,
+.form-scoreboard-gamescore
+{
+	width:60px;
+}
+
+/* .form-scoreboard-desc{
+	width:177px;
+} */
+
+.form-scoreboard-btn{
+	max-width:95px;
+}
+
 .form-scoreboard table{
 	font-weight:500;
 	color: #C2C2C2;
 	font-size:14px;
 }
 
-.form-scoreboard .table thead td{
+.form-scoreboard table th,
+.form-scoreboard table td
+{
 	text-align:center;
-}
-
-.form-scoreboard .table td{
 	border-top:0;
 	vertical-align:middle;
 }
 
-.form-scoreboard .table td:last-child{
-	text-align:center;
-}
-.form-scoreboard .table thead th{
+.form-scoreboard .table th{
 	border-bottom: 0;
-	border-top:0;
-	vertical-align:middle;
-}
-
-.form-scoreboard thead td {
 	color:#2B6986;
 }
 
-.form-scoreboard thead td.td-w {
+/* .form-scoreboard thead td.td-w {
 	color:#ffffff;
-}
+} */
 
-.form-scoreboard .table td.td-w{
+/* .form-scoreboard-desc {
+	color:#2B6986 !important;
+} */
+
+/* .form-scoreboard .table td.td-w{
 	width:150px ;
 	text-align:left;
-}
-.form-scoreboard tbody tr{
+} */
+
+/* .form-scoreboard tbody tr{
 	border-top:2px solid #2B6986;
-}
+} */
+
 .form-scoreboard tbody td{
 	border:2px solid #2B6986;
 }
@@ -145,7 +176,16 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	padding-left:15px;
 	font-weight:400;
 	letter-spacing:1px;
+	text-align:left;
 }
+
+/* .form-scoreboard-logo {
+	width: 40px;
+} */
+
+/* .form-scoreboard-logo img{
+	width:36px !important;
+} */
 
 .form-scoreboard tbody .form-scoreboard-team,
 .form-scoreboard tbody .form-scoreboard-setscore
@@ -171,17 +211,18 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 	box-shadow: 0 0 0 0 #2B6986;
 }
 
-.form-scoreboard .table td.score-field {
+/* .form-scoreboard .table td.score-field,
+.form-scoreboard .table td.form-scoreboard-setpoint
+{
 	width:50px;
-}
+} */
 
-.form-scoreboard .table td.form-scoreboard-setpoint,
-.form-scoreboard .table td.form-scoreboard-setscore,
+/* .form-scoreboard .table td.form-scoreboard-setscore,
 .form-scoreboard .table td.form-scoreboard-gamepoint,
 .form-scoreboard .table td.form-scoreboard-gamescore
- {
-	width:75px;
-}
+{
+	width:60px;
+} */
 
 .form-scoreboard tbody td.form-scoreboard-setscore,
 .form-scoreboard tbody td.form-scoreboard-gamepoint,
@@ -208,7 +249,6 @@ box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 
 .form-scoreboard tbody .form-scoreboard-submit-btn {
 	line-height:24px;
-	margin-top:3px;
 }
 
 #form-scoreboard-style .input-group-text,

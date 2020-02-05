@@ -364,6 +364,9 @@ class Scoreboard_Style_Controller_Class extends Controller_Class {
                 'delete_btn' => '',
             ];
         }
+        if($this->bowstyle_id != 0) {
+            $config['new_btn'] = '';
+        }
 
         return $config;
     }

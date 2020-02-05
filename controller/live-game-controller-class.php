@@ -304,14 +304,14 @@ class Live_Game_Controller_Class extends Controller_Class {
 
             for ($i=0; $i < sizeof($scores['contestants']); $i++){
                 $scores['contestants'][$i]['logo'] = 'uploads/no-image.png';
-                $scores['contestants'][$i]['team'] = '';
-                $scores['contestants'][$i]['player'] = '';
+                $scores['contestants'][$i]['team'] = '-';
+                $scores['contestants'][$i]['player'] = '-';
                 $scoreboard_form_data = $contestant_oc->get_scoreboard_form_data($scores['contestants'][$i]['id']);
                 if( $scoreboard_form_data ){
                     $scores['contestants'][$i]['logo'] = 'uploads/' . $scoreboard_form_data['team_logo'];
                     $scores['contestants'][$i]['team'] = $scoreboard_form_data['team_name'];
                     if( $scores['gamemode_id'] == 1 ){
-                        $scores['contestants'][$i]['player'] = '';
+                        $scores['contestants'][$i]['player'] = '-';
                     }else if( $scores['gamemode_id'] == 2){
                         $scores['contestants'][$i]['player'] = $scoreboard_form_data['player_name'];
                     }

@@ -38,7 +38,7 @@ if( $style_config['team']['visibility_class'] == '' ) {
                 <td class="form-scoreboard-gamepoint <?php echo $style_config['gamepoint']['visibility_class']; ?>"><?php echo $style_config['gamepoint']['label']; ?></td>
                 <td class="form-scoreboard-gamescore <?php echo $style_config['gamescore']['visibility_class']; ?>"><?php echo $style_config['gamescore']['label']; ?></td>
                 <td class="td-w form-scoreboard-desc <?php echo $style_config['description']['visibility_class']; ?>"><?php echo $style_config['description']['label']; ?></td>
-                <th class=""></th>
+                <th class="form-scoreboard-btn"></th>
             </tr>
         </thead>
         <tbody>
@@ -88,7 +88,7 @@ if( $style_config['team']['visibility_class'] == '' ) {
                 <td class="form-scoreboard-gamepoint <?php echo $style_config['gamepoint']['visibility_class']; ?>"><?php echo $style_config['gamepoint']['label']; ?></td>
                 <td class="form-scoreboard-gamescore <?php echo $style_config['gamescore']['visibility_class']; ?>"><?php echo $style_config['gamescore']['label']; ?></td>
                 <td class="td-w form-scoreboard-desc <?php echo $style_config['description']['visibility_class']; ?>"><?php echo $style_config['description']['label']; ?></td>
-                <th class=""></th>
+                <th class="form-scoreboard-btn"></th>
             </tr>
         </thead>
         <tbody>

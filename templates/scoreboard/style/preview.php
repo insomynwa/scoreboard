@@ -1,7 +1,4 @@
 <?php
-//$style_config $game_data
-// var_dump($game_data);
-//die;
 
 $sets_str = 'Set X';
 $sets_css_helper_class = '';

@@ -56,6 +56,15 @@ class Score_Controller_Class extends Controller_Class {
     }
 
     /**
+     * Get Scoreboard Data
+     *
+     * @return array empty | [ scores ]
+     */
+    public function get_scoreboard_data(){
+        return $this->model->scoreboard_data();
+    }
+
+    /**
      * Get Form Data
      *
      * @param integer $gamemode_id Gamemode ID
@@ -223,15 +232,6 @@ class Score_Controller_Class extends Controller_Class {
      */
     public function get_gameset_scores_id($gameset_id){
         return $this->model->gameset_scores_id($gameset_id);
-    }
-
-    /**
-     * Get Scoreboard Data
-     *
-     * @return array empty | [ scores ]
-     */
-    public function get_scoreboard_data(){
-        return $this->model->scoreboard_data();
     }
 
     /**

@@ -118,6 +118,25 @@ class Live_Game_Model_Class extends Model_Class {
     }
 
     /**
+     * Is score ready to launch
+     *
+     * @return boolean
+     */
+    public function is_ready() {
+        $res = false;
+        $query = "SELECT gameset_id, scoreboard_style_id FROM {$this->table_name} WHERE livegame_id=1";
+
+        if ($result = $this->connection->query($query)) {
+            $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+            $game_is_ready = $row['gameset_id'] > 0;
+            $style_is_ready = $row['scoreboard_style_id'] > 0;
+            $res = ($game_is_ready && $style_is_ready);
+        }
+
+        return $res;
+    }
+
+    /**
      * Clean Scoreboard Style
      *
      * @return boolean

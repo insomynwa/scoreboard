@@ -1,5 +1,5 @@
 <?php
 
-define("SCOREBOARD_VERSION", "6.6.0");
+define("SCOREBOARD_VERSION", "6.7.0");
 
 ?>

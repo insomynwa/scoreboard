@@ -80,6 +80,86 @@ class Score_Model_Class {
     }
 
     /**
+     * Scoreboard Preview Data
+     *
+     * @param integer $gamemode_id Game Mode ID
+     * @return array
+     */
+    public function scoreboard_preview_data( $gamemode_id = 0) {
+        $res = array();
+
+        $query =
+        "SELECT gd.gamedraw_id, gs.gameset_id, gd.gamemode_id, gd.bowstyle_id, gs.gameset_num, gd.contestant_a_id, gd.contestant_b_id
+        FROM livegame l
+        LEFT JOIN gameset gs ON l.gameset_id = gs.gameset_id
+        LEFT JOIN gamedraw gd ON gs.gamedraw_id = gd.gamedraw_id";
+
+        if ($result = $this->connection->query($query)) {
+            if ($result->num_rows == 1) {
+                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+                $res['gamedraw_id'] = $row['gamedraw_id'];
+                $res['gameset_id'] = $row['gameset_id'];
+                $res['gamemode_id'] = $row['gamemode_id'];
+                $res['bowstyle_id'] = $row['bowstyle_id'];
+                $res['sets']['curr_set'] = $row['gameset_num'];
+
+                $contestant_a_id = $row['contestant_a_id'];
+                $contestant_b_id = $row['contestant_b_id'];
+
+                $res['sets']['end_set'] = $this->count_gameset_per_draw($row['gamedraw_id']);
+
+                $cnt_data_a = $this->contestant_data($gamemode_id, $contestant_a_id);
+                if( !empty($cnt_data_a)){
+                    $res['contestants'][0]['logo'] = $cnt_data_a['logo'];
+                    $res['contestants'][0]['team'] = $cnt_data_a['team'];
+                    $res['contestants'][0]['player'] = $cnt_data_a['player'];
+                }
+                $cnt_data_b = $this->contestant_data($gamemode_id, $contestant_b_id);
+                if( !empty($cnt_data_b)) {
+                    $res['contestants'][1]['logo'] = $cnt_data_b['logo'];
+                    $res['contestants'][1]['team'] = $cnt_data_b['team'];
+                    $res['contestants'][1]['player'] = $cnt_data_b['player'];
+                }
+                $scr_a = $this->contestant_score($row['gameset_id'], $contestant_a_id);
+                $scr_b = $this->contestant_score($row['gameset_id'], $contestant_b_id);
+                if( !empty($scr_a)) {
+                    $res['contestants'][0]['score_timer'] = $scr_a['score_timer'];
+                    $res['contestants'][0]['score_1'] = is_null($scr_a['score_1']) ? '' : $scr_a['score_1'];
+                    $res['contestants'][0]['score_2'] = is_null($scr_a['score_2']) ? '' : $scr_a['score_2'];
+                    $res['contestants'][0]['score_3'] = is_null($scr_a['score_3']) ? '' : $scr_a['score_3'];
+                    $res['contestants'][0]['score_4'] = is_null($scr_a['score_4']) ? '' : $scr_a['score_4'];
+                    $res['contestants'][0]['score_5'] = is_null($scr_a['score_5']) ? '' : $scr_a['score_5'];
+                    $res['contestants'][0]['score_6'] = is_null($scr_a['score_6']) ? '' : $scr_a['score_6'];
+                    $res['contestants'][0]['set_scores'] = $this->total_score_per_set( [ $scr_a['score_1'], $scr_a['score_2'], $scr_a['score_3'], $scr_a['score_4'], $scr_a['score_5'], $scr_a['score_6'] ] );
+                    $res['contestants'][0]['set_points'] = $scr_a['set_points'];
+                    $res['contestants'][0]['desc'] = is_null($scr_a['score_desc']) ? '' : $scr_a['score_desc'];
+                }
+                if( !empty($scr_b)) {
+                    $res['contestants'][1]['score_timer'] = $scr_b['score_timer'];
+                    $res['contestants'][1]['score_1'] = is_null($scr_b['score_1']) ? '' : $scr_b['score_1'];
+                    $res['contestants'][1]['score_2'] = is_null($scr_b['score_2']) ? '' : $scr_b['score_2'];
+                    $res['contestants'][1]['score_3'] = is_null($scr_b['score_3']) ? '' : $scr_b['score_3'];
+                    $res['contestants'][1]['score_4'] = is_null($scr_b['score_4']) ? '' : $scr_b['score_4'];
+                    $res['contestants'][1]['score_5'] = is_null($scr_b['score_5']) ? '' : $scr_b['score_5'];
+                    $res['contestants'][1]['score_6'] = is_null($scr_b['score_6']) ? '' : $scr_b['score_6'];
+                    $res['contestants'][1]['set_scores'] = $this->total_score_per_set( [ $scr_b['score_1'], $scr_b['score_2'], $scr_b['score_3'], $scr_b['score_4'], $scr_b['score_5'], $scr_b['score_6'] ] );
+                    $res['contestants'][1]['set_points'] = $scr_b['set_points'];
+                    $res['contestants'][1]['desc'] = is_null($scr_b['score_desc']) ? '' : $scr_b['score_desc'];
+                }
+
+                $total_val_a = $this->total_score_per_draw($row['gamedraw_id'], $contestant_a_id);
+                $res['contestants'][0]['game_scores'] = $total_val_a['game_scores'];
+                $res['contestants'][0]['game_points'] = $total_val_a['game_points'];
+                $total_val_b = $this->total_score_per_draw($row['gamedraw_id'], $contestant_b_id);
+                $res['contestants'][1]['game_scores'] = $total_val_b['game_scores'];
+                $res['contestants'][1]['game_points'] = $total_val_b['game_points'];
+            }
+        }
+
+        return $res;
+    }
+
+    /**
      * Scoreboard_data
      *
      * @return array empty | [ scores ]
@@ -97,53 +177,67 @@ class Score_Model_Class {
         if ($result = $this->connection->query($query)) {
             if ($result->num_rows == 1) {
                 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-                $res['scores']['gamemode_id'] = $row['gamemode_id'];
-                $res['scores']['bowstyle_id'] = $row['bowstyle_id'];
-                $res['scores']['sets']['curr_set'] = $row['gameset_num'];
-                $res['scores']['style_config'] = $row['style_config'];
+                $gamemode_id = $row['gamemode_id'];
+                $res['gamemode_id'] = $gamemode_id;
+                $res['bowstyle_id'] = $row['bowstyle_id'];
+                $res['sets']['curr_set'] = $row['gameset_num'];
+                $res['style_config'] = $row['style_config'];
 
                 $contestant_a_id = $row['contestant_a_id'];
                 $contestant_b_id = $row['contestant_b_id'];
                 $gamedraw_id = $row['gamedraw_id'];
                 $gameset_id = $row['gameset_id'];
 
-                $res['scores']['sets']['end_set'] = $this->count_gameset_per_draw($gamedraw_id);
+                $res['sets']['end_set'] = $this->count_gameset_per_draw($gamedraw_id);
+
+                $cnt_data_a = $this->contestant_data($gamemode_id, $contestant_a_id);
+                if( !empty($cnt_data_a)){
+                    $res['contestants'][0]['logo'] = $cnt_data_a['logo'];
+                    $res['contestants'][0]['team'] = $cnt_data_a['team'];
+                    $res['contestants'][0]['player'] = $cnt_data_a['player'];
+                }
+                $cnt_data_b = $this->contestant_data($gamemode_id, $contestant_b_id);
+                if( !empty($cnt_data_b)) {
+                    $res['contestants'][1]['logo'] = $cnt_data_b['logo'];
+                    $res['contestants'][1]['team'] = $cnt_data_b['team'];
+                    $res['contestants'][1]['player'] = $cnt_data_b['player'];
+                }
 
                 $scr_a = $this->contestant_score($gameset_id, $contestant_a_id);
                 $scr_b = $this->contestant_score($gameset_id, $contestant_b_id);
                 if( !empty($scr_a)) {
-                    $res['scores']['contestants'][0]['id'] = $scr_a['contestant_id'];
-                    $res['scores']['contestants'][0]['score_timer'] = $scr_a['score_timer'];
-                    $res['scores']['contestants'][0]['score_1'] = is_null($scr_a['score_1']) ? '' : $scr_a['score_1'];
-                    $res['scores']['contestants'][0]['score_2'] = is_null($scr_a['score_2']) ? '' : $scr_a['score_2'];
-                    $res['scores']['contestants'][0]['score_3'] = is_null($scr_a['score_3']) ? '' : $scr_a['score_3'];
-                    $res['scores']['contestants'][0]['score_4'] = is_null($scr_a['score_4']) ? '' : $scr_a['score_4'];
-                    $res['scores']['contestants'][0]['score_5'] = is_null($scr_a['score_5']) ? '' : $scr_a['score_5'];
-                    $res['scores']['contestants'][0]['score_6'] = is_null($scr_a['score_6']) ? '' : $scr_a['score_6'];
-                    $res['scores']['contestants'][0]['set_scores'] = $this->total_score_per_set( [ $scr_a['score_1'], $scr_a['score_2'], $scr_a['score_3'], $scr_a['score_4'], $scr_a['score_5'], $scr_a['score_6'] ] );
-                    $res['scores']['contestants'][0]['set_points'] = $scr_a['set_points'];
-                    $res['scores']['contestants'][0]['desc'] = $scr_a['score_desc'];
+                    $res['contestants'][0]['id'] = $scr_a['contestant_id'];
+                    $res['contestants'][0]['score_timer'] = $scr_a['score_timer'];
+                    $res['contestants'][0]['score_1'] = is_null($scr_a['score_1']) ? '' : $scr_a['score_1'];
+                    $res['contestants'][0]['score_2'] = is_null($scr_a['score_2']) ? '' : $scr_a['score_2'];
+                    $res['contestants'][0]['score_3'] = is_null($scr_a['score_3']) ? '' : $scr_a['score_3'];
+                    $res['contestants'][0]['score_4'] = is_null($scr_a['score_4']) ? '' : $scr_a['score_4'];
+                    $res['contestants'][0]['score_5'] = is_null($scr_a['score_5']) ? '' : $scr_a['score_5'];
+                    $res['contestants'][0]['score_6'] = is_null($scr_a['score_6']) ? '' : $scr_a['score_6'];
+                    $res['contestants'][0]['set_scores'] = $this->total_score_per_set( [ $scr_a['score_1'], $scr_a['score_2'], $scr_a['score_3'], $scr_a['score_4'], $scr_a['score_5'], $scr_a['score_6'] ] );
+                    $res['contestants'][0]['set_points'] = $scr_a['set_points'];
+                    $res['contestants'][0]['desc'] = $scr_a['score_desc'];
                 }
                 if( !empty($scr_b)) {
-                    $res['scores']['contestants'][1]['id'] = $scr_b['contestant_id'];
-                    $res['scores']['contestants'][1]['score_timer'] = $scr_b['score_timer'];
-                    $res['scores']['contestants'][1]['score_1'] = is_null($scr_b['score_1']) ? '' : $scr_b['score_1'];
-                    $res['scores']['contestants'][1]['score_2'] = is_null($scr_b['score_2']) ? '' : $scr_b['score_2'];
-                    $res['scores']['contestants'][1]['score_3'] = is_null($scr_b['score_3']) ? '' : $scr_b['score_3'];
-                    $res['scores']['contestants'][1]['score_4'] = is_null($scr_b['score_4']) ? '' : $scr_b['score_4'];
-                    $res['scores']['contestants'][1]['score_5'] = is_null($scr_b['score_5']) ? '' : $scr_b['score_5'];
-                    $res['scores']['contestants'][1]['score_6'] = is_null($scr_b['score_6']) ? '' : $scr_b['score_6'];
-                    $res['scores']['contestants'][1]['set_scores'] = $this->total_score_per_set( [ $scr_b['score_1'], $scr_b['score_2'], $scr_b['score_3'], $scr_b['score_4'], $scr_b['score_5'], $scr_b['score_6'] ] );
-                    $res['scores']['contestants'][1]['set_points'] = $scr_b['set_points'];
-                    $res['scores']['contestants'][1]['desc'] = $scr_b['score_desc'];
+                    $res['contestants'][1]['id'] = $scr_b['contestant_id'];
+                    $res['contestants'][1]['score_timer'] = $scr_b['score_timer'];
+                    $res['contestants'][1]['score_1'] = is_null($scr_b['score_1']) ? '' : $scr_b['score_1'];
+                    $res['contestants'][1]['score_2'] = is_null($scr_b['score_2']) ? '' : $scr_b['score_2'];
+                    $res['contestants'][1]['score_3'] = is_null($scr_b['score_3']) ? '' : $scr_b['score_3'];
+                    $res['contestants'][1]['score_4'] = is_null($scr_b['score_4']) ? '' : $scr_b['score_4'];
+                    $res['contestants'][1]['score_5'] = is_null($scr_b['score_5']) ? '' : $scr_b['score_5'];
+                    $res['contestants'][1]['score_6'] = is_null($scr_b['score_6']) ? '' : $scr_b['score_6'];
+                    $res['contestants'][1]['set_scores'] = $this->total_score_per_set( [ $scr_b['score_1'], $scr_b['score_2'], $scr_b['score_3'], $scr_b['score_4'], $scr_b['score_5'], $scr_b['score_6'] ] );
+                    $res['contestants'][1]['set_points'] = $scr_b['set_points'];
+                    $res['contestants'][1]['desc'] = $scr_b['score_desc'];
                 }
 
                 $total_val_a = $this->total_score_per_draw($gamedraw_id, $contestant_a_id);
-                $res['scores']['contestants'][0]['game_scores'] = $total_val_a['game_scores'];
-                $res['scores']['contestants'][0]['game_points'] = $total_val_a['game_points'];
+                $res['contestants'][0]['game_scores'] = $total_val_a['game_scores'];
+                $res['contestants'][0]['game_points'] = $total_val_a['game_points'];
                 $total_val_b = $this->total_score_per_draw($gamedraw_id, $contestant_b_id);
-                $res['scores']['contestants'][1]['game_scores'] = $total_val_b['game_scores'];
-                $res['scores']['contestants'][1]['game_points'] = $total_val_b['game_points'];
+                $res['contestants'][1]['game_scores'] = $total_val_b['game_scores'];
+                $res['contestants'][1]['game_points'] = $total_val_b['game_points'];
             }
         }
 
@@ -405,86 +499,6 @@ class Score_Model_Class {
                 }
                 if( !empty($scr_b)) {
                     $res['contestants'][1]['score_id'] = $scr_b['score_id'];
-                    $res['contestants'][1]['score_timer'] = $scr_b['score_timer'];
-                    $res['contestants'][1]['score_1'] = is_null($scr_b['score_1']) ? '' : $scr_b['score_1'];
-                    $res['contestants'][1]['score_2'] = is_null($scr_b['score_2']) ? '' : $scr_b['score_2'];
-                    $res['contestants'][1]['score_3'] = is_null($scr_b['score_3']) ? '' : $scr_b['score_3'];
-                    $res['contestants'][1]['score_4'] = is_null($scr_b['score_4']) ? '' : $scr_b['score_4'];
-                    $res['contestants'][1]['score_5'] = is_null($scr_b['score_5']) ? '' : $scr_b['score_5'];
-                    $res['contestants'][1]['score_6'] = is_null($scr_b['score_6']) ? '' : $scr_b['score_6'];
-                    $res['contestants'][1]['set_scores'] = $this->total_score_per_set( [ $scr_b['score_1'], $scr_b['score_2'], $scr_b['score_3'], $scr_b['score_4'], $scr_b['score_5'], $scr_b['score_6'] ] );
-                    $res['contestants'][1]['set_points'] = $scr_b['set_points'];
-                    $res['contestants'][1]['desc'] = is_null($scr_b['score_desc']) ? '' : $scr_b['score_desc'];
-                }
-
-                $total_val_a = $this->total_score_per_draw($row['gamedraw_id'], $contestant_a_id);
-                $res['contestants'][0]['game_scores'] = $total_val_a['game_scores'];
-                $res['contestants'][0]['game_points'] = $total_val_a['game_points'];
-                $total_val_b = $this->total_score_per_draw($row['gamedraw_id'], $contestant_b_id);
-                $res['contestants'][1]['game_scores'] = $total_val_b['game_scores'];
-                $res['contestants'][1]['game_points'] = $total_val_b['game_points'];
-            }
-        }
-
-        return $res;
-    }
-
-    /**
-     * Scoreboard Preview Data
-     *
-     * @param integer $gamemode_id Game Mode ID
-     * @return array
-     */
-    public function scoreboard_preview_data( $gamemode_id = 0) {
-        $res = array();
-
-        $query =
-        "SELECT gd.gamedraw_id, gs.gameset_id, gd.gamemode_id, gd.bowstyle_id, gs.gameset_num, gd.contestant_a_id, gd.contestant_b_id
-        FROM livegame l
-        LEFT JOIN gameset gs ON l.gameset_id = gs.gameset_id
-        LEFT JOIN gamedraw gd ON gs.gamedraw_id = gd.gamedraw_id";
-
-        if ($result = $this->connection->query($query)) {
-            if ($result->num_rows == 1) {
-                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-                $res['gamedraw_id'] = $row['gamedraw_id'];
-                $res['gameset_id'] = $row['gameset_id'];
-                $res['gamemode_id'] = $row['gamemode_id'];
-                $res['bowstyle_id'] = $row['bowstyle_id'];
-                $res['sets']['curr_set'] = $row['gameset_num'];
-
-                $contestant_a_id = $row['contestant_a_id'];
-                $contestant_b_id = $row['contestant_b_id'];
-
-                $res['sets']['end_set'] = $this->count_gameset_per_draw($row['gamedraw_id']);
-
-                $cnt_data_a = $this->contestant_data($gamemode_id, $contestant_a_id);
-                if( !empty($cnt_data_a)){
-                    $res['contestants'][0]['logo'] = $cnt_data_a['logo'];
-                    $res['contestants'][0]['team'] = $cnt_data_a['team'];
-                    $res['contestants'][0]['player'] = $cnt_data_a['player'];
-                }
-                $cnt_data_b = $this->contestant_data($gamemode_id, $contestant_b_id);
-                if( !empty($cnt_data_b)) {
-                    $res['contestants'][1]['logo'] = $cnt_data_b['logo'];
-                    $res['contestants'][1]['team'] = $cnt_data_b['team'];
-                    $res['contestants'][1]['player'] = $cnt_data_b['player'];
-                }
-                $scr_a = $this->contestant_score($row['gameset_id'], $contestant_a_id);
-                $scr_b = $this->contestant_score($row['gameset_id'], $contestant_b_id);
-                if( !empty($scr_a)) {
-                    $res['contestants'][0]['score_timer'] = $scr_a['score_timer'];
-                    $res['contestants'][0]['score_1'] = is_null($scr_a['score_1']) ? '' : $scr_a['score_1'];
-                    $res['contestants'][0]['score_2'] = is_null($scr_a['score_2']) ? '' : $scr_a['score_2'];
-                    $res['contestants'][0]['score_3'] = is_null($scr_a['score_3']) ? '' : $scr_a['score_3'];
-                    $res['contestants'][0]['score_4'] = is_null($scr_a['score_4']) ? '' : $scr_a['score_4'];
-                    $res['contestants'][0]['score_5'] = is_null($scr_a['score_5']) ? '' : $scr_a['score_5'];
-                    $res['contestants'][0]['score_6'] = is_null($scr_a['score_6']) ? '' : $scr_a['score_6'];
-                    $res['contestants'][0]['set_scores'] = $this->total_score_per_set( [ $scr_a['score_1'], $scr_a['score_2'], $scr_a['score_3'], $scr_a['score_4'], $scr_a['score_5'], $scr_a['score_6'] ] );
-                    $res['contestants'][0]['set_points'] = $scr_a['set_points'];
-                    $res['contestants'][0]['desc'] = is_null($scr_a['score_desc']) ? '' : $scr_a['score_desc'];
-                }
-                if( !empty($scr_b)) {
                     $res['contestants'][1]['score_timer'] = $scr_b['score_timer'];
                     $res['contestants'][1]['score_1'] = is_null($scr_b['score_1']) ? '' : $scr_b['score_1'];
                     $res['contestants'][1]['score_2'] = is_null($scr_b['score_2']) ? '' : $scr_b['score_2'];

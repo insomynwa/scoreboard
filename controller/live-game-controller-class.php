@@ -17,8 +17,8 @@ class Live_Game_Controller_Class extends Controller_Class {
     private $live_template_name = '';
     private $live_template_loc = '';
 
-    private $has_live_game;
-    private $has_live_style;
+    private $root_key;
+    private $scoreboard_key;
 
     /**
      * Class Constructor
@@ -29,16 +29,22 @@ class Live_Game_Controller_Class extends Controller_Class {
     public function __construct($connection = null) {
         $this->connection = $connection;
         $this->model = new Live_Game_Model_Class($connection);
+
+        $this->root_key = 'livegame';
+        $this->scoreboard_key = 'scoreboard';
         $this->init_templates();
     }
-
+    
     /**
-     * Get Live Gameset ID
+     * Get Game Set ID
+     * 
+     * Can be used to check if there is a live game
      *
-     * @return integer
+     * @param boolean $live_check For live check
+     * @return integer|boolean If $live_check is TRUE, return boolean
      */
-    public function get_gameset_id() {
-        return $this->model->gameset_id();
+    public function get_gameset_id($live_check = false) {
+        return $this->model->gameset_id($live_check);
     }
 
     /**
@@ -273,7 +279,7 @@ class Live_Game_Controller_Class extends Controller_Class {
      *
      * @return array
      */
-    public function get_scoreboard(){
+    public function get_scoreboard_deprecated(){
         $result = [ 'status' => false ];
 
         $gameset_id = $this->get_gameset_id();
@@ -331,6 +337,58 @@ class Live_Game_Controller_Class extends Controller_Class {
         return $result;
     }
 
+    /**
+     * Get Scoreboard
+     *
+     * @return mixed
+     */
+    private function get_scoreboard(){
+        $res = array();
+
+        if( $this->model->is_ready() ) {
+            $score_oc = new Score_Controller_Class($this->connection);
+            $scoreboard_data = $score_oc->get_scoreboard_data();
+
+            $style_config = json_decode( $scoreboard_data['style_config'], true);
+    
+            $formatted_style_config = array();
+            foreach ($style_config as $key => $value) {
+                foreach($value as $vkey => $vval ){
+                    if($vkey == 'visibility_class' ){
+                        $formatted_style_config[$key . '_vc' ] = $vval;
+                    }
+                }
+            }
+            $scoreboard_data['style_config'] = $formatted_style_config;
+
+            $res = $scoreboard_data;
+        }
+
+        return $res;
+    }
+
+    /**
+     * Get Data
+     *
+     * @param array $req_data
+     * @return array
+     */
+    public function get_data($req_data = array( 'scoreboard' )){
+        $result = array();
+        $result[$this->root_key] = array();
+        $root_res = $result[$this->root_key];
+
+        $data = null;
+        if(in_array($this->scoreboard_key,$req_data)){
+            $data = $this->get_scoreboard();
+            $root_res[$this->scoreboard_key] = $data;
+        }
+
+        $result[$this->root_key] = $root_res;
+
+        return $result;
+    }
+
 }
 
 if (isset($_POST['livegame_action'])) {
@@ -374,7 +432,12 @@ if (isset($_GET['livegame_get'])) {
         $connection = $database->getConnection();
         $live_game_oc = new Live_Game_Controller_Class($connection);
         if($request_value == 'scoreboard'){
-            $result = $live_game_oc->get_scoreboard();
+            // $result = $live_game_oc->get_scoreboard();
+            $live_game_data = $live_game_oc->get_data(['scoreboard']);
+            $result = array_merge(
+                $result,
+                $live_game_data
+            );
         }
         $database->conn->close();
     }
